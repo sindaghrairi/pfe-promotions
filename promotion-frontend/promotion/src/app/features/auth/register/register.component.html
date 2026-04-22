@@ -1,0 +1,53 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Inscription</h1>
+    <p class="subtitle">Creez votre compte pour acceder a la plateforme.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="fullName">Nom complet</label>
+      <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
+      <small class="error" *ngIf="hasError('fullName', 'required')">Le nom complet est obligatoire.</small>
+      <small class="error" *ngIf="hasError('fullName', 'minlength')">3 caracteres minimum.</small>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="exemple@domaine.com" />
+      <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
+      <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" placeholder="Choisissez un mot de passe" />
+      <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
+      <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+
+      <label for="confirmPassword">Confirmer le mot de passe</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        formControlName="confirmPassword"
+        placeholder="Confirmez le mot de passe"
+      />
+      <small class="error" *ngIf="hasError('confirmPassword', 'required')">Confirmation obligatoire.</small>
+
+      <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Creation en cours...' : 'Creer mon compte' }}
+      </button>
+    </form>
+
+    <p class="switch-link">
+      Vous avez deja un compte ?
+      <a routerLink="/login">Se connecter</a>
+    </p>
+
+    <p class="switch-link">
+      Vous etes une societe ?
+      <a routerLink="/admin/subscribe">Commencer par l'abonnement admin</a>
+    </p>
+
+    <p class="switch-link">
+      Retour a la selection des espaces ?
+      <a routerLink="/espace">Choisir un espace</a>
+    </p>
+  </div>
+</section>

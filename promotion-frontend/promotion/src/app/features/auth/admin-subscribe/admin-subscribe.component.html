@@ -1,0 +1,63 @@
+<section class="auth-page">
+  <div class="bg-orb orb-one" aria-hidden="true"></div>
+  <div class="bg-orb orb-two" aria-hidden="true"></div>
+
+  <div class="auth-layout">
+    <aside class="auth-showcase" aria-hidden="true">
+      <p class="showcase-kicker">PROMOLINK BUSINESS</p>
+      <h2>Prenez le controle de vos campagnes en 3 etapes</h2>
+      <p>Configurez votre espace marchand, activez le paiement et publiez vos offres en quelques minutes.</p>
+      <div class="showcase-metrics">
+        <article>
+          <strong>+1200</strong>
+          <span>promotions lancees</span>
+        </article>
+        <article>
+          <strong>98%</strong>
+          <span>taux de satisfaction</span>
+        </article>
+      </div>
+    </aside>
+
+    <div class="auth-card">
+      <p class="eyebrow">ETAPE 1 SUR 3</p>
+      <h1>Abonnement Admin Societe</h1>
+      <p class="subtitle">Renseignez votre societe puis passez au choix du type de paiement.</p>
+
+      <div class="step-strip" aria-label="Progression inscription">
+        <span class="step active">Societe</span>
+        <span class="step">Paiement</span>
+        <span class="step">Validation</span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="goToPaymentTypes()" novalidate>
+        <div class="field-group">
+          <label for="companyName">Nom de la societe</label>
+          <input id="companyName" type="text" formControlName="companyName" placeholder="Nom de votre societe" />
+          <small class="error" *ngIf="hasError('companyName', 'required')">Le nom de la societe est obligatoire.</small>
+          <small class="error" *ngIf="hasError('companyName', 'minlength')">2 caracteres minimum.</small>
+        </div>
+
+        <div class="field-group">
+          <label for="contactEmail">Email de contact</label>
+          <div class="field-shell">
+            <span class="field-icon" aria-hidden="true">✉</span>
+            <input id="contactEmail" type="email" formControlName="contactEmail" placeholder="contact@societe.com" />
+          </div>
+          <small class="error" *ngIf="hasError('contactEmail', 'required')">L'email est obligatoire.</small>
+          <small class="error" *ngIf="hasError('contactEmail', 'email')">Format email invalide.</small>
+        </div>
+
+        <button type="submit">
+          <span>Passer au type de paiement</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </form>
+
+      <p class="switch-link">
+        Deja un compte admin ?
+        <a routerLink="/admin/login">Se connecter</a>
+      </p>
+    </div>
+  </div>
+</section>

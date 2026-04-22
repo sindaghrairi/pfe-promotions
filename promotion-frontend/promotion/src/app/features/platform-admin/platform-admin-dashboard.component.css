@@ -1,0 +1,93 @@
+.platform-dashboard-shell {
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #eef5ff 0%, #f8fbff 45%, #e3f0ff 100%);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+h1 {
+  margin: 0;
+  color: #1c355e;
+}
+
+p {
+  margin: 0.35rem 0 0;
+  color: #4f6788;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.actions a,
+.actions button {
+  border: 1px solid #a9bddb;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  color: #193d73;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.state {
+  color: #264265;
+}
+
+.state.error {
+  color: #b42318;
+}
+
+.quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 1rem 0;
+}
+
+.quick-nav a {
+  border: 1px solid #a9bddb;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  color: #193d73;
+  text-decoration: none;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #d2e0f3;
+  border-radius: 14px;
+  padding: 0.9rem;
+  box-shadow: 0 10px 24px rgba(20, 45, 90, 0.08);
+}
+
+.card h3 {
+  margin: 0;
+  color: #2c4d7d;
+  font-size: 0.95rem;
+}
+
+.card strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.3rem;
+  color: #143052;
+}

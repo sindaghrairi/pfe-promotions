@@ -1,0 +1,59 @@
+<section class="platform-auth-page">
+  <div class="bg-orb orb-one" aria-hidden="true"></div>
+  <div class="bg-orb orb-two" aria-hidden="true"></div>
+
+  <div class="platform-auth-shell">
+    <aside class="brand-panel" aria-label="Presentation espace admin">
+      <p class="eyebrow">PROMOLINK CONTROL</p>
+      <h1>Pilotage global de la plateforme</h1>
+      <p class="panel-subtitle">
+        Supervisez comptes, abonnements et factures depuis une seule interface.
+      </p>
+
+      <div class="panel-stats">
+        <article>
+          <strong>Moniteur</strong>
+          <span>Acces continu aux indicateurs clefs</span>
+        </article>
+        <article>
+          <strong>Decision rapide</strong>
+          <span>Actions admin centralisees en temps reel</span>
+        </article>
+      </div>
+    </aside>
+
+    <div class="platform-auth-card">
+      <p class="card-kicker">Connexion securisee</p>
+      <h2>Admin Plateforme</h2>
+      <p class="subtitle">Accedez a votre console premium.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <label for="email">Email</label>
+        <div class="input-wrap">
+          <span aria-hidden="true">@</span>
+          <input id="email" type="email" formControlName="email" placeholder="admin.plateforme@promolink.com" />
+        </div>
+        <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
+        <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+
+        <label for="password">Mot de passe</label>
+        <div class="input-wrap">
+          <span aria-hidden="true">*</span>
+          <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+        </div>
+        <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
+        <small class="error" *ngIf="hasError('password', 'minlength')">3 caracteres minimum.</small>
+
+        <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <button type="submit" [disabled]="loading">
+          <span>{{ loading ? 'Connexion en cours...' : 'Entrer dans la console' }}</span>
+        </button>
+      </form>
+
+      <p class="switch-link">
+        Retour a <a routerLink="/">l'accueil</a>
+      </p>
+    </div>
+  </div>
+</section>

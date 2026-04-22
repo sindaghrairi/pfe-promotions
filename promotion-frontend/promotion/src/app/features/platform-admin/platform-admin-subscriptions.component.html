@@ -1,0 +1,43 @@
+<section class="platform-page-shell">
+  <header class="page-topbar">
+    <div>
+      <h1>Abonnements entreprises</h1>
+      <p>Suivi global des abonnements actifs et inactifs.</p>
+    </div>
+    <a routerLink="/platform-admin/dashboard">Retour dashboard</a>
+  </header>
+
+  <p class="state" *ngIf="loading">Chargement des abonnements...</p>
+  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="table-wrap" *ngIf="!loading && subscriptions.length">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Entreprise</th>
+          <th>Email contact</th>
+          <th>Plan</th>
+          <th>Actif</th>
+          <th>Date creation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of subscriptions">
+          <td>{{ item.id }}</td>
+          <td>{{ item.companyName }}</td>
+          <td>{{ item.contactEmail }}</td>
+          <td>{{ item.plan }}</td>
+          <td>
+            <span [class.badge-ok]="item.active" [class.badge-ko]="!item.active">
+              {{ item.active ? 'Oui' : 'Non' }}
+            </span>
+          </td>
+          <td>{{ item.createdAt | date: 'short' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="state" *ngIf="!loading && !subscriptions.length">Aucun abonnement trouve.</p>
+</section>

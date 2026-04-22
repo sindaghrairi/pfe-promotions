@@ -1,0 +1,77 @@
+<section class="dashboard-page">
+  <header class="dashboard-navbar">
+    <a class="nav-brand" routerLink="/">PromoLink</a>
+
+    <nav class="nav-links" aria-label="Navigation dashboard">
+      <a routerLink="/">Accueil</a>
+      <a [routerLink]="allPromosLink">Promos</a>
+      <button type="button" class="nav-logout" (click)="logout()">Deconnexion</button>
+    </nav>
+  </header>
+
+  <div class="dashboard-shell">
+    <div class="dashboard-card">
+      <h1>{{ isClientSpace ? 'Espace Utilisateur' : 'Espace Entreprise' }}</h1>
+
+    <p class="subtitle">Choisissez une action pour continuer.</p>
+
+    <p *ngIf="loadingUser">Chargement du profil...</p>
+
+    <p *ngIf="!loadingUser">
+      Vous etes connecte avec l'email:
+      <strong>{{ email }}</strong>
+    </p>
+
+    <section *ngIf="isClientSpace" class="user-space">
+      <p class="company-selected" *ngIf="hasSelectedCompany">
+        Entreprise selectionnee: <strong>{{ selectedCompanyLabel }}</strong>
+      </p>
+
+      <p *ngIf="loadingCompanies">Chargement des entreprises avec promotions publiees...</p>
+      <p class="company-missing" *ngIf="!loadingCompanies && companiesError">{{ companiesError }}</p>
+
+      <p class="subtitle" *ngIf="!loadingCompanies && !companiesError">
+        Consulter les promotions publiees de toutes les entreprises.
+      </p>
+
+      <div class="company-list" *ngIf="!loadingCompanies && !companiesError">
+        <a class="details-link" [routerLink]="allPromosLink">
+          Consulter toutes les promos
+        </a>
+      </div>
+
+      <div class="dashboard-actions">
+        <button type="button" (click)="logout()">Se deconnecter</button>
+      </div>
+    </section>
+
+    <section *ngIf="!isClientSpace">
+    <p class="company-selected" *ngIf="hasConnectedCompany">
+      Entreprise connectee (gestion): <strong>{{ connectedCompanyLabel }}</strong>
+    </p>
+
+    <p class="company-missing" *ngIf="!hasConnectedCompany">
+      Aucun lien entreprise n'a ete trouve pour ce compte admin. La gestion promos est desactivee.
+    </p>
+
+    <p class="company-selected" *ngIf="hasSelectedCompany">
+      Entreprise selectionnee (details): <strong>{{ selectedCompanyLabel }}</strong>
+    </p>
+
+    <p class="company-missing" *ngIf="!hasSelectedCompany">
+      Aucune entreprise n'est selectionnee. Passez d'abord par la page d'accueil pour cliquer sur une entreprise.
+    </p>
+
+    <div class="dashboard-actions" *ngIf="hasConnectedCompany || hasSelectedCompany">
+      <a [routerLink]="managePromosLink" class="manage-promos-link" *ngIf="hasConnectedCompany">Gerer promos</a>
+      <button type="button" (click)="logout()">Se deconnecter</button>
+    </div>
+
+    <div class="dashboard-actions" *ngIf="!hasConnectedCompany && !hasSelectedCompany">
+      <a routerLink="/" class="manage-promos-link">Aller a l'accueil</a>
+      <button type="button" (click)="logout()">Se deconnecter</button>
+    </div>
+    </section>
+    </div>
+  </div>
+</section>

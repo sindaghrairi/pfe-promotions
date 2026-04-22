@@ -1,0 +1,82 @@
+.platform-page-shell {
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #eef5ff 0%, #f8fbff 45%, #e3f0ff 100%);
+}
+
+.page-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.page-topbar h1 {
+  margin: 0;
+  color: #1c355e;
+}
+
+.page-topbar p {
+  margin: 0.35rem 0 0;
+  color: #4f6788;
+}
+
+.page-topbar a {
+  border: 1px solid #a9bddb;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.5rem 0.8rem;
+  color: #193d73;
+  text-decoration: none;
+}
+
+.state {
+  color: #264265;
+}
+
+.state.error {
+  color: #b42318;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #d2e0f3;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.7rem;
+  border-bottom: 1px solid #e2ebf8;
+}
+
+th {
+  color: #325680;
+  font-size: 0.9rem;
+}
+
+.badge-ok,
+.badge-ko {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.82rem;
+}
+
+.badge-ok {
+  background: #e6f6ec;
+  color: #157347;
+}
+
+.badge-ko {
+  background: #fff3f4;
+  color: #b42318;
+}

@@ -1,0 +1,81 @@
+<section class="add-promo-page">
+  <header class="add-promo-head">
+    <div>
+      <p class="kicker">Gestion entreprise</p>
+      <h1>Ajouter une promotion</h1>
+      <p class="subtitle">Entreprise: <strong>{{ companyName }}</strong></p>
+    </div>
+    <a class="back-link" [routerLink]="['/entreprises', companySlug]">Retour a la gestion</a>
+  </header>
+
+  <form class="add-promo-card" (ngSubmit)="submit()">
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+
+    <label>
+      Titre *
+      <input type="text" name="title" [(ngModel)]="formModel.title" required />
+    </label>
+
+    <div class="grid-two">
+      <label>
+        Type
+        <select name="type" [(ngModel)]="formModel.type">
+          <option *ngFor="let item of typeOptions" [value]="item.value">{{ item.label }}</option>
+        </select>
+      </label>
+
+      <label>
+        Statut
+        <select name="status" [(ngModel)]="formModel.status">
+          <option *ngFor="let item of statusOptions" [value]="item.value">{{ item.label }}</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="grid-two">
+      <label>
+        Categorie
+        <select name="category" [(ngModel)]="formModel.category">
+          <option *ngFor="let item of categories" [value]="item">{{ item }}</option>
+        </select>
+      </label>
+
+      <label>
+        Reduction
+        <input type="text" name="discount" [(ngModel)]="formModel.discount" />
+      </label>
+    </div>
+
+    <div class="grid-two">
+      <label>
+        Date debut *
+        <input type="date" name="startDate" [(ngModel)]="formModel.startDate" required />
+      </label>
+
+      <label>
+        Date fin *
+        <input type="date" name="endDate" [(ngModel)]="formModel.endDate" required />
+      </label>
+    </div>
+
+    <div class="grid-two">
+      <label>
+        Code coupon
+        <input type="text" name="code" [(ngModel)]="formModel.code" />
+      </label>
+
+      <label>
+        Limite d'utilisation
+        <input type="number" min="0" name="usageLimit" [(ngModel)]="formModel.usageLimit" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="cancel-btn" (click)="cancel()" [disabled]="submitting">Annuler</button>
+      <button type="submit" class="submit-btn" [disabled]="submitting">
+        {{ submitting ? 'Enregistrement...' : 'Ajouter la promotion' }}
+      </button>
+    </div>
+  </form>
+</section>

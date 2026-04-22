@@ -1,0 +1,38 @@
+<section class="subscription-page">
+  <div class="subscription-shell">
+    <header class="subscription-header">
+      <div>
+        <p class="eyebrow">Espace abonnement</p>
+        <h1>Mon abonnement et mes factures</h1>
+        <p class="subtitle">Consultez les details de votre abonnement actif et accedez a votre facture.</p>
+      </div>
+      <a class="back-link" [routerLink]="fallbackRedirect">Retour a la gestion</a>
+    </header>
+
+    <p class="loading" *ngIf="loading">Chargement de votre abonnement...</p>
+    <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <section class="subscription-card" *ngIf="hasSnapshot; else noData" aria-label="Details abonnement">
+      <div class="info-grid">
+        <p><span>Societe</span><strong>{{ snapshot?.companyName }}</strong></p>
+        <p><span>Email</span><strong>{{ snapshot?.email || '-' }}</strong></p>
+        <p><span>Plan</span><strong>{{ planLabel }}</strong></p>
+        <p><span>Cycle</span><strong>{{ cycleLabel }}</strong></p>
+        <p><span>Montant</span><strong>{{ amountLabel }}</strong></p>
+        <p><span>Date facture</span><strong>{{ dateLabel }}</strong></p>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="solid-btn" (click)="openInvoice()">Voir facture</button>
+        <button type="button" class="ghost-btn" (click)="goToPayment()">Modifier abonnement</button>
+      </div>
+    </section>
+
+    <ng-template #noData>
+      <section class="subscription-card empty-state">
+        <p>Aucun abonnement n'a ete enregistre pour le moment.</p>
+        <button type="button" class="solid-btn" (click)="goToPayment()">Choisir un abonnement</button>
+      </section>
+    </ng-template>
+  </div>
+</section>

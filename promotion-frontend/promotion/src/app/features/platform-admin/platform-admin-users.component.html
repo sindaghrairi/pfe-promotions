@@ -1,0 +1,167 @@
+<section class="users-layout">
+  <aside class="left-nav">
+    <div class="brand-block">
+      <div class="brand-mark" aria-hidden="true">A</div>
+      <div>
+        <h2>Admin Console</h2>
+        <p>Enterprise Tier</p>
+      </div>
+    </div>
+
+    <nav class="menu-links" aria-label="Navigation admin">
+      <a routerLink="/platform-admin/dashboard">Dashboard</a>
+      <a routerLink="/platform-admin/subscriptions">Abonnements</a>
+      <a class="active" routerLink="/platform-admin/users">User Directory</a>
+      <a routerLink="/platform-admin/invoices">Factures</a>
+    </nav>
+
+    <div class="menu-footer">
+      <a routerLink="/platform-admin/dashboard">Help Center</a>
+      <a routerLink="/platform-admin/dashboard">Account</a>
+    </div>
+  </aside>
+
+  <div class="main-shell">
+    <header class="top-dock">
+      <div class="top-brand">StrategyArch</div>
+      <label class="top-search" aria-label="Rechercher">
+        <span aria-hidden="true">⌕</span>
+        <input type="search" placeholder="Search resources..." />
+      </label>
+      <a class="back-btn" routerLink="/platform-admin/dashboard">Retour dashboard</a>
+    </header>
+
+    <main class="content-canvas">
+      <section class="hero-head">
+        <div>
+          <p class="kicker">Console · Directory</p>
+          <h1>Gestion des Utilisateurs</h1>
+        </div>
+        <button type="button" class="new-user-btn">New User</button>
+      </section>
+
+      <section class="stats-grid" *ngIf="!loading">
+        <article class="stat-card">
+          <p>Total Users</p>
+          <strong>{{ users.length }}</strong>
+        </article>
+        <article class="stat-card">
+          <p>Company Admins</p>
+          <strong>{{ countByRole('ADMIN') }}</strong>
+        </article>
+        <article class="stat-card">
+          <p>Active Clients</p>
+          <strong>{{ countByRole('CLIENT') }}</strong>
+        </article>
+        <article class="stat-card">
+          <p>Platform Admins</p>
+          <strong>{{ countByRole('PLATFORM_ADMIN') }}</strong>
+        </article>
+      </section>
+
+      <section class="directory-panel">
+        <div class="toolbar">
+          <label class="table-search" aria-label="Recherche utilisateurs">
+            <span aria-hidden="true">⌕</span>
+            <input
+              type="search"
+              [(ngModel)]="searchTerm"
+              placeholder="Search by name, email or ID..."
+            />
+          </label>
+
+          <div class="toolbar-actions">
+            <label>
+              <span>Role</span>
+              <select [(ngModel)]="roleFilter">
+                <option value="ALL">Tous</option>
+                <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+              </select>
+            </label>
+            <button type="button" class="ghost-action">Date</button>
+            <button type="button" class="ghost-action">Download</button>
+          </div>
+        </div>
+
+        <p class="state" *ngIf="loading">Chargement des utilisateurs...</p>
+        <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p class="state notice" *ngIf="saving">Mise a jour en cours...</p>
+
+        <div class="table-wrap" *ngIf="!loading && filteredUsers.length">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of filteredUsers">
+                <td>
+                  <span class="id-badge">#UA-{{ user.id }}</span>
+                </td>
+                <td>
+                  <div class="user-cell">
+                    <span class="avatar-fallback">{{ userInitials(user.fullName) }}</span>
+                    <div>
+                      <p class="user-name">{{ user.fullName }}</p>
+                      <p class="user-email">{{ user.email }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="role-cell">
+                    <span
+                      class="role-badge"
+                      [ngClass]="{
+                        'role-client': user.role === 'CLIENT',
+                        'role-admin': user.role === 'ADMIN',
+                        'role-platform': user.role === 'PLATFORM_ADMIN'
+                      }"
+                    >
+                      {{ user.role }}
+                    </span>
+                    <select [ngModel]="user.role" (ngModelChange)="onRoleChange(user, $event)">
+                      <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+                    </select>
+                  </div>
+                </td>
+                <td>
+                  <span class="date-pill">{{ user.createdAt | date: 'MMM d, y' }}</span>
+                </td>
+                <td>
+                  <button type="button" class="danger" (click)="deleteUser(user)">Supprimer</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="state" *ngIf="!loading && !filteredUsers.length">Aucun utilisateur trouve.</p>
+
+        <footer class="table-foot" *ngIf="!loading && filteredUsers.length">
+          <p>Showing <strong>{{ filteredUsers.length }}</strong> of <strong>{{ users.length }}</strong> users</p>
+          <div class="pager">
+            <button type="button">1</button>
+          </div>
+        </footer>
+      </section>
+
+      <section class="insight-row" *ngIf="!loading">
+        <article class="insight-main">
+          <p class="insight-kicker">Platform Growth</p>
+          <h2>Optimizing Enterprise User Management Strategies.</h2>
+          <p>Scale your operations with authoritative permission mapping and real-time promotion tracking across global teams.</p>
+        </article>
+        <article class="insight-side">
+          <p>Active Users</p>
+          <strong>98.4%</strong>
+          <span>Retention rate over the last fiscal quarter.</span>
+        </article>
+      </section>
+    </main>
+  </div>
+</section>

@@ -1,0 +1,35 @@
+<section class="platform-dashboard-shell">
+  <header class="topbar">
+    <div>
+      <h1>Dashboard Admin Plateforme</h1>
+      <p>Bienvenue {{ email || 'admin' }}</p>
+    </div>
+    <div class="actions">
+      <a routerLink="/">Accueil</a>
+      <button type="button" (click)="logout()">Deconnexion</button>
+    </div>
+  </header>
+
+  <p class="state" *ngIf="loading">Chargement des statistiques...</p>
+  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <nav class="quick-nav" *ngIf="!loading && stats">
+    <a routerLink="/platform-admin/users">Utilisateurs</a>
+    <a routerLink="/platform-admin/subscriptions">Abonnements</a>
+    <a routerLink="/platform-admin/invoices">Factures</a>
+  </nav>
+
+  <div class="cards" *ngIf="!loading && stats">
+    <article class="card"><h3>Utilisateurs</h3><strong>{{ stats.totalUsers }}</strong></article>
+    <article class="card"><h3>Clients</h3><strong>{{ stats.totalClients }}</strong></article>
+    <article class="card"><h3>Admins Societe</h3><strong>{{ stats.totalCompanyAdmins }}</strong></article>
+    <article class="card"><h3>Admin Plateforme</h3><strong>{{ stats.totalPlatformAdmins }}</strong></article>
+    <article class="card"><h3>Abonnements Actifs</h3><strong>{{ stats.activeSubscriptions }}</strong></article>
+    <article class="card"><h3>Abonnements Inactifs</h3><strong>{{ stats.inactiveSubscriptions }}</strong></article>
+    <article class="card"><h3>Promotions Totales</h3><strong>{{ stats.totalPromotions }}</strong></article>
+    <article class="card"><h3>Promotions Actives</h3><strong>{{ stats.activePromotions }}</strong></article>
+    <article class="card"><h3>Promotions Expirees</h3><strong>{{ stats.expiredPromotions }}</strong></article>
+    <article class="card"><h3>Promotions Planifiees</h3><strong>{{ stats.scheduledPromotions }}</strong></article>
+    <article class="card"><h3>Promotions Brouillon</h3><strong>{{ stats.draftPromotions }}</strong></article>
+  </div>
+</section>

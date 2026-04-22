@@ -1,0 +1,75 @@
+<section class="auth-page">
+  <div class="bg-orb orb-one" aria-hidden="true"></div>
+  <div class="bg-orb orb-two" aria-hidden="true"></div>
+
+  <div class="auth-layout">
+    <aside class="auth-showcase" aria-hidden="true">
+      <p class="showcase-kicker">VALIDATION FINALE</p>
+      <h2>Creez le compte admin pour piloter votre espace societe</h2>
+      <p>Utilisez l'email abonne, definissez un mot de passe securise et connectez-vous a votre dashboard.</p>
+      <div class="showcase-list">
+        <p>Acces securise</p>
+        <p>Gestion des promotions</p>
+        <p>Suivi des performances</p>
+      </div>
+    </aside>
+
+    <div class="auth-card">
+      <p class="eyebrow">ETAPE 3 SUR 3</p>
+      <h1>Inscription Admin Societe</h1>
+      <p class="subtitle">Creez votre compte admin avec l'email abonne.</p>
+
+      <div class="step-strip" aria-label="Progression inscription">
+        <span class="step done">Societe</span>
+        <span class="step done">Paiement</span>
+        <span class="step active">Validation</span>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field-group">
+          <label for="fullName">Nom complet</label>
+          <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
+          <small class="error" *ngIf="hasError('fullName', 'required')">Le nom complet est obligatoire.</small>
+          <small class="error" *ngIf="hasError('fullName', 'minlength')">3 caracteres minimum.</small>
+        </div>
+
+        <div class="field-group">
+          <label for="companyName">Nom de la societe</label>
+          <input id="companyName" type="text" formControlName="companyName" placeholder="Nom exact de la societe" />
+          <small class="error" *ngIf="hasError('companyName', 'required')">Le nom de la societe est obligatoire.</small>
+        </div>
+
+        <div class="field-group">
+          <label for="email">Email admin</label>
+          <input id="email" type="email" formControlName="email" placeholder="admin@societe.com" />
+          <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
+          <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+        </div>
+
+        <div class="field-group">
+          <label for="password">Mot de passe</label>
+          <input id="password" type="password" formControlName="password" placeholder="Choisissez un mot de passe" />
+          <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
+          <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+        </div>
+
+        <div class="field-group">
+          <label for="confirmPassword">Confirmer le mot de passe</label>
+          <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Confirmez le mot de passe" />
+          <small class="error" *ngIf="hasError('confirmPassword', 'required')">Confirmation obligatoire.</small>
+        </div>
+
+        <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <button type="submit" [disabled]="loading">
+          {{ loading ? 'Creation en cours...' : 'Creer le compte admin' }}
+        </button>
+      </form>
+
+      <p class="switch-link">
+        Etape 1 pas encore faite ?
+        <a routerLink="/admin/subscribe">Commencer par abonnement</a>
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,45 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Connexion</h1>
+    <p class="subtitle">Connectez-vous pour acceder a votre espace.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="email">Email</label>
+      <div class="field-shell">
+        <span class="field-icon" aria-hidden="true">✉</span>
+        <input id="email" type="email" formControlName="email" placeholder="exemple@domaine.com" />
+      </div>
+      <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
+      <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+
+      <label for="password">Mot de passe</label>
+      <div class="field-shell">
+        <span class="field-icon" aria-hidden="true">🔒</span>
+        <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+      </div>
+      <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
+      <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+
+      <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Connexion en cours...' : 'Se connecter' }}
+      </button>
+    </form>
+
+    <p class="switch-link">
+      Pas encore de compte ?
+      <a routerLink="/register">Creer un compte</a>
+    </p>
+
+    <p class="switch-link">
+      Espace admin societe ?
+      <a routerLink="/admin/subscribe">Abonnement et inscription admin</a>
+    </p>
+
+    <p class="switch-link">
+      Retour a la selection des espaces ?
+      <a routerLink="/espace">Choisir un espace</a>
+    </p>
+  </div>
+</section>

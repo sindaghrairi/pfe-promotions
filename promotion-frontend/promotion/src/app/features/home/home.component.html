@@ -1,0 +1,238 @@
+<section class="home-shell">
+  <div class="screen-glow" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="utility-bar">
+      <p class="utility-pill">+500 offres actives aujourd hui</p>
+      <div class="utility-actions">
+        <a routerLink="/login">Connexion</a>
+      </div>
+    </div>
+
+    <div class="main-nav">
+      <div class="nav-glow" aria-hidden="true"></div>
+      <a class="brand" routerLink="/">
+        <span class="brand-mark">PL</span>
+        <span class="brand-stack">
+          <span class="brand-text">PromoLink</span>
+          <span class="brand-sub">Growth Promo Platform</span>
+        </span>
+      </a>
+
+      <nav class="primary-nav" aria-label="Navigation principale">
+        <a class="nav-link is-hot" href="#partners">Offres du jour</a>
+        <a class="nav-link" routerLink="/admin/subscribe">Espace commercant</a>
+        <a class="nav-link" routerLink="/espace">Espace client</a>
+      </nav>
+
+      <a class="company-cta" routerLink="/admin/subscribe">Lancer mes promotions</a>
+      <a class="login-cta" routerLink="/login">Connexion</a>
+
+      <button class="icon-btn" type="button" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="landing">
+    <section class="hero" aria-label="Presentation">
+      <div class="hero-copy">
+        <p class="hero-chip">Nouveau : promos et coupons en temps reel</p>
+        <h1>
+          <span class="title-blue">Boostez vos ventes</span>
+          <span class="title-orange">avec nos promotions !</span>
+        </h1>
+        <p>
+          Activez des campagnes plus vite, pilotez les performances en direct et transformez vos visiteurs en clients
+          fideles.
+        </p>
+
+        <div class="hero-actions">
+          <a class="cta btn-primary" routerLink="/admin/subscribe">Inscrire votre entreprise</a>
+          <a class="cta btn-secondary" routerLink="/promos/consulter-toutes">Voir les promos</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="signal-card">
+          <p>Campagnes actives</p>
+          <strong>124</strong>
+          <small>+18% cette semaine</small>
+        </div>
+        <div class="signal-card alt">
+          <p>Coupons utilises</p>
+          <strong>2 480</strong>
+          <small>Conversion en hausse</small>
+        </div>
+        <div class="floating-pill one">Flash Deal -30%</div>
+        <div class="floating-pill two">Nouveau partenaire</div>
+      </div>
+    </section>
+
+    <section class="partners" id="partners" aria-label="Nos partenaires">
+      <div class="section-head">
+        <h2>Nos partenaires</h2>
+        <p>Decouvrez les offres qui vous entourent en un clin d'oeil.</p>
+      </div>
+      <div class="partner-ribbon" aria-label="Liste des partenaires">
+        <article
+          class="partner-card"
+          routerLink="/entreprises/decathlon/consulter-promos"
+        >
+          <div class="partner-cover">
+            <img src="partners/decathlon.png" alt="Decathlon" />
+            <span class="promo-chip">-10%</span>
+            <div class="partner-badge">
+              <img src="partners/decathlon.png" alt="Logo Decathlon" />
+            </div>
+          </div>
+          <div class="partner-body">
+            <h3>DECATHLON</h3>
+            <p class="partner-sector">Sport & Loisirs</p>
+            <p class="partner-discount">10% de remise</p>
+            <a
+              class="partner-more"
+              routerLink="/entreprises/decathlon/consulter-promos"
+              >Voir offre</a
+            >
+          </div>
+        </article>
+        <article
+          class="partner-card"
+          routerLink="/entreprises/aziza/consulter-promos"
+        >
+          <div class="partner-cover">
+            <img src="partners/aziza.jpg" alt="Aziza" />
+            <span class="promo-chip">-12%</span>
+            <div class="partner-badge">
+              <img src="partners/aziza.jpg" alt="Logo Aziza" />
+            </div>
+          </div>
+          <div class="partner-body">
+            <h3>AZIZA</h3>
+            <p class="partner-sector">Grande distribution</p>
+            <p class="partner-discount">12% de remise</p>
+            <a
+              class="partner-more"
+              routerLink="/entreprises/aziza/consulter-promos"
+              >Voir offre</a
+            >
+          </div>
+        </article>
+        <article
+          class="partner-card"
+          routerLink="/entreprises/fatales/consulter-promos"
+        >
+          <div class="partner-cover">
+            <img src="partners/fatales.png" alt="Fatales" />
+            <span class="promo-chip">-15%</span>
+            <div class="partner-badge">
+              <img src="partners/fatales.png" alt="Logo Fatales" />
+            </div>
+          </div>
+          <div class="partner-body">
+            <h3>FATALES</h3>
+            <p class="partner-sector">Beaute & Cosmetique</p>
+            <p class="partner-discount">15% de remise</p>
+            <a
+              class="partner-more"
+              routerLink="/entreprises/fatales/consulter-promos"
+              >Voir offre</a
+            >
+          </div>
+        </article>
+        <article
+          class="partner-card"
+          routerLink="/entreprises/monoprix/consulter-promos"
+        >
+          <div class="partner-cover">
+            <img src="partners/monoprix.jpg" alt="Monoprix" />
+            <span class="promo-chip">-10%</span>
+            <div class="partner-badge">
+              <img src="partners/monoprix.jpg" alt="Logo Monoprix" />
+            </div>
+          </div>
+          <div class="partner-body">
+            <h3>MONOPRIX</h3>
+            <p class="partner-sector">Boutique & Maison</p>
+            <p class="partner-discount">10% de remise</p>
+            <a
+              class="partner-more"
+              routerLink="/entreprises/monoprix/consulter-promos"
+              >Voir offre</a
+            >
+          </div>
+        </article>
+        <article
+          class="partner-card"
+          routerLink="/entreprises/zara/consulter-promos"
+        >
+          <div class="partner-cover">
+            <img src="partners/zara.jpg" alt="Zara" />
+            <span class="promo-chip">-18%</span>
+            <div class="partner-badge">
+              <img src="partners/zara.jpg" alt="Logo Zara" />
+            </div>
+          </div>
+          <div class="partner-body">
+            <h3>ZARA</h3>
+            <p class="partner-sector">Mode & Accessoires</p>
+            <p class="partner-discount">18% de remise</p>
+            <a
+              class="partner-more"
+              routerLink="/entreprises/zara/consulter-promos"
+              >Voir offre</a
+            >
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="offers" aria-label="Promotions du moment">
+      <div class="section-head">
+        <h2>Promotions du moment</h2>
+        <p>Activez rapidement une offre ou consultez tous les bons plans.</p>
+      </div>
+
+      <div class="offers-grid">
+        <article class="promo-card">
+          <span class="promo-badge">-30%</span>
+          <h3>ZARA</h3>
+          <p>Collection printemps</p>
+          <small>Expire le 28/04/2026</small>
+          <a routerLink="/entreprises/zara/consulter-promos">Activer</a>
+        </article>
+
+        <article class="promo-card">
+          <span class="promo-badge">-20%</span>
+          <h3>DECATHLON</h3>
+          <p>Equipement running</p>
+          <small>Expire le 02/05/2026</small>
+          <a routerLink="/entreprises/decathlon/consulter-promos">Activer</a>
+        </article>
+
+        <article class="promo-card">
+          <span class="promo-badge">-15%</span>
+          <h3>FATALES</h3>
+          <p>Pack skincare premium</p>
+          <small>Expire le 30/04/2026</small>
+          <a routerLink="/entreprises/fatales/consulter-promos">Activer</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="signup-panel" id="signup" aria-label="Inscription aux coupons">
+      <div class="signup-icon">PROMO</div>
+      <h2>Inscrivez-vous pour profiter des coupons</h2>
+      <p>Ne ratez plus aucune offre exclusive. Recevez des notifications personnalisees selon vos centres d'interet et votre localisation.</p>
+      <form class="signup-form" action="#" method="post">
+        <input type="email" placeholder="votre@email.com" aria-label="Email" />
+        <button type="button">Je m'inscris</button>
+      </form>
+      <small>Gratuit pour les utilisateurs. Desinscription possible en un clic.</small>
+    </section>
+  </main>
+
+</section>

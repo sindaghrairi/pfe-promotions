@@ -1,0 +1,58 @@
+<section class="invoice-page">
+  <p class="state" *ngIf="loading">Chargement de la facture...</p>
+  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <div class="invoice-shell" *ngIf="!loading && invoice">
+    <header class="invoice-header">
+      <div>
+        <p class="eyebrow">Facture d'abonnement</p>
+        <h1>Facture societe</h1>
+        <p class="subtitle">Facture consultee depuis l'espace admin plateforme.</p>
+      </div>
+      <div class="invoice-meta">
+        <p><span>Numero</span><strong>{{ invoiceNumber }}</strong></p>
+        <p><span>Date</span><strong>{{ invoice.issuedAt | date: 'dd/MM/yyyy' }}</strong></p>
+      </div>
+    </header>
+
+    <section class="invoice-card" aria-label="Details de facture">
+      <div class="identity-block">
+        <h2>Client</h2>
+        <p><strong>Societe:</strong> {{ invoice.companyName }}</p>
+        <p><strong>Email:</strong> {{ invoice.companyEmail }}</p>
+      </div>
+
+      <div class="details-block">
+        <h2>Abonnement</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Cycle</th>
+              <th>Montant</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ invoice.plan }}</td>
+              <td>{{ cycleLabel }}</td>
+              <td>{{ invoice.amount | number: '1.2-2' }} DT</td>
+              <td>{{ invoice.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="total-line">
+        <p>Total TTC</p>
+        <strong>{{ invoice.amount | number: '1.2-2' }} DT</strong>
+      </div>
+    </section>
+
+    <div class="actions no-print">
+      <a routerLink="/platform-admin/invoices">Retour factures</a>
+      <button type="button" class="print-btn" (click)="printInvoice()">Imprimer facture (PDF)</button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,106 @@
+<section class="platform-page-shell">
+  <div class="bg-orb orb-one" aria-hidden="true"></div>
+  <div class="bg-orb orb-two" aria-hidden="true"></div>
+
+  <header class="page-topbar">
+    <div class="title-wrap">
+      <p class="kicker">Platform billing command</p>
+      <h1>Factures</h1>
+      <p>Vision globale des factures de la plateforme.</p>
+    </div>
+    <a class="back-link" routerLink="/platform-admin/dashboard">Retour dashboard</a>
+  </header>
+
+  <p class="state" *ngIf="loading">Chargement des factures...</p>
+  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <section class="kpi-grid" *ngIf="!loading && invoices">
+    <article class="kpi-card">
+      <p>Total factures</p>
+      <strong>{{ invoices.total }}</strong>
+    </article>
+    <article class="kpi-card">
+      <p>Reglees</p>
+      <strong>{{ countByStatus('PAID') }}</strong>
+    </article>
+    <article class="kpi-card">
+      <p>En attente</p>
+      <strong>{{ countByStatus('PENDING') }}</strong>
+    </article>
+    <article class="kpi-card">
+      <p>En retard</p>
+      <strong>{{ countByStatus('OVERDUE') }}</strong>
+    </article>
+  </section>
+
+  <section class="invoice-box" *ngIf="!loading && invoices">
+    <div class="box-topline">
+      <p class="box-caption">{{ invoices.message }}</p>
+      <div class="progress-pill">
+        <span>Taux paiement</span>
+        <strong>{{ paymentRate }}%</strong>
+      </div>
+    </div>
+
+    <p class="hint" *ngIf="!invoices.items.length">
+      Aucun element facture disponible pour le moment.
+    </p>
+
+    <div class="table-wrap" *ngIf="invoices.items.length">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Entreprise</th>
+            <th>Email</th>
+            <th>Plan</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Emission</th>
+            <th>Echeance</th>
+            <th>Paiement</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of invoices.items; let i = index" [style.--row-index]="i">
+            <td>{{ item.id }}</td>
+            <td>{{ item.companyName }}</td>
+            <td>{{ item.companyEmail }}</td>
+            <td>
+              <span
+                class="plan-badge"
+                [ngClass]="{
+                  'plan-basic': item.plan === 'BASIC',
+                  'plan-standard': item.plan === 'STANDARD',
+                  'plan-premium': item.plan === 'PREMIUM'
+                }"
+              >
+                {{ item.plan }}
+              </span>
+            </td>
+            <td>{{ item.amount | number: '1.2-2' }} DT</td>
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'status-paid': item.status === 'PAID',
+                  'status-pending': item.status === 'PENDING',
+                  'status-overdue': item.status === 'OVERDUE'
+                }"
+              >
+                {{ item.status }}
+              </span>
+            </td>
+            <td>{{ item.issuedAt | date: 'shortDate' }}</td>
+            <td>{{ item.dueAt | date: 'shortDate' }}</td>
+            <td>{{ item.paidAt ? (item.paidAt | date: 'shortDate') : '-' }}</td>
+            <td>
+              <a class="view-btn" [routerLink]="['/platform-admin/invoices', item.id]">Voir facture</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

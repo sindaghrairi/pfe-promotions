@@ -1,0 +1,81 @@
+<section class="pricing-page">
+  <div class="bg-orb orb-one" aria-hidden="true"></div>
+  <div class="bg-orb orb-two" aria-hidden="true"></div>
+
+  <div class="pricing-layout">
+    <div class="pricing-shell">
+      <p class="eyebrow">Abonnement</p>
+      <h1>Choisissez l'abonnement adapte a votre activite</h1>
+      <p class="subtitle">Choisissez la formule ideale pour votre societe et activez votre abonnement.</p>
+
+      <div class="step-strip" aria-label="Progression inscription">
+        <span class="step done">Societe</span>
+        <span class="step active">Paiement</span>
+        <span class="step">Validation</span>
+      </div>
+
+      <div class="company-summary">
+        <p><span>Societe</span><strong>{{ companyName || '-' }}</strong></p>
+        <p><span>Email</span><strong>{{ contactEmail || '-' }}</strong></p>
+      </div>
+
+      <div class="billing-toggle" role="tablist" aria-label="Choix de la periode de facturation">
+        <button
+          type="button"
+          [class.active]="billingCycle === 'MONTHLY'"
+          (click)="setBillingCycle('MONTHLY')"
+        >
+          Monthly
+        </button>
+        <button
+          type="button"
+          [class.active]="billingCycle === 'YEARLY'"
+          (click)="setBillingCycle('YEARLY')"
+        >
+          Annually
+        </button>
+      </div>
+
+      <div class="plans-grid">
+        <article
+          class="plan-card"
+          *ngFor="let plan of plans"
+          [class.basic-plan]="plan.key === 'BASIC'"
+          [class.standard-plan]="plan.key === 'STANDARD'"
+          [class.premium-plan]="plan.key === 'PREMIUM'"
+          [class.selected]="selectedPlan === plan.key"
+          [class.featured]="plan.key === 'STANDARD'"
+          (click)="selectPlan(plan.key)"
+        >
+          <div class="plan-head">
+            <p class="plan-badge" *ngIf="plan.key === 'STANDARD'">Recommande</p>
+            <h3>{{ plan.label }}</h3>
+            <p>{{ plan.subtitle }}</p>
+          </div>
+
+          <p class="price">
+            {{ getPlanPrice(plan.monthlyPrice, plan.yearlyPrice) }}
+            <span *ngIf="plan.key !== 'PREMIUM'">/{{ billingCycle === 'YEARLY' ? 'an' : 'mois' }}</span>
+          </p>
+
+          <ul>
+            <li *ngFor="let feature of plan.features">{{ feature }}</li>
+          </ul>
+
+          <button type="button" class="choose-btn" [class.active]="selectedPlan === plan.key">
+            {{ selectedPlan === plan.key ? 'Selected' : 'Get Started' }}
+          </button>
+        </article>
+      </div>
+
+      <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <div class="actions">
+        <a [routerLink]="['/admin/subscribe']">Retour et modifier les infos</a>
+        <button type="button" class="activate-btn" (click)="activateSubscription()" [disabled]="loading">
+          {{ loading ? 'Activation en cours...' : "Activer l'abonnement" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

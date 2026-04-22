@@ -1,0 +1,76 @@
+<section class="invoice-page">
+  <div class="bg-orb orb-one" aria-hidden="true"></div>
+  <div class="bg-orb orb-two" aria-hidden="true"></div>
+
+  <div class="invoice-layout">
+    <aside class="invoice-showcase no-print" aria-hidden="true">
+      <p class="showcase-kicker">ETAPE 3 SUR 3</p>
+      <h2>Votre abonnement est pret a etre active</h2>
+      <p>Conservez cette facture comme reference. Vous pouvez ensuite creer le compte admin de votre societe.</p>
+      <div class="showcase-list">
+        <p>Numero unique</p>
+        <p>Montant transparent</p>
+        <p>Activation immediate</p>
+      </div>
+    </aside>
+
+    <div class="invoice-shell">
+      <header class="invoice-header">
+        <div>
+          <p class="eyebrow">Facture d'abonnement</p>
+          <h1>Facture societe</h1>
+          <p class="subtitle">Votre societe est inscrite. Vous pouvez imprimer cette facture en PDF.</p>
+
+          <div class="step-strip no-print" aria-label="Progression inscription">
+            <span class="step done">Societe</span>
+            <span class="step done">Paiement</span>
+            <span class="step active">Validation</span>
+          </div>
+        </div>
+        <div class="invoice-meta">
+          <p><span>Numero</span><strong>{{ invoiceNumber }}</strong></p>
+          <p><span>Date</span><strong>{{ issuedDateLabel }}</strong></p>
+        </div>
+      </header>
+
+      <section class="invoice-card" aria-label="Details de facture">
+        <div class="identity-block">
+          <h2>Client</h2>
+          <p><strong>Societe:</strong> {{ companyName }}</p>
+          <p><strong>Email:</strong> {{ email || '-' }}</p>
+        </div>
+
+        <div class="details-block">
+          <h2>Abonnement</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Plan</th>
+                <th>Cycle</th>
+                <th>Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ planLabel }}</td>
+                <td>{{ cycleLabel }}</td>
+                <td>{{ totalLabel }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="total-line">
+          <p>Total TTC</p>
+          <strong>{{ totalLabel }}</strong>
+        </div>
+      </section>
+
+      <div class="actions no-print">
+        <a routerLink="/dashboard">Retour au dashboard</a>
+        <button type="button" class="print-btn" (click)="printInvoice()">Imprimer facture (PDF)</button>
+        <button type="button" class="next-btn" *ngIf="showAdminRegisterButton" (click)="continueToAdminRegister()">Continuer vers creation du compte admin</button>
+      </div>
+    </div>
+  </div>
+</section>

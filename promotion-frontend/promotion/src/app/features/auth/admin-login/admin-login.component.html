@@ -1,0 +1,47 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <p class="brand-strip">
+      <span class="brand-dot" aria-hidden="true"></span>
+      Espace Entreprise
+    </p>
+    <h1>Connexion Admin Societe</h1>
+    <p class="subtitle">Etape 3/3: connectez-vous avec votre compte admin.</p>
+    <div class="trust-row" aria-label="Informations de confiance">
+      <span>Connexion securisee</span>
+      <span>Acces entreprise</span>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="email">Email admin</label>
+      <div class="field-shell">
+        <span class="field-icon" aria-hidden="true">✉</span>
+        <input id="email" type="email" formControlName="email" placeholder="admin@societe.com" />
+      </div>
+      <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
+      <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+
+      <label for="password">Mot de passe</label>
+      <div class="field-shell">
+        <span class="field-icon" aria-hidden="true">🔒</span>
+        <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+      </div>
+      <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
+      <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+
+      <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Connexion en cours...' : 'Se connecter a l\'espace admin' }}
+      </button>
+    </form>
+
+    <p class="switch-link">
+      Pas encore de compte admin ?
+      <a routerLink="/admin/register" [queryParams]="authQueryParams">Creer mon compte admin</a>
+    </p>
+    <p class="switch-link secondary-link">
+      Pas encore abonne ?
+      <a routerLink="/admin/subscribe" [queryParams]="authQueryParams">S'abonner d'abord</a>
+    </p>
+  </div>
+</section>
