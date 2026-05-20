@@ -4,6 +4,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 type BillingCycle = 'MONTHLY' | 'YEARLY';
 type PlanKey = 'BASIC' | 'STANDARD' | 'PREMIUM';
@@ -21,7 +23,7 @@ type SubscriptionSnapshot = {
 @Component({
   selector: 'app-admin-subscription-overview',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './admin-subscription-overview.component.html',
   styleUrl: './admin-subscription-overview.component.css'
 })
@@ -29,11 +31,12 @@ export class AdminSubscriptionOverviewComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly translations = inject(TranslationService);
 
   snapshot: SubscriptionSnapshot | null = null;
   loading = false;
   errorMessage = '';
-  companyName = 'Societe';
+  companyName ="";
   contactEmail = '';
   fallbackRedirect = '/dashboard';
 
@@ -80,12 +83,18 @@ export class AdminSubscriptionOverviewComponent {
   get cycleLabel(): string {
     const cycle = this.snapshot?.billingCycle;
     if (cycle === 'YEARLY') {
-      return 'Annuel';
+      return this.translations.translate('PAYMENT.YEARLY');
     }
     if (cycle === 'MONTHLY') {
-      return 'Mensuel';
+      return this.translations.translate('PAYMENT.MONTHLY');
     }
     return '-';
+  }
+
+  get cycleSuffixLabel(): string {
+    return this.snapshot?.billingCycle === 'YEARLY'
+      ? this.translations.translate('PAYMENT.YEAR_SUFFIX')
+      : this.translations.translate('PAYMENT.MONTH_SUFFIX');
   }
 
   get amountLabel(): string {
@@ -163,6 +172,10 @@ export class AdminSubscriptionOverviewComponent {
         return null;
       }
 
+      if (this.isPlaceholderCompanyName(parsed.companyName)) {
+        return null;
+      }
+
       return {
         companyName: parsed.companyName,
         email: parsed.email ?? '',
@@ -175,6 +188,11 @@ export class AdminSubscriptionOverviewComponent {
     } catch {
       return null;
     }
+  }
+
+  private isPlaceholderCompanyName(name: string): boolean {
+    const normalized = name.trim().toLowerCase();
+    return normalized === 'societe' || normalized === 'entreprise' || normalized === 'societey';
   }
 
   private loadSubscriptionFromApi(): void {

@@ -51,9 +51,9 @@
 }
 
 .platform-auth-shell {
-  width: min(980px, 100%);
+  width: min(520px, 100%);
   display: grid;
-  grid-template-columns: 1.1fr 0.95fr;
+  grid-template-columns: 1fr;
   border-radius: 26px;
   overflow: hidden;
   border: 1px solid var(--panel-stroke);

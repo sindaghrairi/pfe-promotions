@@ -6,11 +6,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AdminRegisterRequest } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-admin-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './admin-register.component.html',
   styleUrl: './admin-register.component.css'
 })
@@ -19,6 +22,7 @@ export class AdminRegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translations = inject(TranslationService);
 
   readonly form = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -31,6 +35,60 @@ export class AdminRegisterComponent {
   loading = false;
   errorMessage = '';
   redirectTo = '/entreprises/entreprise';
+
+  get isConfirmPasswordValid(): boolean {
+    const confirmControl = this.form.controls.confirmPassword;
+    if (!confirmControl.value) {
+      return false;
+    }
+
+    return confirmControl.valid && confirmControl.value === this.form.controls.password.value;
+  }
+
+  get passwordStrengthPercent(): number {
+    const password = this.form.controls.password.value;
+    if (!password) {
+      return 0;
+    }
+
+    let score = 0;
+
+    if (password.length >= 8) {
+      score += 30;
+    } else if (password.length >= 6) {
+      score += 15;
+    }
+
+    if (/[a-z]/.test(password)) {
+      score += 20;
+    }
+
+    if (/[A-Z]/.test(password)) {
+      score += 20;
+    }
+
+    if (/\d/.test(password)) {
+      score += 15;
+    }
+
+    if (/[^A-Za-z0-9]/.test(password)) {
+      score += 15;
+    }
+
+    return Math.min(100, score);
+  }
+
+  get passwordStrengthLabel(): string {
+    if (this.passwordStrengthPercent >= 75) {
+      return this.t('ADMIN_REGISTER.STRENGTH_STRONG');
+    }
+
+    if (this.passwordStrengthPercent >= 45) {
+      return this.t('ADMIN_REGISTER.STRENGTH_MEDIUM');
+    }
+
+    return this.t('ADMIN_REGISTER.STRENGTH_WEAK');
+  }
 
   constructor() {
     this.route.queryParamMap.subscribe((params) => {
@@ -62,7 +120,7 @@ export class AdminRegisterComponent {
     }
 
     if (this.form.controls.password.value !== this.form.controls.confirmPassword.value) {
-      this.errorMessage = 'Les mots de passe ne correspondent pas.';
+      this.errorMessage = this.t('ADMIN_REGISTER.PASSWORD_MISMATCH');
       return;
     }
 
@@ -93,6 +151,11 @@ export class AdminRegisterComponent {
     return control.touched && control.hasError(errorName);
   }
 
+  isControlValid(controlName: 'fullName' | 'companyName' | 'email' | 'password' | 'confirmPassword'): boolean {
+    const control = this.form.controls[controlName];
+    return control.touched && control.valid;
+  }
+
   private extractApiError(error: HttpErrorResponse): string {
     const payload = error.error;
 
@@ -107,7 +170,11 @@ export class AdminRegisterComponent {
       }
     }
 
-    return "Echec de creation du compte admin. Veuillez reessayer.";
+    return this.t('ADMIN_REGISTER.CREATE_ERROR');
+  }
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.translations.translate(key, params);
   }
 
   private buildCompanyRedirect(companyName: string): string {

@@ -5,17 +5,25 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { PlatformAdminInvoice } from '../../core/models/platform-admin.model';
 import { PlatformAdminService } from '../../core/services/platform-admin.service';
+import { ThemeService } from '../../core/services/theme.service';
+import { TranslationService } from '../../core/i18n/translation.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-platform-admin-invoice-details',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './platform-admin-invoice-details.component.html',
   styleUrl: './platform-admin-invoice-details.component.css'
 })
 export class PlatformAdminInvoiceDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly platformAdminService = inject(PlatformAdminService);
+  private readonly themeService = inject(ThemeService);
+  private readonly translations = inject(TranslationService);
+
+  readonly isDark$ = this.themeService.isDark$;
 
   loading = true;
   errorMessage = '';
@@ -41,6 +49,10 @@ export class PlatformAdminInvoiceDetailsComponent implements OnInit {
     });
   }
 
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
+
   printInvoice(): void {
     if (typeof window !== 'undefined') {
       window.print();
@@ -57,7 +69,7 @@ export class PlatformAdminInvoiceDetailsComponent implements OnInit {
   }
 
   get cycleLabel(): string {
-    return 'Mensuel';
+    return this.translations.translate('PAYMENT.MONTHLY');
   }
 
   private extractError(error: HttpErrorResponse): string {

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="light" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PromoLink - Boostez vos ventes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#00201d",
+                        "on-background": "#1b1b1d",
+                        "surface": "#fcf8fa",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#006f66",
+                        "tertiary": "#000000",
+                        "surface-bright": "#fcf8fa",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#565e74",
+                        "on-tertiary-container": "#b87500",
+                        "on-secondary-fixed-variant": "#005049",
+                        "surface-variant": "#e4e2e4",
+                        "primary-fixed": "#dae2fd",
+                        "inverse-on-surface": "#f3f0f2",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "tertiary-fixed": "#ffddb8",
+                        "primary-fixed-dim": "#bec6e0",
+                        "surface-container-high": "#eae7e9",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-primary-fixed": "#131b2e",
+                        "surface-container-low": "#f6f3f5",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1b1b1d",
+                        "outline": "#76777d",
+                        "primary-container": "#131b2e",
+                        "inverse-primary": "#bec6e0",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#6bd8cb",
+                        "tertiary-container": "#2a1700",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "secondary-container": "#86f2e4",
+                        "on-primary-container": "#7c839b",
+                        "primary": "#000000",
+                        "outline-variant": "#c6c6cd",
+                        "on-surface-variant": "#45464d",
+                        "inverse-surface": "#303032",
+                        "surface-dim": "#dcd9db",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fcf8fa",
+                        "surface-container-highest": "#e4e2e4",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#f0edef",
+                        "secondary": "#006a61",
+                        "secondary-fixed": "#89f5e7"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "sm": "1rem",
+                        "container-max": "1280px",
+                        "md": "1.5rem",
+                        "lg": "2.5rem",
+                        "xs": "0.5rem",
+                        "xl": "4rem",
+                        "gutter": "1.5rem"
+                    },
+                    fontFamily: {
+                        "headline-xl": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "label-md": ["Manrope"]
+                    },
+                    fontSize: {
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 30px -5px rgba(15, 23, 42, 0.15);
+        }
+        .text-gradient-primary {
+            background: linear-gradient(to right, #006a61, #6bd8cb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(to right, #006a61, #6bd8cb);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 border-b border-white/20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 shadow-[0_20px_30px_-5px_rgba(15,23,42,0.15)] font-['Manrope'] antialiased ease-out duration-300 transform hover:-translate-y-0.5">
+<div class="max-w-[1280px] mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<a class="text-xl font-bold tracking-tight text-slate-900 dark:text-white" href="#">GrowthPromo</a>
+<div class="hidden md:flex gap-6">
+<a class="text-teal-600 dark:text-teal-400 font-semibold border-b-2 border-teal-500 pb-1" href="#">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Promotions</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Partners</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors" href="#">Analytics</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center gap-2">
+<button aria-label="notifications" class="text-slate-500 hover:text-slate-900 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="settings" class="text-slate-500 hover:text-slate-900 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<button class="bg-gradient-primary text-on-primary rounded-full px-6 py-2 font-label-md text-label-md shadow-md hover:shadow-lg transition-all duration-300 ease-out transform hover:-translate-y-0.5">Upgrade Pro</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<main class="flex-grow pt-32 pb-24 px-6 relative overflow-hidden">
+<!-- Decorative Background Element -->
+<div class="absolute top-0 right-0 -z-10 w-2/3 h-full bg-gradient-to-bl from-secondary-container to-background opacity-40 blur-3xl rounded-bl-full"></div>
+<div class="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div class="flex flex-col gap-8 z-10">
+<div class="inline-flex items-center gap-2 bg-surface-container-high rounded-full px-4 py-2 w-max">
+<span class="material-symbols-outlined text-secondary text-sm">trending_up</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Croissance garantie</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-background">
+                    Boostez vos ventes avec nos <span class="text-gradient-primary">promotions !</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+                    La plateforme premium pour gérer, diffuser et analyser vos campagnes promotionnelles avec une efficacité redoutable.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="bg-gradient-primary text-on-primary rounded-full px-8 py-4 font-label-md text-label-md shadow-lg hover:shadow-xl transition-all duration-300 ease-out transform hover:-translate-y-1">
+                        Lancer mes promotions
+                    </button>
+<button class="bg-surface text-on-surface border-2 border-outline-variant rounded-full px-8 py-4 font-label-md text-label-md hover:bg-surface-container-low transition-colors duration-300">
+                        Connexion
+                    </button>
+</div>
+</div>
+<div class="relative z-10 w-full aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
+<img alt="Modern diverse team collaborating in a bright airy startup office focusing on business growth and strategy" class="object-cover w-full h-full" data-alt="Modern diverse team collaborating in a bright airy startup office focusing on business growth and strategy" src="./stitch_acceuil.png"/>
+<!-- Glassmorphism Stats Cards overlay -->
+<div class="absolute bottom-8 left-8 glass-card rounded-xl p-6 flex flex-col gap-2 max-w-[200px]">
+<span class="material-symbols-outlined text-secondary">campaign</span>
+<span class="font-headline-md text-headline-md text-primary">1,245</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Campagnes actives</span>
+</div>
+<div class="absolute top-8 right-8 glass-card rounded-xl p-6 flex flex-col gap-2 max-w-[200px]">
+<span class="material-symbols-outlined text-secondary">local_activity</span>
+<span class="font-headline-md text-headline-md text-primary">+84K</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Coupons utilisés</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Partners Section -->
+<section class="py-24 bg-surface-container-low border-y border-outline-variant/30">
+<div class="max-w-container-max mx-auto px-6 text-center">
+<h2 class="font-headline-md text-headline-md text-on-background mb-12">Nos partenaires de confiance</h2>
+<div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<!-- Text representations for logos to maintain clean code without external dependencies -->
+<span class="font-headline-lg text-headline-lg font-black tracking-tighter">DECATHLON</span>
+<span class="font-headline-lg text-headline-lg font-bold">AZIZA</span>
+<span class="font-headline-lg text-headline-lg font-serif italic">Fatales</span>
+<span class="font-headline-lg text-headline-lg font-bold tracking-widest text-red-600">MONOPRIX</span>
+<span class="font-headline-lg text-headline-lg font-light tracking-widest">ZARA</span>
+</div>
+</div>
+</section>
+<!-- Current Promos Section -->
+<section class="py-24 px-6 bg-background">
+<div class="max-w-container-max mx-auto">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-4">Promotions du moment</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Découvrez les offres les plus performantes de notre réseau.</p>
+</div>
+<a class="hidden md:inline-flex items-center gap-2 font-label-md text-label-md text-secondary hover:underline underline-offset-4" href="#">
+                    Voir toutes les offres <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<!-- Bento Grid Layout for Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] border border-outline-variant/20 group hover:-translate-y-2 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Sleek red Nike running shoe floating against a dark background with dramatic lighting" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Sleek red Nike running shoe floating against a dark background with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDir_nOA7Y72pJMl6dMc7u74QvJ-ef1GStfBZDwP8bkf17n_jhlLqrDDIHe0R-3td6uK9CFvmr5yJCoxBI-lZbp_LprSvDsRVy1oeaoswi9acuCEVik_5uOlYoXVUw7st12fAQtEFZsVe7W1tZWSDSJwrDIbuGBGSHrgYEXX6JqewFuArC-kWzLD0QkiYhez_CenlETwjRnC1aiz-dD4bCW0B-uEC_c1GTjJpNMlSL0t4QtyEPRkPAagXe4fhOxo7gLNTMkV755KT3i"/>
+<div class="absolute top-4 right-4 bg-error text-on-error font-label-md text-label-md px-3 py-1 rounded-full shadow-md">
+                            -30%
+                        </div>
+</div>
+<div class="p-8">
+<div class="font-label-md text-label-md text-secondary mb-2">DECATHLON</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-4">Collection Running Élite</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 line-clamp-2">Profitez de réductions exceptionnelles sur notre dernière gamme de chaussures de course.</p>
+<button class="w-full bg-surface-container text-primary font-label-md text-label-md py-3 rounded-full hover:bg-surface-container-high transition-colors">
+                            Activer l'offre
+                        </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] border border-outline-variant/20 group hover:-translate-y-2 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Luxury skincare cosmetic bottles beautifully arranged on a pastel marble surface with soft shadows" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Luxury skincare cosmetic bottles beautifully arranged on a pastel marble surface with soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvHvj9cOKlPXPbanav7IVAb3hMxoke-hN6jCVBTmgu-pp9LYjexBzIWVlf2sA3OatPK5lcTx_271LFV_Ghu4zySnUIaIuxxf5DZ-sxOY8_-4t3XkwZF5ShxblkByBSufB7f3fO7x7LIB-RnBNO50G2Rr-qIChiJGDeU61QUjOG0IQ5aAOYSy0O5rHpRQx5xkj9vosa1SBXZWuXvk2utj3Ob1nuqOliTHFdWho5ZLgrePkpOghAzBKxUFLaFU1tQ41UPtMQxlJgl98P"/>
+<div class="absolute top-4 right-4 bg-error text-on-error font-label-md text-label-md px-3 py-1 rounded-full shadow-md">
+                            -15%
+                        </div>
+</div>
+<div class="p-8">
+<div class="font-label-md text-label-md text-secondary mb-2">FATALES</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-4">Soins Visage Premium</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 line-clamp-2">Une routine beauté complète avec nos meilleurs sérums anti-âge.</p>
+<button class="w-full bg-surface-container text-primary font-label-md text-label-md py-3 rounded-full hover:bg-surface-container-high transition-colors">
+                            Activer l'offre
+                        </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface rounded-xl overflow-hidden shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] border border-outline-variant/20 group hover:-translate-y-2 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Minimalist modern headphones resting on a clean white desk beside a sleek laptop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Minimalist modern headphones resting on a clean white desk beside a sleek laptop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu04XHhEGQ1VQNWmc8kn3XePtXB8u5vL99NYef7V6-KSVrpmBEF4Cbz0zhW7oYwvkTwjCUWW--wu-TT3Z-y4k5P-ZhHc-sdzqt5qtbrAbNE7feSzBfpLmrcc8uOPNHh39HxLeM3o41eMxuwNQ1OdgCXhxZxhw-CBxFjrcL3HJu-l2uwTJxBpyKYFwYbofX0dhFWEXpsdp0sbsC-dkeACg1yMfByLbHWZLEYwGf2NYTvAK0bXrqf9DXEpEHDt_9orJ9OhVPnhLxWO9c"/>
+<div class="absolute top-4 right-4 bg-error text-on-error font-label-md text-label-md px-3 py-1 rounded-full shadow-md">
+                            -20%
+                        </div>
+</div>
+<div class="p-8">
+<div class="font-label-md text-label-md text-secondary mb-2">MONOPRIX</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-4">Audio Sans Fil Haute Définition</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 line-clamp-2">L'expérience sonore ultime maintenant à prix réduit pour les membres.</p>
+<button class="w-full bg-surface-container text-primary font-label-md text-label-md py-3 rounded-full hover:bg-surface-container-high transition-colors">
+                            Activer l'offre
+                        </button>
+</div>
+</div>
+</div>
+<div class="mt-8 text-center md:hidden">
+<a class="inline-flex items-center gap-2 font-label-md text-label-md text-secondary" href="#">
+                    Voir toutes les offres <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- CTA / Newsletter Section -->
+<section class="py-24 px-6 bg-primary-container text-on-primary-container relative overflow-hidden">
+<div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-secondary-container via-transparent to-transparent"></div>
+<div class="max-w-4xl mx-auto text-center relative z-10">
+<h2 class="font-headline-lg text-headline-lg text-on-primary mb-6">Ne manquez aucune opportunité</h2>
+<p class="font-body-lg text-body-lg text-on-primary-container opacity-80 mb-12">Inscrivez-vous pour profiter des coupons exclusifs et propulser votre stratégie de croissance.</p>
+<form class="flex flex-col sm:flex-row gap-4 justify-center max-w-xl mx-auto">
+<input class="flex-grow bg-white/5 border border-white/20 rounded-full px-6 py-4 font-body-md text-on-primary placeholder:text-white/50 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors backdrop-blur-sm" placeholder="Votre adresse email professionnelle" type="email"/>
+<button class="bg-gradient-primary text-on-primary rounded-full px-8 py-4 font-label-md text-label-md shadow-lg hover:shadow-xl transition-all duration-300 whitespace-nowrap" type="submit">
+                    S'inscrire
+                </button>
+</form>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-950 w-full py-16 border-t border-t border-slate-200 dark:border-slate-800 font-['Manrope'] text-sm text-slate-500 dark:text-slate-400 transition-all duration-300">
+<div class="max-w-[1280px] mx-auto px-8 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-between items-start gap-12">
+<div class="flex flex-col gap-4">
+<span class="text-lg font-black text-slate-900 dark:text-white">GrowthPromo</span>
+<p>© 2024 GrowthPromo. Engineering premium growth.</p>
+</div>
+<div class="flex flex-wrap gap-6 lg:gap-8">
+<a class="text-slate-500 hover:text-teal-500 transition-colors hover:underline decoration-teal-500 underline-offset-4" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-teal-500 transition-colors hover:underline decoration-teal-500 underline-offset-4" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-teal-500 transition-colors hover:underline decoration-teal-500 underline-offset-4" href="#">Cookie Settings</a>
+<a class="text-slate-500 hover:text-teal-500 transition-colors hover:underline decoration-teal-500 underline-offset-4" href="#">Press Kit</a>
+<a class="text-slate-500 hover:text-teal-500 transition-colors hover:underline decoration-teal-500 underline-offset-4" href="#">Support</a>
+</div>
+</div>
+</footer>
+</body></html>

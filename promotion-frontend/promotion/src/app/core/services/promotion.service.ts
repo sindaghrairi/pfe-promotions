@@ -2,16 +2,33 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PromotionDto, PromotionPayload } from '../models/promo.model';
+import {
+  CompanyAdminDashboardResponse,
+  CompanyCouponResponse,
+  CompanyDashboardPeriod,
+  PromotionDto,
+  PromotionPayload
+} from '../models/promo.model';
 
 @Injectable({ providedIn: 'root' })
 export class PromotionService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = 'http://localhost:8081/api/promotions';
   private readonly catalogUrl = 'http://localhost:8081/api/catalog';
+  private readonly companyAdminUrl = 'http://localhost:8081/api/company-admin';
 
   listCompanyPromotions(companySlug: string): Observable<PromotionDto[]> {
     return this.http.get<PromotionDto[]>(`${this.apiUrl}/company/${companySlug}`);
+  }
+
+  getCompanyAdminDashboard(period: CompanyDashboardPeriod): Observable<CompanyAdminDashboardResponse> {
+    return this.http.get<CompanyAdminDashboardResponse>(`${this.companyAdminUrl}/dashboard`, {
+      params: { period }
+    });
+  }
+
+  getCompanyCoupons(): Observable<CompanyCouponResponse[]> {
+    return this.http.get<CompanyCouponResponse[]>(`${this.companyAdminUrl}/coupons`);
   }
 
   listPublishedPromotions(companySlug: string): Observable<PromotionDto[]> {

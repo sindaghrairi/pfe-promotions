@@ -1,58 +1,148 @@
-<section class="invoice-page">
-  <p class="state" *ngIf="loading">Chargement de la facture...</p>
-  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <div class="invoice-shell" *ngIf="!loading && invoice">
-    <header class="invoice-header">
-      <div>
-        <p class="eyebrow">Facture d'abonnement</p>
-        <h1>Facture societe</h1>
-        <p class="subtitle">Facture consultee depuis l'espace admin plateforme.</p>
+<section class="ud-page">
+  <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+  <aside class="ud-nav">
+    <div class="ud-nav-brand">
+      <div class="ud-nav-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
-      <div class="invoice-meta">
-        <p><span>Numero</span><strong>{{ invoiceNumber }}</strong></p>
-        <p><span>Date</span><strong>{{ invoice.issuedAt | date: 'dd/MM/yyyy' }}</strong></p>
+      <div>
+        <p class="ud-nav-name">{{ 'COMMON.BRAND' | translate }}</p>
+        <p class="ud-nav-tier">{{ 'PLATFORM_ADMIN.TIER' | translate }}</p>
+      </div>
+    </div>
+
+    <nav class="ud-nav-links" aria-label="Navigation admin">
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        {{ 'NAV.DASHBOARD' | translate }}
+      </a>
+      <a routerLink="/platform-admin/subscriptions" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        {{ 'NAV.SUBSCRIPTIONS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/plans" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        {{ 'NAV.PLANS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/users" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ 'NAV.USERS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/invoices" class="ud-nav-link ud-nav-active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        {{ 'NAV.INVOICES' | translate }}
+      </a>
+    </nav>
+
+    <div class="ud-nav-foot">
+      <a routerLink="/" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        {{ 'NAV.HOME' | translate }}
+      </a>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════ MAIN ═══════════════════ -->
+  <div class="ud-main">
+    <header class="ud-topbar">
+      <p class="ud-topbar-logo">PromoLink</p>
+      <div class="ud-topbar-actions">
+        <app-language-switcher />
+        <button
+          type="button"
+          class="ud-theme-toggle"
+          [class.is-dark]="(isDark$ | async)"
+          [attr.aria-pressed]="(isDark$ | async) ? 'true' : 'false'"
+          [attr.aria-label]="'PLATFORM_ADMIN.THEME_TOGGLE' | translate"
+          (click)="toggleTheme()">
+          <svg class="ud-toggle-icon ud-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12 4.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0V5.5a1 1 0 0 1 1-1Zm0 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.5-3.2a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1ZM5.5 12.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1Zm11.9-6.9a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4ZM4.6 18.4a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4Zm14.2 1a1 1 0 0 1-1.4 0l-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1 0 1.4ZM6 6a1 1 0 0 1-1.4 0l-1-1A1 1 0 1 1 5 3.6l1 1A1 1 0 0 1 6 6Z" />
+          </svg>
+          <span class="ud-toggle-thumb"></span>
+          <svg class="ud-toggle-icon ud-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a.9.9 0 0 0-1.1 1.1A10.3 10.3 0 1 0 19.3 15.7a.9.9 0 0 0 1.1-1.1Z" />
+          </svg>
+        </button>
       </div>
     </header>
 
-    <section class="invoice-card" aria-label="Details de facture">
-      <div class="identity-block">
-        <h2>Client</h2>
-        <p><strong>Societe:</strong> {{ invoice.companyName }}</p>
-        <p><strong>Email:</strong> {{ invoice.companyEmail }}</p>
-      </div>
+    <main class="ud-content">
+      <p class="ud-state" *ngIf="loading">Chargement de la facture...</p>
+      <p class="ud-state ud-state-error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-      <div class="details-block">
-        <h2>Abonnement</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Plan</th>
-              <th>Cycle</th>
-              <th>Montant</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ invoice.plan }}</td>
-              <td>{{ cycleLabel }}</td>
-              <td>{{ invoice.amount | number: '1.2-2' }} DT</td>
-              <td>{{ invoice.status }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div *ngIf="!loading && invoice">
+        <div class="ud-hero">
+          <p class="ud-kicker">Facturation plateforme</p>
+          <h1>Detail facture</h1>
+          <p class="ud-hero-sub">{{ invoice.companyName }} &mdash; {{ invoiceNumber }}</p>
+        </div>
 
-      <div class="total-line">
-        <p>Total TTC</p>
-        <strong>{{ invoice.amount | number: '1.2-2' }} DT</strong>
-      </div>
-    </section>
+        <section class="ud-panel inv-shell" aria-label="Details de facture">
+          <header class="inv-header">
+            <div>
+              <p class="inv-kicker">Facture d'abonnement</p>
+              <h2 class="inv-title">Facture societe</h2>
+              <p class="inv-subtitle">Facture consultee depuis l'espace admin plateforme.</p>
+            </div>
+            <div class="inv-meta">
+              <p><span>Numero</span><strong>{{ invoiceNumber }}</strong></p>
+              <p><span>Date</span><strong>{{ invoice.issuedAt | date: 'dd/MM/yyyy' }}</strong></p>
+            </div>
+          </header>
 
-    <div class="actions no-print">
-      <a routerLink="/platform-admin/invoices">Retour factures</a>
-      <button type="button" class="print-btn" (click)="printInvoice()">Imprimer facture (PDF)</button>
-    </div>
+          <div class="inv-body">
+            <div class="inv-client">
+              <h3>Client</h3>
+              <p><strong>Societe:</strong> {{ invoice.companyName }}</p>
+              <p><strong>Email:</strong> {{ invoice.companyEmail }}</p>
+            </div>
+
+            <div class="inv-subscription">
+              <h3>Abonnement</h3>
+              <div class="inv-table-wrap">
+                <table class="inv-table">
+                  <thead>
+                    <tr>
+                      <th>Plan</th>
+                      <th>Cycle</th>
+                      <th>Montant</th>
+                      <th>Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="inv-row">
+                      <td>
+                        <span class="plan-badge" [ngClass]="'plan-' + invoice.plan.toLowerCase()">
+                          {{ invoice.plan }}
+                        </span>
+                      </td>
+                      <td><span class="inv-cycle">{{ cycleLabel }}</span></td>
+                      <td><span class="inv-amount-pill">{{ invoice.amount | number: '1.2-2' }} DT</span></td>
+                      <td>
+                        <span class="status-badge" [ngClass]="'status-' + invoice.status.toLowerCase()">
+                          {{ invoice.status }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="inv-total-line">
+              <p>Total TTC</p>
+              <strong class="inv-total-amount">{{ invoice.amount | number: '1.2-2' }} DT</strong>
+            </div>
+          </div>
+        </section>
+
+        <div class="inv-actions no-print">
+          <a class="inv-back-btn" routerLink="/platform-admin/invoices">Retour factures</a>
+          <button type="button" class="inv-print-btn" (click)="printInvoice()">Imprimer facture (PDF)</button>
+        </div>
+      </div>
+    </main>
   </div>
 </section>

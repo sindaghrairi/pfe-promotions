@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 
 import {
   AdminAccountExistsResponse,
+  ActiveAdminPlanResponse,
   AdminPlanResponse,
   AdminRegisterRequest,
   AdminSubscriptionResponse,
@@ -28,6 +29,10 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(`${this.apiUrl}/register`, payload)
       .pipe(tap((response) => this.saveSession(response)));
+  }
+
+  createUser(payload: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, payload);
   }
 
   adminSubscribe(payload: AdminSubscribeRequest): Observable<MessageResponse> {
@@ -90,6 +95,10 @@ export class AuthService {
 
   getPlanById(planId: number): Observable<AdminPlanResponse> {
     return this.http.get<AdminPlanResponse>(`${this.apiUrl}/admin/plan/${planId}`);
+  }
+
+  listActiveAdminPlans(): Observable<ActiveAdminPlanResponse[]> {
+    return this.http.get<ActiveAdminPlanResponse[]>(`${this.apiUrl}/admin/plans`);
   }
 
   logout(): void {

@@ -1,47 +1,105 @@
-<section class="auth-page">
-  <div class="auth-card">
-    <p class="brand-strip">
-      <span class="brand-dot" aria-hidden="true"></span>
-      Espace Entreprise
-    </p>
-    <h1>Connexion Admin Societe</h1>
-    <p class="subtitle">Etape 3/3: connectez-vous avec votre compte admin.</p>
-    <div class="trust-row" aria-label="Informations de confiance">
-      <span>Connexion securisee</span>
-      <span>Acces entreprise</span>
+<section class="al-page">
+  <header class="al-topbar">
+    <p class="al-top-brand"><span>P</span> {{ 'COMMON.BRAND' | translate }}</p>
+    <nav aria-label="{{ 'AUTH.QUICK_NAV' | translate }}">
+      <app-language-switcher />
+      <a routerLink="/admin/subscribe" [queryParams]="authQueryParams">{{ 'AUTH.SUBSCRIBE' | translate }}</a>
+      <a class="al-pill-link" routerLink="/admin/login">{{ 'AUTH.ADMIN_LOGIN' | translate }}</a>
+    </nav>
+  </header>
+
+  <div class="al-layout">
+    <aside class="al-intro" aria-hidden="true">
+      <p class="al-brand-row"><span class="al-brand-mark">P</span> {{ 'COMMON.BRAND' | translate }}</p>
+      <p class="al-sale-chip">{{ 'AUTH.ADMIN_CHIP' | translate }}</p>
+      <h1>{{ 'AUTH.ADMIN_TITLE' | translate }}</h1>
+      <p class="al-intro-copy">
+        {{ 'AUTH.ADMIN_COPY_1' | translate }}
+        {{ 'AUTH.ADMIN_COPY_2' | translate }}
+      </p>
+
+      <div class="al-feature-list">
+        <article class="al-feature-item">
+          <span class="al-feature-icon growth">%</span>
+          <div>
+            <h3>{{ 'AUTH.CAMPAIGNS_TITLE' | translate }}</h3>
+            <p>{{ 'AUTH.CAMPAIGNS_TEXT' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="al-feature-item">
+          <span class="al-feature-icon ai">↗</span>
+          <div>
+            <h3>{{ 'AUTH.PERFORMANCE_TITLE' | translate }}</h3>
+            <p>{{ 'AUTH.PERFORMANCE_TEXT' | translate }}</p>
+          </div>
+        </article>
+      </div>
+    </aside>
+
+    <div class="al-card">
+      <div class="al-form-head">
+        <h2>{{ 'AUTH.ADMIN_LOGIN' | translate }} societe</h2>
+        <p>{{ 'AUTH.ADMIN_LOGIN_SUBTITLE' | translate }}</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="al-field-block">
+          <label for="email">{{ 'COMMON.EMAIL' | translate }}</label>
+          <div class="al-field-shell">
+            <span class="al-field-icon" aria-hidden="true">@</span>
+            <input id="email" type="email" formControlName="email" placeholder="admin@votre-societe.com" />
+          </div>
+          <small class="al-error" *ngIf="hasError('email', 'required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</small>
+          <small class="al-error" *ngIf="hasError('email', 'email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</small>
+        </div>
+
+        <div class="al-field-block">
+          <label for="password">{{ 'COMMON.PASSWORD' | translate }}</label>
+          <div class="al-field-shell">
+            <span class="al-field-icon" aria-hidden="true">*</span>
+            <input id="password" type="password" formControlName="password" [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate" />
+          </div>
+          <small class="al-error" *ngIf="hasError('password', 'required')">{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</small>
+          <small class="al-error" *ngIf="hasError('password', 'minlength')">{{ 'AUTH.PASSWORD_MIN' | translate }}</small>
+        </div>
+
+        <label class="al-remember-line" for="admin-remember-check">
+          <input id="admin-remember-check" type="checkbox" />
+          <span>{{ 'AUTH.REMEMBER' | translate }}</span>
+        </label>
+
+        <p class="al-api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <button type="submit" [disabled]="loading">
+          {{ loading ? ('AUTH.LOGIN_LOADING' | translate) : ('AUTH.ADMIN_LOGIN_BUTTON' | translate) }}
+        </button>
+      </form>
+
+      <p class="al-switch-link">
+        {{ 'AUTH.NO_ACCOUNT' | translate }}
+        <a routerLink="/admin/register" [queryParams]="authQueryParams">{{ 'AUTH.CREATE_ADMIN_ACCOUNT' | translate }}</a>
+      </p>
+
+      <p class="al-switch-link">
+        {{ 'AUTH.NOT_SUBSCRIBED' | translate }}
+        <a routerLink="/admin/subscribe" [queryParams]="authQueryParams">{{ 'AUTH.SUBSCRIBE_FIRST' | translate }}</a>
+      </p>
+
+      <p class="al-switch-link">
+        {{ 'AUTH.BACK_SPACE_QUESTION' | translate }}
+        <a routerLink="/espace">{{ 'AUTH.CHOOSE_SPACE' | translate }}</a>
+      </p>
     </div>
-
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <label for="email">Email admin</label>
-      <div class="field-shell">
-        <span class="field-icon" aria-hidden="true">✉</span>
-        <input id="email" type="email" formControlName="email" placeholder="admin@societe.com" />
-      </div>
-      <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
-      <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
-
-      <label for="password">Mot de passe</label>
-      <div class="field-shell">
-        <span class="field-icon" aria-hidden="true">🔒</span>
-        <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
-      </div>
-      <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
-      <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
-
-      <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-      <button type="submit" [disabled]="loading">
-        {{ loading ? 'Connexion en cours...' : 'Se connecter a l\'espace admin' }}
-      </button>
-    </form>
-
-    <p class="switch-link">
-      Pas encore de compte admin ?
-      <a routerLink="/admin/register" [queryParams]="authQueryParams">Creer mon compte admin</a>
-    </p>
-    <p class="switch-link secondary-link">
-      Pas encore abonne ?
-      <a routerLink="/admin/subscribe" [queryParams]="authQueryParams">S'abonner d'abord</a>
-    </p>
   </div>
+
+  <footer class="al-footer" aria-label="Liens footer">
+    <p class="al-footer-brand">{{ 'COMMON.BRAND' | translate }}</p>
+    <div class="al-footer-links">
+      <a routerLink="/espace">{{ 'AUTH.PRIVACY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.TERMS' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.SECURITY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.STATUS' | translate }}</a>
+    </div>
+  </footer>
 </section>

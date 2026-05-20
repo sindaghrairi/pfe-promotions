@@ -1,14 +1,43 @@
 <section class="company-promos-page">
   <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
-  <p class="api-loading" *ngIf="loading">Chargement des promotions...</p>
+  <p class="api-loading" *ngIf="loading">{{ 'PROMOS.LOADING' | translate }}</p>
+
+  <nav class="client-navbar" *ngIf="readOnlyMode">
+    <a class="client-nav-brand" routerLink="/">
+      <span class="client-nav-logo">P</span>
+      PromoLink
+    </a>
+    <div class="client-nav-links">
+      <a class="client-nav-link" routerLink="/">{{ 'NAV.HOME' | translate }}</a>
+      <app-language-switcher />
+      <button type="button" class="client-nav-logout" (click)="logout()">{{ 'COMMON.LOGOUT' | translate }}</button>
+    </div>
+  </nav>
 
   <ng-container *ngIf="readOnlyMode; else managementView">
     <header class="read-only-header curated-header">
       <div class="curated-title-wrap">
-        <p class="kicker">Promotions publiees</p>
-        <h1>{{ allCompaniesMode ? 'Exclusivites Partenaires' : companyName }}</h1>
-        <p *ngIf="allCompaniesMode">Une selection editee des meilleures offres de la semaine.</p>
-        <p *ngIf="!allCompaniesMode">Voici les promotions que cette entreprise a publiees.</p>
+        <p class="kicker">{{ 'PROMOS.PUBLISHED_KICKER' | translate }}</p>
+        <h1>{{ allCompaniesMode ? ('PROMOS.PARTNER_EXCLUSIVES' | translate) : companyName }}</h1>
+        <p *ngIf="allCompaniesMode">{{ 'PROMOS.PARTNER_SUBTITLE' | translate }}</p>
+        <p *ngIf="!allCompaniesMode">{{ 'PROMOS.COMPANY_SUBTITLE' | translate }}</p>
+      </div>
+
+      <div class="curated-stats-row" *ngIf="allCompaniesMode" aria-hidden="true">
+        <div class="curated-stat">
+          <strong>5</strong>
+          <span>{{ 'PROMOS.PARTNER_BRANDS' | translate }}</span>
+        </div>
+        <div class="curated-stat-divider"></div>
+        <div class="curated-stat">
+          <strong>+84K</strong>
+          <span>{{ 'PROMOS.USED_COUPONS' | translate }}</span>
+        </div>
+        <div class="curated-stat-divider"></div>
+        <div class="curated-stat">
+          <strong>100%</strong>
+          <span>{{ 'PROMOS.VERIFIED_OFFERS' | translate }}</span>
+        </div>
       </div>
 
       <div class="curated-search" *ngIf="allCompaniesMode">
@@ -16,8 +45,8 @@
         <input
           type="search"
           [(ngModel)]="readonlySearch"
-          placeholder="Rechercher une marque, un produit..."
-          aria-label="Rechercher une marque"
+          [placeholder]="'PROMOS.SEARCH_PLACEHOLDER' | translate"
+          [attr.aria-label]="'PROMOS.SEARCH_ARIA' | translate"
         />
       </div>
 
@@ -26,16 +55,17 @@
           type="button"
           class="category-chip"
           *ngFor="let item of readCategories"
-          [class.active]="isReadCategoryActive(item.label)"
-          (click)="setReadCategory(item.label)"
+          [class.active]="isReadCategoryActive(item.key)"
+          (click)="setReadCategory(item.key)"
         >
           <span *ngIf="item.icon" aria-hidden="true">{{ item.icon }}</span>
-          {{ item.label }}
+          {{ item.labelKey | translate }}
         </button>
       </div>
     </header>
 
-    <section class="published-grid curated-grid" [class.single-company-grid]="!allCompaniesMode" aria-label="Promotions publiees de l'entreprise">
+    <section class="published-grid curated-grid" [class.single-company-grid]="!allCompaniesMode" [attr.aria-label]="'PROMOS.PUBLISHED_ARIA' | translate">
+
       <article class="published-card curated-card" *ngFor="let promo of curatedPromotions">
         <p class="promo-badge" *ngIf="!isMonoprixPromo(promo)">{{ promoBadge(promo) }}</p>
 
@@ -51,280 +81,442 @@
 
         <div class="promo-content">
           <p class="published-company" *ngIf="allCompaniesMode">{{ companyLabelFor(promo) }}</p>
-          <p class="published-category">{{ promo.category }}</p>
+          <p class="published-category">{{ categoryLabel(promo.category) }}</p>
           <h2 class="promo-title-script">{{ promo.title }}</h2>
           <p class="published-dates">{{ displayDateRange(promo) }}</p>
 
           <div class="published-coupon" *ngIf="promo.couponCode; else noCouponBlock">
-            <p *ngIf="isUserAuthenticated; else hiddenCouponText">Coupon: <strong>{{ promo.couponCode }}</strong></p>
+            <p *ngIf="isUserAuthenticated; else hiddenCouponText">{{ 'PROMOS.COUPON' | translate }}: <strong>{{ promo.couponCode }}</strong></p>
             <ng-template #hiddenCouponText>
-              <p>Coupon: <strong>Connectez-vous pour l'afficher</strong></p>
+              <p>{{ 'PROMOS.COUPON' | translate }}: <strong>{{ 'PROMOS.LOGIN_TO_SHOW' | translate }}</strong></p>
             </ng-template>
             <button
               type="button"
               class="copy-coupon-btn"
               (click)="handleCouponAction(promo)"
             >
-              {{ copiedCouponPromoId === promo.id ? 'Coupon copie' : 'Recuperer le coupon' }}
+              {{ couponActionLabel(promo) }}
             </button>
           </div>
           <ng-template #noCouponBlock>
-            <p class="published-no-coupon">Aucun coupon pour cette offre.</p>
+            <p class="published-no-coupon">{{ 'PROMOS.NO_COUPON' | translate }}</p>
           </ng-template>
 
-          <a class="promo-link" [routerLink]="promoDetailsLink(promo)" (click)="onPromoDetailsClick(promo)">Voir plus de details</a>
+          <a class="promo-link" [routerLink]="promoDetailsLink(promo)" (click)="onPromoDetailsClick(promo)">{{ 'PROMOS.VIEW_DETAILS' | translate }}</a>
           <span class="status-pill" [ngClass]="statusClass(promo.status)">{{ statusLabel(promo.status) }}</span>
         </div>
       </article>
 
       <article class="published-empty" *ngIf="!curatedPromotions.length">
-        <h2>Aucune promotion publiee pour le moment.</h2>
-        <p>Revenez plus tard pour consulter les nouvelles offres de cette entreprise.</p>
+        <h2>{{ 'PROMOS.EMPTY_TITLE' | translate }}</h2>
+        <p>{{ 'PROMOS.EMPTY_TEXT' | translate }}</p>
       </article>
     </section>
 
     <div class="curated-cta" *ngIf="allCompaniesMode && curatedPromotions.length">
-      <button type="button">Explorer plus d'offres</button>
+      <button type="button">{{ 'PROMOS.EXPLORE_MORE' | translate }}</button>
     </div>
   </ng-container>
 
   <ng-template #managementView>
-  <section class="dash-brand-row" aria-label="Barre superieure dashboard">
-    <div class="brand-left">
-      <span class="brand-logo">A</span>
-      <strong>{{ companyName }}</strong>
+  <div class="pf-dashboard">
+
+    <!-- ══ PAGE HEADER ══ -->
+    <div class="pf-page-header">
+      <div class="pf-page-header-left">
+        <h1>{{ 'PROMOS.MANAGEMENT.TITLE' | translate }}</h1>
+        <p>{{ 'PROMOS.MANAGEMENT.SUBTITLE' | translate }}</p>
+      </div>
+      <div class="pf-page-header-right">
+        <div class="pf-date-range">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          {{ currentDateRangeDisplay }}
+        </div>
+        <button type="button" class="pf-filter-btn" (click)="showFilters = !showFilters">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          {{ 'PROMOS.MANAGEMENT.FILTERS' | translate }}
+        </button>
+        <app-language-switcher />
+        <button type="button" class="pf-btn-secondary" (click)="openSubscriptionPage()">{{ 'NAV.SUBSCRIPTIONS' | translate }}</button>
+        <button type="button" class="pf-btn-primary" (click)="openCreateForm()">{{ 'PROMOS.MANAGEMENT.NEW_PROMOTION' | translate }}</button>
+        <button type="button" class="pf-btn-ghost" (click)="logout()">{{ 'COMMON.LOGOUT' | translate }}</button>
+      </div>
     </div>
-    <div class="brand-right">
-      <label class="search-wrap" aria-label="Recherche">
-        <input
-          type="search"
-          [(ngModel)]="searchTerm"
-          placeholder="Rechercher une promotion"
-          aria-label="Rechercher une promotion"
-        />
-        <span class="search-end" aria-hidden="true">⌕</span>
-      </label>
-      <button type="button" class="top-action-btn" (click)="openSubscriptionPage()">Consulter abonnement</button>
-      <button type="button" class="top-action-btn invoice" (click)="openInvoicePage()">Voir facture</button>
-      <button type="button" class="add-promos-btn" (click)="openCreateForm()">Ajouter promo</button>
-      <button type="button" class="top-action-btn logout" (click)="logout()">Se deconnecter</button>
-    </div>
-  </section>
 
-  <header class="topbar">
-    <div>
-      <h1>Gestion des Promotions</h1>
-      <p class="subtitle-main">Pilotez vos campagnes, coupons et performances depuis un espace unifie.</p>
-    </div>
-  </header>
-
-  <section class="kpi-grid" aria-label="KPI promotions">
-    <article class="kpi-card">
-      <p>Promotions actives</p>
-      <strong>{{ activeCount }}</strong>
-      <span class="kpi-icon">📣</span>
-    </article>
-    <article class="kpi-card">
-      <p>Promotions expirees</p>
-      <strong>{{ expiredCount }}</strong>
-      <span class="kpi-icon">🎁</span>
-    </article>
-    <article class="kpi-card">
-      <p>Coupons utilises</p>
-      <strong>{{ totalUsage }}</strong>
-      <span class="kpi-icon">🎫</span>
-    </article>
-    <article class="kpi-card">
-      <p>Vues moyennes par promotion</p>
-      <strong>{{ averageViewsPerPromotion }}</strong>
-      <span class="kpi-icon">👁</span>
-    </article>
-  </section>
-
-  <section class="workspace">
-    <aside class="filters" aria-label="Filtres">
-      <h2>Filtres</h2>
-
+    <!-- ══ FILTERS PANEL (collapsible) ══ -->
+    <div class="pf-filter-panel" *ngIf="showFilters">
       <label>
-        Statut
+        <span>{{ 'COMMON.STATUS' | translate }}</span>
         <select [(ngModel)]="statusFilter">
-          <option *ngFor="let item of statusOptions" [value]="item.value">{{ item.label }}</option>
+          <option *ngFor="let item of statusOptions" [value]="item.value">{{ item.labelKey | translate }}</option>
         </select>
       </label>
-
       <label>
-        Type d'offre
+        <span>{{ 'PROMOS.MANAGEMENT.OFFER_TYPE' | translate }}</span>
         <select [(ngModel)]="typeFilter">
-          <option *ngFor="let item of typeOptions" [value]="item.value">{{ item.label }}</option>
+          <option *ngFor="let item of typeOptions" [value]="item.value">{{ item.labelKey | translate }}</option>
         </select>
       </label>
-
       <label>
-        Categorie
+        <span>{{ 'PROMOS.MANAGEMENT.CATEGORY' | translate }}</span>
         <select [(ngModel)]="categoryFilter">
-          <option *ngFor="let item of categories" [value]="item">{{ item === 'ALL' ? 'Toutes' : item }}</option>
+          <option *ngFor="let item of categories" [value]="item">{{ item === 'ALL' ? ('COMMON.ALL' | translate) : categoryLabel(item) }}</option>
         </select>
       </label>
-
-      <button type="button" class="filter-btn" (click)="applyFilters()">⏷ Filtrer</button>
-    </aside>
-
-    <div class="table-shell">
-      <table>
-        <thead>
-          <tr>
-            <th>Titre</th>
-            <th>Type</th>
-            <th>Reduction</th>
-            <th>Periode</th>
-            <th>Statut</th>
-            <th>Utilisations</th>
-            <th *ngIf="!readOnlyMode">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let promo of filteredPromotions">
-            <td>
-              <strong>{{ promo.title }}</strong>
-              <small>{{ promo.category }}</small>
-            </td>
-            <td>{{ typeLabel(promo.type) }}</td>
-            <td>{{ promo.discount }}</td>
-            <td>{{ promo.startDate }} - {{ promo.endDate }}</td>
-            <td><span class="status-pill" [ngClass]="statusClass(promo.status)">{{ statusLabel(promo.status) }}</span></td>
-            <td>{{ promo.usageCount }}</td>
-            <td class="actions-cell" *ngIf="!readOnlyMode">
-              <button type="button" class="table-action-btn" (click)="editPromotion(promo)">Modifier</button>
-              <button type="button" class="table-action-btn" (click)="duplicatePromotion(promo)">Dupliquer</button>
-              <button type="button" class="table-action-btn" (click)="togglePromotion(promo)">Desactiver</button>
-              <button type="button" class="table-action-btn danger" (click)="deletePromotion(promo)">Supprimer</button>
-            </td>
-          </tr>
-          <tr *ngIf="!filteredPromotions.length">
-            <td [attr.colspan]="readOnlyMode ? 6 : 7" class="empty">Aucune promotion ne correspond aux filtres actifs.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="status-inline-card" aria-label="Actions rapides promotions">
-    <div class="inline-intro">
-      <h2>Pilotage rapide</h2>
-      <p>
-        {{ filteredPromotions.length }} promotion(s) visible(s),
-        dont {{ activeCountInScope }} active(s).
-      </p>
+      <label>
+        <span>{{ 'PROMOS.MANAGEMENT.SEARCH' | translate }}</span>
+        <input type="search" [(ngModel)]="searchTerm" [placeholder]="'PROMOS.MANAGEMENT.SEARCH_PLACEHOLDER' | translate" />
+      </label>
+      <button type="button" class="pf-btn-primary" (click)="applyFilters(); showFilters = false">{{ 'PROMOS.MANAGEMENT.APPLY' | translate }}</button>
     </div>
 
-    <div class="inline-actions">
-      <button
-        type="button"
-        class="inline-pill blue"
-        (click)="editFirstPromotion()"
-        [disabled]="!filteredPromotions.length"
-      >
-        ✎ Modifier
-      </button>
-      <button
-        type="button"
-        class="inline-pill violet"
-        (click)="duplicateFirstPromotion()"
-        [disabled]="!filteredPromotions.length"
-      >
-        ⧉ Dupliquer
-      </button>
-      <button
-        type="button"
-        class="inline-pill orange"
-        (click)="toggleFirstPromotion()"
-        [disabled]="!filteredPromotions.length"
-      >
-        ⏻ Desactiver
-      </button>
+    <!-- ══ KPI CARDS ══ -->
+    <ng-container *ngIf="false">
+    <div class="pf-kpi-row">
+      <div class="pf-kpi-card">
+        <div class="pf-kpi-icon pf-kpi-icon--indigo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        </div>
+        <div class="pf-kpi-body">
+          <p class="pf-kpi-label">Coupons utilises</p>
+          <strong class="pf-kpi-value">{{ totalUsage }}</strong>
+          <span class="pf-kpi-trend pf-trend-up">↑ 12% cette semaine</span>
+        </div>
+      </div>
+
+      <div class="pf-kpi-card">
+        <div class="pf-kpi-icon pf-kpi-icon--teal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <div class="pf-kpi-body">
+          <p class="pf-kpi-label">Vues totales</p>
+          <strong class="pf-kpi-value">{{ totalViews | number }}</strong>
+          <span class="pf-kpi-trend pf-trend-up">↑ 18% cette semaine</span>
+        </div>
+      </div>
+
+      <div class="pf-kpi-card">
+        <div class="pf-kpi-icon pf-kpi-icon--orange">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="pf-kpi-body">
+          <p class="pf-kpi-label">Taux de conversion</p>
+          <strong class="pf-kpi-value">{{ globalConversionRate }}%</strong>
+          <span class="pf-kpi-trend pf-trend-up">↑ 5,3% cette semaine</span>
+        </div>
+      </div>
+
+      <div class="pf-kpi-card">
+        <div class="pf-kpi-icon pf-kpi-icon--red">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="pf-kpi-body">
+          <p class="pf-kpi-label">Promotions a risque</p>
+          <strong class="pf-kpi-value">{{ riskyPromoCount }}</strong>
+          <span class="pf-kpi-trend pf-trend-down">↓ 2% cette semaine</span>
+        </div>
+      </div>
     </div>
-  </section>
 
-  <section class="stats-charts" aria-label="Visualisations de statistiques promotions">
-    <article class="chart-card lifecycle-card">
-      <div class="chart-head">
-        <h2>Cycle de vie des promotions</h2>
-        <div class="status-donut" [style.background]="statusDonutStyle">
-          <span>{{ activeSharePercent }}%</span>
-          <small>Actives</small>
-        </div>
-      </div>
-      <div class="stack-track" *ngIf="statusChartItems.length">
-        <div
-          class="stack-segment"
-          *ngFor="let item of statusChartItems"
-          [style.flex-grow]="item.value || 0.25"
-          [style.background]="item.color"
-        ></div>
-      </div>
-      <div class="status-metric-grid" *ngIf="statusChartItems.length; else noStatusData">
-        <div class="status-metric" *ngFor="let item of statusChartItems">
-          <p>
-            <span class="status-dot" [style.background]="item.color"></span>
-            {{ item.label }}
-          </p>
-          <strong>{{ item.value }}</strong>
-          <small>{{ statusItemPercent(item.value) }}%</small>
-        </div>
-      </div>
-      <ng-template #noStatusData>
-        <p class="chart-empty">Aucune donnee disponible.</p>
-      </ng-template>
-    </article>
+    <!-- ══ CHART + INSIGHTS ROW ══ -->
+    <div class="pf-main-row">
 
-    <article class="chart-card performance-card">
-      <div class="chart-head score-head">
-        <h2>Sante commerciale</h2>
-        <div class="score-chip">{{ promotionHealthScore }}%</div>
-      </div>
-      <div class="metric-list">
-        <div class="metric-row">
-          <p>Taux d'activation <strong>{{ activeSharePercent }}%</strong></p>
-          <div class="metric-track">
-            <div class="metric-fill active" [style.width.%]="activeSharePercent"></div>
+      <!-- Performance Chart -->
+      <div class="pf-chart-card">
+        <div class="pf-chart-header">
+          <h2>Performance des promotions</h2>
+          <div class="pf-chart-legend">
+            <span class="pf-legend-dot pf-legend-views"></span> Vues
+            <span class="pf-legend-dot pf-legend-coupons"></span> Coupons utilises
           </div>
         </div>
-        <div class="metric-row">
-          <p>Taux d'expiration <strong>{{ expiredSharePercent }}%</strong></p>
-          <div class="metric-track">
-            <div class="metric-fill expired" [style.width.%]="expiredSharePercent"></div>
+        <div class="pf-chart-body">
+          <!-- Y-axis labels -->
+          <div class="pf-chart-yaxis">
+            <span *ngFor="let lbl of chartYLabels" [style.top.%]="lbl.pct">{{ lbl.label }}</span>
           </div>
-        </div>
-        <div class="metric-row">
-          <p>Utilisation vs vues <strong>{{ usageViewRatioPercent }}%</strong></p>
-          <div class="metric-track">
-            <div class="metric-fill usage" [style.width.%]="usageViewRatioPercent"></div>
+          <!-- Chart area + x-axis stacked -->
+          <div class="pf-chart-area-wrap">
+            <div class="pf-chart-area">
+              <svg viewBox="0 0 640 160" preserveAspectRatio="none" class="pf-svg" aria-hidden="true">
+                <defs>
+                  <linearGradient id="pf-grad-views" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#6366f1" stop-opacity="0.15"/>
+                    <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+                  </linearGradient>
+                  <linearGradient id="pf-grad-coupons" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.12"/>
+                    <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <line x1="4" y1="40" x2="636" y2="40" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="4" y1="70" x2="636" y2="70" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="4" y1="100" x2="636" y2="100" stroke="#f1f5f9" stroke-width="1"/>
+                <line x1="4" y1="130" x2="636" y2="130" stroke="#f1f5f9" stroke-width="1"/>
+                <path [attr.d]="svgChartPaths.viewsArea" fill="url(#pf-grad-views)"/>
+                <path [attr.d]="svgChartPaths.couponArea" fill="url(#pf-grad-coupons)"/>
+                <path [attr.d]="svgChartPaths.viewsLine" stroke="#6366f1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <path [attr.d]="svgChartPaths.couponLine" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="pf-chart-xaxis">
+              <svg viewBox="0 0 640 20" preserveAspectRatio="none" class="pf-xaxis-svg" aria-hidden="true">
+                <text
+                  *ngFor="let lbl of chartXLabels"
+                  [attr.x]="lbl.x"
+                  y="14"
+                  text-anchor="middle"
+                  font-size="9"
+                  fill="#94a3b8"
+                  font-family="DM Sans, sans-serif"
+                >{{ lbl.label }}</text>
+              </svg>
+            </div>
           </div>
         </div>
       </div>
-    </article>
 
-    <article class="chart-card category-card">
-      <h2>Top categories</h2>
-      <p class="chart-subtitle" *ngIf="topCategoryLabel">
-        Leader: <strong>{{ topCategoryLabel }}</strong>
-      </p>
-      <div class="category-columns" *ngIf="categoryChartItems.length; else noCategoryData">
-        <div class="category-col" *ngFor="let item of categoryChartItems">
-          <div class="category-bar-wrap">
-            <div class="category-bar" [style.height.%]="(item.value / maxCategoryValue) * 100" [style.background]="item.color"></div>
+      <!-- Insights & recommandations -->
+      <div class="pf-insights-card">
+        <div class="pf-insights-header">
+          <h2>Insights &amp; recommandations</h2>
+          <a class="pf-voir-tout" href="#">Voir tout</a>
+        </div>
+        <div class="pf-insights-list">
+          <div class="pf-insight-item" *ngFor="let item of insights">
+            <div class="pf-insight-icon" [ngClass]="item.iconCls" aria-hidden="true">{{ item.icon }}</div>
+            <div class="pf-insight-body">
+              <strong>{{ item.title }}</strong>
+              <p>{{ item.desc }}</p>
+            </div>
+            <button type="button" class="pf-insight-btn" [ngClass]="item.actionCls">{{ item.action }}</button>
           </div>
-          <strong>{{ item.value }}</strong>
-          <p>{{ item.label }}</p>
+          <div class="pf-insight-empty" *ngIf="!insights.length">
+            <p>Aucune recommandation pour le moment. Vos promotions se portent bien !</p>
+          </div>
         </div>
       </div>
-      <ng-template #noCategoryData>
-        <p class="chart-empty">Aucune categorie a afficher.</p>
-      </ng-template>
-    </article>
-  </section>
 
+    </div>
+
+    <!-- ══ SECONDARY CHARTS ══ -->
+    <div class="pf-secondary-row">
+      <div class="pf-chart-card pf-chart-card--compact pf-channel-card">
+        <div class="pf-chart-header">
+          <h2>Repartition des types d'offre</h2>
+          <span class="pf-chart-meta">Toutes promotions</span>
+        </div>
+        <div class="pf-channel-body">
+          <div class="pf-donut" [style.background]="offerTypeDonutStyle" aria-hidden="true"></div>
+          <div class="pf-channel-legend">
+            <div class="pf-legend-item" *ngFor="let item of offerTypeSplit">
+              <span class="pf-legend-swatch" [style.background]="item.color"></span>
+              <div>
+                <strong>{{ item.label }}</strong>
+                <span>{{ item.value }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="pf-empty-note" *ngIf="!offerTypeTotal">Aucune donnee de type d'offre.</p>
+      </div>
+
+      <div class="pf-chart-card pf-chart-card--compact pf-category-card">
+        <div class="pf-chart-header">
+          <h2>Top categories</h2>
+          <span class="pf-chart-meta">Engagement</span>
+        </div>
+        <div class="pf-vert-chart" *ngIf="categoryChartItems.length; else emptyCategories">
+          <div class="pf-vert-item" *ngFor="let item of categoryChartItems">
+            <div class="pf-vert-bar" aria-hidden="true">
+              <div
+                class="pf-vert-fill"
+                [style.height.%]="(item.value / maxCategoryValue) * 100"
+                [style.background]="item.color"
+              ></div>
+            </div>
+            <span class="pf-vert-label">{{ item.label }}</span>
+            <span class="pf-vert-value">{{ item.value }}</span>
+          </div>
+        </div>
+        <ng-template #emptyCategories>
+          <div class="pf-bar-empty">Aucune donnee disponible.</div>
+        </ng-template>
+      </div>
+
+      <div class="pf-chart-card pf-chart-card--compact pf-status-card">
+        <div class="pf-chart-header">
+          <h2>Statut des promotions</h2>
+          <span class="pf-chart-meta">Repartition</span>
+        </div>
+        <div class="pf-bar-list">
+          <div class="pf-bar-row" *ngFor="let item of statusChartItems">
+            <span class="pf-bar-label">{{ item.label }}</span>
+            <div class="pf-bar-track">
+              <div
+                class="pf-bar-fill"
+                [style.width.%]="(item.value / maxStatusValue) * 100"
+                [style.background]="item.color"
+              ></div>
+            </div>
+            <span class="pf-bar-value">{{ item.value }}</span>
+          </div>
+          <div class="pf-bar-empty" *ngIf="!statusChartItems.length">Aucune donnee disponible.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RADAR PERFORMANCE PAR CATEGORIE ══ -->
+    <div class="pf-radar-row">
+      <div class="pf-chart-card pf-radar-card">
+        <div class="pf-chart-header">
+          <h2>Performance par catégorie</h2>
+          <span class="pf-chart-meta">Conversion · Vues · Coupons utilisés (normalisés sur 100)</span>
+        </div>
+        <apx-chart
+          [series]="radarChartOptions.series"
+          [chart]="radarChartOptions.chart"
+          [stroke]="radarChartOptions.stroke"
+          [fill]="radarChartOptions.fill"
+          [markers]="radarChartOptions.markers"
+          [yaxis]="radarChartOptions.yaxis"
+          [xaxis]="radarChartOptions.xaxis"
+          [colors]="radarChartOptions.colors"
+          [legend]="radarChartOptions.legend"
+        ></apx-chart>
+      </div>
+    </div>
+
+    <!-- ══ APERCU RAPIDE ══ -->
+    <div class="pf-apercu-row" *ngIf="bestPromo || worstActivePromo">
+      <h2 class="pf-section-title">Apercu rapide</h2>
+      <div class="pf-apercu-cards">
+        <div class="pf-apercu-card pf-apercu-best" *ngIf="bestPromo">
+          <div class="pf-apercu-meta">
+            <span class="pf-apercu-tag">Meilleure promotion</span>
+            <div class="pf-apercu-name">
+              <span class="pf-apercu-icon">🏆</span>
+              <strong>{{ bestPromo?.title }}</strong>
+            </div>
+          </div>
+          <div class="pf-apercu-stats">
+            <span>{{ bestPromo?.usageCount }} coupons utilises</span>
+            <span class="pf-apercu-rate pf-rate-green">{{ promoConversionRate(bestPromo!) }}% conversion</span>
+          </div>
+        </div>
+        <div class="pf-apercu-card pf-apercu-worst" *ngIf="worstActivePromo">
+          <div class="pf-apercu-meta">
+            <span class="pf-apercu-tag">Moins performante</span>
+            <div class="pf-apercu-name">
+              <span class="pf-apercu-icon">📉</span>
+              <strong>{{ worstActivePromo?.title }}</strong>
+            </div>
+          </div>
+          <div class="pf-apercu-stats">
+            <span>{{ worstActivePromo?.usageCount }} coupons utilises</span>
+            <span class="pf-apercu-rate pf-rate-red">{{ promoConversionRate(worstActivePromo!) }}% conversion</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TOUTES LES PROMOTIONS ══ -->
+    </ng-container>
+
+    <div class="pf-table-section">
+      <h2 class="pf-section-title">{{ 'PROMOS.MANAGEMENT.ALL_PROMOTIONS' | translate }}</h2>
+      <div class="pf-table-wrap">
+        <table class="pf-table">
+          <thead>
+            <tr>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_PROMOTION' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_TYPE' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_DISCOUNT' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_PERIOD' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_VIEWS' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_USED_COUPONS' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_CONVERSION' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_SCORE' | translate }}</th>
+              <th>{{ 'PROMOS.MANAGEMENT.COL_PRIORITY' | translate }}</th>
+              <th *ngIf="!readOnlyMode">{{ 'COMMON.ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let promo of filteredPromotions" class="pf-table-row">
+              <td>
+                <div class="pf-td-promo">
+                  <div class="pf-promo-avatar" [style.background]="promoScoreBadge(promo).cls === 'score-excellent' ? '#ecfdf5' : '#f8fafc'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                  </div>
+                  <div>
+                    <strong class="pf-promo-name">{{ promo.title }}</strong>
+                    <span class="pf-promo-cat">{{ promo.category }}</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="pf-type-lbl">{{ typeLabel(promo.type) }}</span></td>
+              <td><span class="pf-discount-badge">{{ promo.discount }}</span></td>
+              <td>
+                <div class="pf-date-col">
+                  <span>{{ promo.startDate }} → {{ promo.endDate }}</span>
+                  <span class="pf-status-pill" [ngClass]="statusClass(promo.status)">{{ statusLabel(promo.status) }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="pf-metric-cell">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  {{ promo.views }}
+                </div>
+              </td>
+              <td>
+                <div class="pf-metric-cell">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                  {{ promo.usageCount }}
+                </div>
+              </td>
+              <td>
+                <div class="pf-conv-cell">
+                  <span class="pf-conv-pct">{{ promoConversionRate(promo) }}%</span>
+                  <div class="pf-conv-bar">
+                    <div class="pf-conv-fill" [style.width.%]="promoConversionRate(promo)" [style.background]="promoConversionRate(promo) >= 40 ? '#22c55e' : promoConversionRate(promo) >= 20 ? '#f59e0b' : '#ef4444'"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="pf-score-badge" [ngClass]="promoScoreBadge(promo).cls">
+                  {{ promoScoreBadge(promo).badge }} ({{ promoScoreBadge(promo).score }}%)
+                </span>
+              </td>
+              <td>
+                <div class="pf-priority-cell" [ngClass]="promoPriority(promo).cls">
+                  <span class="pf-pri-dot"></span>
+                  {{ promoPriority(promo).label }}
+                </div>
+              </td>
+              <td class="pf-actions-cell" *ngIf="!readOnlyMode">
+                <button type="button" class="pf-action-main" (click)="editPromotion(promo)"
+                  [ngClass]="promoScoreBadge(promo).cls === 'score-excellent' ? 'pf-act-green' : promoScoreBadge(promo).cls === 'score-moyen' ? 'pf-act-orange' : 'pf-act-red'">
+                  {{ promoScoreBadge(promo).cls === 'score-excellent' ? ('PROMOS.MANAGEMENT.ACTION_BOOST' | translate) : promoScoreBadge(promo).cls === 'score-moyen' ? ('PROMOS.MANAGEMENT.ACTION_EXTEND' | translate) : ('PROMOS.MANAGEMENT.ACTION_OPTIMIZE' | translate) }}
+                </button>
+                <button type="button" class="pf-icon-btn" (click)="editPromotion(promo)" [title]="'COMMON.EDIT' | translate">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button type="button" class="pf-icon-btn" (click)="deletePromotion(promo)" [title]="'COMMON.DELETE' | translate">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="!filteredPromotions.length">
+              <td [attr.colspan]="readOnlyMode ? 9 : 10" class="pf-empty-row">{{ 'PROMOS.MANAGEMENT.EMPTY_FILTERS' | translate }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
   </ng-template>
 
-  <a class="back-link" [routerLink]="choiceLink" [queryParams]="choiceQueryParams">Retour a l'accueil</a>
+  <a class="back-link" [routerLink]="choiceLink" [queryParams]="choiceQueryParams">{{ 'COMMON.BACK_HOME' | translate }}</a>
 </section>
+

@@ -1,80 +1,84 @@
 <section class="add-promo-page">
-  <header class="add-promo-head">
+  <header class="add-promo-head anim-fade-up delay-1">
     <div>
-      <p class="kicker">Gestion entreprise</p>
-      <h1>Ajouter une promotion</h1>
-      <p class="subtitle">Entreprise: <strong>{{ companyName }}</strong></p>
+      <p class="kicker">{{ 'PROMOS.MANAGEMENT.ADD_KICKER' | translate }}</p>
+      <h1>{{ 'PROMOS.MANAGEMENT.ADD_TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'PROMOS.MANAGEMENT.COMPANY_LABEL' | translate }}: <strong>{{ companyName }}</strong></p>
     </div>
-    <a class="back-link" [routerLink]="['/entreprises', companySlug]">Retour a la gestion</a>
+    <a class="back-link" [routerLink]="['/entreprises', companySlug]">{{ 'PROMOS.MANAGEMENT.BACK_MANAGEMENT' | translate }}</a>
   </header>
 
-  <form class="add-promo-card" (ngSubmit)="submit()">
+  <form class="add-promo-card card-glass anim-fade-up delay-2" (ngSubmit)="submit()">
+    <div class="card-head">
+      <h2>{{ 'PROMOS.MANAGEMENT.DETAILS_TITLE' | translate }}</h2>
+    </div>
+
     <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
     <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
 
     <label>
-      Titre *
-      <input type="text" name="title" [(ngModel)]="formModel.title" required />
+      {{ 'PROMOS.MANAGEMENT.FORM_TITLE' | translate }} *
+      <input type="text" name="title" [(ngModel)]="formModel.title" [placeholder]="'PROMOS.MANAGEMENT.TITLE_PLACEHOLDER' | translate" required />
     </label>
 
     <div class="grid-two">
       <label>
-        Type
+        {{ 'PROMOS.MANAGEMENT.COL_TYPE' | translate }}
         <select name="type" [(ngModel)]="formModel.type">
-          <option *ngFor="let item of typeOptions" [value]="item.value">{{ item.label }}</option>
+          <option *ngFor="let item of typeOptions" [value]="item.value">{{ item.labelKey | translate }}</option>
         </select>
       </label>
 
       <label>
-        Statut
+        {{ 'COMMON.STATUS' | translate }}
         <select name="status" [(ngModel)]="formModel.status">
-          <option *ngFor="let item of statusOptions" [value]="item.value">{{ item.label }}</option>
+          <option *ngFor="let item of statusOptions" [value]="item.value">{{ item.labelKey | translate }}</option>
         </select>
       </label>
     </div>
 
     <div class="grid-two">
       <label>
-        Categorie
+        {{ 'PROMOS.MANAGEMENT.CATEGORY' | translate }}
         <select name="category" [(ngModel)]="formModel.category">
-          <option *ngFor="let item of categories" [value]="item">{{ item }}</option>
+          <option *ngFor="let item of categories" [value]="item">{{ categoryLabel(item) }}</option>
         </select>
       </label>
 
       <label>
-        Reduction
-        <input type="text" name="discount" [(ngModel)]="formModel.discount" />
+        {{ 'PROMOS.MANAGEMENT.COL_DISCOUNT' | translate }}
+        <input type="text" name="discount" [(ngModel)]="formModel.discount" [placeholder]="'PROMOS.MANAGEMENT.DISCOUNT_PLACEHOLDER' | translate" />
       </label>
     </div>
 
     <div class="grid-two">
       <label>
-        Date debut *
+        {{ 'PROMOS.MANAGEMENT.START_DATE' | translate }} *
         <input type="date" name="startDate" [(ngModel)]="formModel.startDate" required />
       </label>
 
       <label>
-        Date fin *
+        {{ 'PROMOS.MANAGEMENT.END_DATE' | translate }} *
         <input type="date" name="endDate" [(ngModel)]="formModel.endDate" required />
       </label>
     </div>
 
     <div class="grid-two">
       <label>
-        Code coupon
-        <input type="text" name="code" [(ngModel)]="formModel.code" />
+        {{ 'PROMOS.MANAGEMENT.COUPON_CODE' | translate }}
+        <input type="text" name="code" [(ngModel)]="formModel.code" [placeholder]="'PROMOS.MANAGEMENT.COUPON_PLACEHOLDER' | translate" />
       </label>
 
       <label>
-        Limite d'utilisation
-        <input type="number" min="0" name="usageLimit" [(ngModel)]="formModel.usageLimit" />
+        {{ 'PROMOS.MANAGEMENT.USAGE_LIMIT' | translate }}
+        <input type="number" min="0" name="usageLimit" [(ngModel)]="formModel.usageLimit" [placeholder]="'PROMOS.MANAGEMENT.USAGE_LIMIT_PLACEHOLDER' | translate" />
       </label>
     </div>
 
     <div class="actions">
-      <button type="button" class="cancel-btn" (click)="cancel()" [disabled]="submitting">Annuler</button>
-      <button type="submit" class="submit-btn" [disabled]="submitting">
-        {{ submitting ? 'Enregistrement...' : 'Ajouter la promotion' }}
+      <button type="button" class="cancel-btn btn-anim" (click)="cancel()" [disabled]="submitting">{{ 'COMMON.CANCEL' | translate }}</button>
+      <button type="submit" class="submit-btn btn-anim" [disabled]="submitting">
+        {{ submitting ? ('PROMOS.MANAGEMENT.SUBMITTING' | translate) : ('PROMOS.MANAGEMENT.SUBMIT_ADD' | translate) }}
       </button>
     </div>
   </form>

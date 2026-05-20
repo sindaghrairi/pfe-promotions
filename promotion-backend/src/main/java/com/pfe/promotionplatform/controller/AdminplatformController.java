@@ -1,10 +1,15 @@
 package com.pfe.promotionplatform.controller;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,6 +78,47 @@ public class AdminplatformController {
 		stats.put("draftPromotions", draftPromotions);
 
 		return ResponseEntity.ok(stats);
+	}
+
+	@GetMapping("/dashboard/acquisition-stats")
+	public ResponseEntity<Map<String, Object>> acquisitionStats() {
+		LocalDate today = LocalDate.now();
+
+		// Anchor the 7-day window on the most recent activity date.
+		// If all data is older than 6 days, shift the window backwards so the chart shows real data.
+		Optional<LocalDateTime> maxUser = userRepository.findMaxCreatedAt();
+		Optional<LocalDateTime> maxSub  = adminSubscriptionRepository.findMaxCreatedAt();
+		Optional<LocalDateTime> maxPromo = promotionRepository.findMaxCreatedAt();
+
+		LocalDate endDate = Stream.of(maxUser, maxSub, maxPromo)
+				.filter(Optional::isPresent)
+				.map(opt -> opt.get().toLocalDate())
+				.max(Comparator.naturalOrder())
+				.filter(d -> d.isBefore(today.minusDays(6)))
+				.orElse(today);
+
+		List<String> labels = new ArrayList<>();
+		List<Long> users = new ArrayList<>();
+		List<Long> companies = new ArrayList<>();
+		List<Long> promos = new ArrayList<>();
+
+		for (int i = 6; i >= 0; i--) {
+			LocalDate date = endDate.minusDays(i);
+			LocalDateTime start = date.atStartOfDay();
+			LocalDateTime end = date.atTime(23, 59, 59, 999_999_999);
+
+			labels.add(i == 0 ? "J0" : "J-" + i);
+			users.add(userRepository.countByCreatedAtBetween(start, end));
+			companies.add(adminSubscriptionRepository.countByCreatedAtBetween(start, end));
+			promos.add(promotionRepository.countByCreatedAtBetween(start, end));
+		}
+
+		Map<String, Object> result = new LinkedHashMap<>();
+		result.put("labels", labels);
+		result.put("users", users);
+		result.put("companies", companies);
+		result.put("promos", promos);
+		return ResponseEntity.ok(result);
 	}
 
 	@GetMapping("/users")
@@ -146,6 +192,15 @@ public class AdminplatformController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/promotions")
+	public ResponseEntity<List<Map<String, Object>>> listPromotions() {
+		List<Map<String, Object>> response = promotionRepository.findAll().stream()
+				.map(this::toPromotionDto)
+				.toList();
+
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/invoices")
 	public ResponseEntity<Map<String, Object>> listInvoices() {
 		List<Map<String, Object>> items = invoiceRepository.findAllByOrderByIssuedAtDesc().stream()
@@ -201,6 +256,20 @@ public class AdminplatformController {
 		dto.put("dueAt", invoice.getDueAt());
 		dto.put("paidAt", invoice.getPaidAt());
 		dto.put("createdAt", invoice.getCreatedAt());
+		return dto;
+	}
+
+	private Map<String, Object> toPromotionDto(Promotion promotion) {
+		Map<String, Object> dto = new LinkedHashMap<>();
+		dto.put("id", promotion.getId());
+		dto.put("companySlug", promotion.getCompanySlug());
+		dto.put("status", promotion.getStatus());
+		dto.put("startDate", promotion.getStartDate());
+		dto.put("endDate", promotion.getEndDate());
+		dto.put("createdAt", promotion.getCreatedAt());
+		dto.put("views", promotion.getViews() != null ? promotion.getViews() : 0);
+		dto.put("usageCount", promotion.getUsageCount() != null ? promotion.getUsageCount() : 0);
+		dto.put("claimedCount", promotion.getClaimedCount() != null ? promotion.getClaimedCount() : 0);
 		return dto;
 	}
 

@@ -4,19 +4,19 @@
 
   <div class="pricing-layout">
     <div class="pricing-shell">
-      <p class="eyebrow">Abonnement</p>
-      <h1>Choisissez l'abonnement adapte a votre activite</h1>
-      <p class="subtitle">Choisissez la formule ideale pour votre societe et activez votre abonnement.</p>
+      <p class="eyebrow">{{ 'PAYMENT.EYEBROW' | translate }}</p>
+      <h1>{{ 'PAYMENT.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'PAYMENT.SUBTITLE' | translate }}</p>
 
       <div class="step-strip" aria-label="Progression inscription">
-        <span class="step done">Societe</span>
-        <span class="step active">Paiement</span>
-        <span class="step">Validation</span>
+        <span class="step done">{{ 'INVOICE.STEP_COMPANY' | translate }}</span>
+        <span class="step active">{{ 'INVOICE.STEP_PAYMENT' | translate }}</span>
+        <span class="step">{{ 'PAYMENT.VALIDATION' | translate }}</span>
       </div>
 
       <div class="company-summary">
-        <p><span>Societe</span><strong>{{ companyName || '-' }}</strong></p>
-        <p><span>Email</span><strong>{{ contactEmail || '-' }}</strong></p>
+        <p><span>{{ 'INVOICE.STEP_COMPANY' | translate }}</span><strong>{{ companyName || '-' }}</strong></p>
+        <p><span>{{ 'COMMON.EMAIL' | translate }}</span><strong>{{ contactEmail || '-' }}</strong></p>
       </div>
 
       <div class="billing-toggle" role="tablist" aria-label="Choix de la periode de facturation">
@@ -25,18 +25,20 @@
           [class.active]="billingCycle === 'MONTHLY'"
           (click)="setBillingCycle('MONTHLY')"
         >
-          Monthly
+          {{ 'PAYMENT.MONTHLY' | translate }}
         </button>
         <button
           type="button"
           [class.active]="billingCycle === 'YEARLY'"
           (click)="setBillingCycle('YEARLY')"
         >
-          Annually
+          {{ 'PAYMENT.YEARLY' | translate }}
         </button>
       </div>
 
-      <div class="plans-grid">
+      <p class="api-error" *ngIf="plansLoading">{{ 'PAYMENT.LOADING_PLANS' | translate }}</p>
+
+      <div class="plans-grid" *ngIf="!plansLoading && plans.length">
         <article
           class="plan-card"
           *ngFor="let plan of plans"
@@ -44,36 +46,42 @@
           [class.standard-plan]="plan.key === 'STANDARD'"
           [class.premium-plan]="plan.key === 'PREMIUM'"
           [class.selected]="selectedPlan === plan.key"
+          [class.inactive]="!plan.active"
           [class.featured]="plan.key === 'STANDARD'"
           (click)="selectPlan(plan.key)"
         >
           <div class="plan-head">
-            <p class="plan-badge" *ngIf="plan.key === 'STANDARD'">Recommande</p>
+            <p class="plan-badge" *ngIf="plan.key === 'STANDARD'">{{ 'PAYMENT.RECOMMENDED' | translate }}</p>
+            <p class="plan-badge unavailable" *ngIf="!plan.active">{{ 'PAYMENT.UNAVAILABLE' | translate }}</p>
             <h3>{{ plan.label }}</h3>
             <p>{{ plan.subtitle }}</p>
           </div>
 
           <p class="price">
             {{ getPlanPrice(plan.monthlyPrice, plan.yearlyPrice) }}
-            <span *ngIf="plan.key !== 'PREMIUM'">/{{ billingCycle === 'YEARLY' ? 'an' : 'mois' }}</span>
+            <span>/{{ billingCycle === 'YEARLY' ? ('PAYMENT.YEAR_SHORT' | translate) : ('PAYMENT.MONTH_SHORT' | translate) }}</span>
           </p>
 
           <ul>
             <li *ngFor="let feature of plan.features">{{ feature }}</li>
           </ul>
 
-          <button type="button" class="choose-btn" [class.active]="selectedPlan === plan.key">
-            {{ selectedPlan === plan.key ? 'Selected' : 'Get Started' }}
+          <button type="button" class="choose-btn" [class.active]="selectedPlan === plan.key" [disabled]="!plan.active">
+            {{ !plan.active ? ('PAYMENT.UNAVAILABLE' | translate) : (selectedPlan === plan.key ? ('PAYMENT.SELECTED' | translate) : ('PAYMENT.GET_STARTED' | translate)) }}
           </button>
         </article>
       </div>
 
+      <p class="api-error" *ngIf="!plansLoading && !plans.length && !errorMessage">
+        {{ 'PAYMENT.NO_PLAN' | translate }}
+      </p>
+
       <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
       <div class="actions">
-        <a [routerLink]="['/admin/subscribe']">Retour et modifier les infos</a>
-        <button type="button" class="activate-btn" (click)="activateSubscription()" [disabled]="loading">
-          {{ loading ? 'Activation en cours...' : "Activer l'abonnement" }}
+        <a [routerLink]="['/admin/subscribe']">{{ 'PAYMENT.BACK_EDIT' | translate }}</a>
+        <button type="button" class="activate-btn" (click)="activateSubscription()" [disabled]="loading || plansLoading || !plans.length">
+          {{ loading ? ('PAYMENT.ACTIVATING' | translate) : ('PAYMENT.ACTIVATE' | translate) }}
         </button>
       </div>
     </div>

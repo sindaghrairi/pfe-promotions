@@ -1,7 +1,9 @@
 package com.pfe.promotionplatform.service.impl;
 
 import java.text.Normalizer;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,11 +19,14 @@ import com.pfe.promotionplatform.dto.AdminSubscribeRequest;
 import com.pfe.promotionplatform.dto.AuthResponse;
 import com.pfe.promotionplatform.dto.LoginRequest;
 import com.pfe.promotionplatform.dto.MessageResponse;
+import com.pfe.promotionplatform.dto.PlatformAdminPlanDto;
 import com.pfe.promotionplatform.dto.RegisterRequest;
 import com.pfe.promotionplatform.entity.AdminSubscription;
+import com.pfe.promotionplatform.entity.Plan;
 import com.pfe.promotionplatform.entity.Role;
 import com.pfe.promotionplatform.entity.User;
 import com.pfe.promotionplatform.repository.AdminSubscriptionRepository;
+import com.pfe.promotionplatform.repository.PlanRepository;
 import com.pfe.promotionplatform.repository.UserRepository;
 import com.pfe.promotionplatform.security.CustomUserDetailsService;
 import com.pfe.promotionplatform.security.JwtService;
@@ -34,13 +39,8 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImpl implements AuthService {
 
         private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
-        private static final Map<Long, String> PLAN_ID_TO_CODE = Map.of(
-        1L, "BASIC",
-        2L, "STANDARD",
-        3L, "PREMIUM"
-);
-
         private final AdminSubscriptionRepository adminSubscriptionRepository;
+    private final PlanRepository planRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -58,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
         public MessageResponse adminSubscribe(AdminSubscribeRequest request) {
                 String normalizedContactEmail = normalizeEmail(request.getContactEmail());
                 String normalizedPlan = normalizePlan(request.getPlan());
+                ensurePlanIsActive(normalizedPlan);
 
                 AdminSubscription existing = adminSubscriptionRepository
                                 .findByContactEmailIgnoreCase(normalizedContactEmail)
@@ -376,14 +377,25 @@ public class AuthServiceImpl implements AuthService {
                         throw new IllegalArgumentException("Id de plan invalide");
                 }
 
-                String planCode = PLAN_ID_TO_CODE.get(planId);
-                if (planCode == null) {
-                        throw new IllegalArgumentException("Plan introuvable pour cet id");
+                Plan plan = planRepository.findById(planId)
+                                .orElseThrow(() -> new IllegalArgumentException("Plan introuvable pour cet id"));
+
+                if (!Boolean.TRUE.equals(plan.getActive())) {
+                        throw new IllegalArgumentException("Ce plan est actuellement inactif");
                 }
 
                 return Map.of(
                                 "id", planId,
-                                "code", planCode);
+                                "code", normalizePlan(plan.getName()));
+        }
+
+        @Override
+        public List<PlatformAdminPlanDto> getActivePlans() {
+                return planRepository.findAll().stream()
+                                .filter(plan -> isSupportedSubscriptionPlan(plan.getName()))
+                                .sorted(Comparator.comparing(Plan::getId))
+                                .map(this::toPlanDto)
+                                .toList();
         }
 
         private String normalizeEmail(String email) {
@@ -414,5 +426,35 @@ public class AuthServiceImpl implements AuthService {
                         default -> throw new IllegalArgumentException(
                                         "Plan invalide. Valeurs acceptees: BASIC, STANDARD, PREMIUM");
                 };
+        }
+
+        private void ensurePlanIsActive(String planCode) {
+                Plan plan = planRepository.findByNameIgnoreCase(planCode)
+                                .orElseThrow(() -> new IllegalArgumentException("Plan introuvable"));
+
+                if (!Boolean.TRUE.equals(plan.getActive())) {
+                        throw new IllegalArgumentException("Ce plan est actuellement inactif");
+                }
+        }
+
+        private boolean isSupportedSubscriptionPlan(String plan) {
+                try {
+                        normalizePlan(plan);
+                        return true;
+                } catch (IllegalArgumentException ex) {
+                        return false;
+                }
+        }
+
+        private PlatformAdminPlanDto toPlanDto(Plan plan) {
+                return new PlatformAdminPlanDto(
+                                plan.getId(),
+                                normalizePlan(plan.getName()),
+                                plan.getPrice(),
+                                plan.getDescription(),
+                                plan.getDuration(),
+                                plan.getActive(),
+                                plan.getCreatedAt(),
+                                plan.getUpdatedAt());
         }
 }

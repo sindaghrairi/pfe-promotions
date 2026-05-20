@@ -6,11 +6,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { LoginRequest } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })

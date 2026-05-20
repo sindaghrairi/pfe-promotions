@@ -46,11 +46,12 @@ public class SecurityConfig {
             .permitAll()
             .requestMatchers(HttpMethod.GET,
                 "/api/auth/admin/subscription/company",
+                "/api/auth/admin/plans",
                 "/api/auth/admin/plan/**",
                 "/api/catalog/**",
                 "/api/promotions/company/**")
             .permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/promotions/company/**/view")
+            .requestMatchers(HttpMethod.POST, "/api/promotions/company/{slug}/{promotionId}/view")
             .permitAll()
             .requestMatchers("/api/platform-admin/**")
             .hasRole("PLATFORM_ADMIN")
@@ -74,7 +75,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
 

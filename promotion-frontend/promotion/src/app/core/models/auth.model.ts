@@ -51,7 +51,17 @@ export interface AdminPlanResponse {
   code: 'BASIC' | 'STANDARD' | 'PREMIUM';
 }
 
+export interface ActiveAdminPlanResponse {
+  id: number;
+  name: 'BASIC' | 'STANDARD' | 'PREMIUM';
+  price: number;
+  description: string;
+  duration?: string | null;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AdminAccountExistsResponse {
   exists: boolean;
 }
-

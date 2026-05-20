@@ -1,5 +1,6 @@
 package com.pfe.promotionplatform.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.pfe.promotionplatform.dto.AdminSubscriptionResponse;
@@ -8,6 +9,7 @@ import com.pfe.promotionplatform.dto.AdminRegisterRequest;
 import com.pfe.promotionplatform.dto.AdminSubscribeRequest;
 import com.pfe.promotionplatform.dto.LoginRequest;
 import com.pfe.promotionplatform.dto.MessageResponse;
+import com.pfe.promotionplatform.dto.PlatformAdminPlanDto;
 import com.pfe.promotionplatform.dto.RegisterRequest;
 
 public interface AuthService {
@@ -22,5 +24,6 @@ public interface AuthService {
     AdminSubscriptionResponse adminSubscriptionMe(String email);
     Map<String, Boolean> adminAccountExists(String email, String companyName);
     Map<String, Object> getPlanById(Long planId);
+    List<PlatformAdminPlanDto> getActivePlans();
     AdminSubscriptionResponse adminSubscriptionByCompanyName(String companyName);
 }

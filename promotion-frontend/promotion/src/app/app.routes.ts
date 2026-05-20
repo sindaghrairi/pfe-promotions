@@ -23,6 +23,7 @@ import { PlatformAdminUsersComponent } from './features/platform-admin/platform-
 import { PlatformAdminSubscriptionsComponent } from './features/platform-admin/platform-admin-subscriptions.component';
 import { PlatformAdminInvoicesComponent } from './features/platform-admin/platform-admin-invoices.component';
 import { PlatformAdminInvoiceDetailsComponent } from './features/platform-admin/platform-admin-invoice-details.component';
+import { PlatformAdminPlansComponent } from './features/platform-admin/platform-admin-plans.component';
 
 export const routes: Routes = [
 	{ path: '', pathMatch: 'full', component: HomeComponent },
@@ -37,12 +38,13 @@ export const routes: Routes = [
 	{ path: 'admin/subscribe/overview', component: AdminSubscriptionOverviewComponent },
 	{ path: 'admin/subscribe/invoice', component: AdminInvoiceComponent },
 	{ path: 'admin/subscribe', canActivate: [guestGuard], component: AdminSubscribeComponent },
-	{ path: 'admin/register', canActivate: [guestGuard], component: AdminRegisterComponent },
+	{ path: 'admin/register', component: AdminRegisterComponent },
 	{ path: 'admin/login', canActivate: [guestGuard], component: AdminLoginComponent },
 	{ path: 'platform-admin/login', canActivate: [platformAdminGuestGuard], component: PlatformAdminLoginComponent },
 	{ path: 'platform-admin/dashboard', canActivate: [platformAdminGuard], component: PlatformAdminDashboardComponent },
 	{ path: 'platform-admin/users', canActivate: [platformAdminGuard], component: PlatformAdminUsersComponent },
 	{ path: 'platform-admin/subscriptions', canActivate: [platformAdminGuard], component: PlatformAdminSubscriptionsComponent },
+	{ path: 'platform-admin/plans', canActivate: [platformAdminGuard], component: PlatformAdminPlansComponent },
 	{ path: 'platform-admin/invoices', canActivate: [platformAdminGuard], component: PlatformAdminInvoicesComponent },
 	{ path: 'platform-admin/invoices/:id', canActivate: [platformAdminGuard], component: PlatformAdminInvoiceDetailsComponent },
 	{ path: 'dashboard', canActivate: [authGuard], component: DashboardComponent },

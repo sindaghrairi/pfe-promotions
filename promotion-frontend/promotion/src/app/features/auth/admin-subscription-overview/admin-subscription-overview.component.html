@@ -1,38 +1,101 @@
-<section class="subscription-page">
-  <div class="subscription-shell">
-    <header class="subscription-header">
+<section class="sub-page">
+
+  <div class="sub-shell">
+
+    <!-- ── Header ── -->
+    <header class="sub-header anim-up">
       <div>
-        <p class="eyebrow">Espace abonnement</p>
-        <h1>Mon abonnement et mes factures</h1>
-        <p class="subtitle">Consultez les details de votre abonnement actif et accedez a votre facture.</p>
+        <p class="sub-eyebrow">{{ 'SUB_OVERVIEW.EYEBROW' | translate }}</p>
+        <h1>{{ 'SUB_OVERVIEW.TITLE' | translate }}</h1>
+        <p class="sub-subtitle">{{ 'SUB_OVERVIEW.SUBTITLE' | translate }}</p>
       </div>
-      <a class="back-link" [routerLink]="fallbackRedirect">Retour a la gestion</a>
+      <a class="sub-back-btn" routerLink="/dashboard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        {{ 'SUB_OVERVIEW.BACK' | translate }}
+      </a>
     </header>
 
-    <p class="loading" *ngIf="loading">Chargement de votre abonnement...</p>
-    <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <!-- ── Feedback ── -->
+    <p class="sub-loading anim-up" *ngIf="loading">{{ 'SUB_OVERVIEW.LOADING' | translate }}</p>
+    <p class="sub-error anim-up" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <section class="subscription-card" *ngIf="hasSnapshot; else noData" aria-label="Details abonnement">
-      <div class="info-grid">
-        <p><span>Societe</span><strong>{{ snapshot?.companyName }}</strong></p>
-        <p><span>Email</span><strong>{{ snapshot?.email || '-' }}</strong></p>
-        <p><span>Plan</span><strong>{{ planLabel }}</strong></p>
-        <p><span>Cycle</span><strong>{{ cycleLabel }}</strong></p>
-        <p><span>Montant</span><strong>{{ amountLabel }}</strong></p>
-        <p><span>Date facture</span><strong>{{ dateLabel }}</strong></p>
+    <!-- ── Main Card ── -->
+    <div class="sub-card anim-up delay-2" *ngIf="hasSnapshot; else noData" aria-label="Details abonnement">
+
+      <div class="sub-card-top">
+        <div class="sub-card-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <h2>{{ 'SUB_OVERVIEW.PREVIEW' | translate }}</h2>
+        <div class="sub-spacer"></div>
+        <span class="sub-live-badge">
+          <span class="sub-blink" aria-hidden="true"></span>
+          Plan {{ cycleLabel }}
+        </span>
       </div>
 
-      <div class="actions">
-        <button type="button" class="solid-btn" (click)="openInvoice()">Voir facture</button>
-        <button type="button" class="ghost-btn" (click)="goToPayment()">Modifier abonnement</button>
-      </div>
-    </section>
+      <div class="sub-sep"></div>
 
+      <!-- Row 1: 4 info columns -->
+      <div class="sub-info-grid">
+        <div class="sub-info-col">
+          <span class="sub-info-label">{{ 'INVOICE.STEP_COMPANY' | translate }}</span>
+          <strong class="sub-info-val">{{ snapshot?.companyName }}</strong>
+        </div>
+        <div class="sub-info-col">
+          <span class="sub-info-label">{{ 'COMMON.EMAIL' | translate }} de facturation</span>
+          <strong class="sub-info-val sub-info-email">{{ snapshot?.email || '-' }}</strong>
+        </div>
+        <div class="sub-info-col">
+          <span class="sub-info-label">{{ 'SUB_OVERVIEW.SELECTED_PLAN' | translate }}</span>
+          <strong class="sub-info-val">
+            <span class="sub-plan-badge">{{ planLabel | uppercase }}</span>
+          </strong>
+        </div>
+        <div class="sub-info-col">
+          <span class="sub-info-label">{{ 'INVOICE.CYCLE' | translate }}</span>
+          <strong class="sub-info-val">{{ cycleLabel }}</strong>
+        </div>
+      </div>
+
+      <!-- Row 2: amount + next invoice -->
+      <div class="sub-amount-row">
+        <div class="sub-amount-box">
+          <span class="sub-info-label">{{ 'SUB_OVERVIEW.AMOUNT' | translate }} {{ cycleSuffixLabel }}</span>
+          <strong class="sub-amount-val">{{ amountLabel }}</strong>
+        </div>
+        <div class="sub-info-col">
+          <span class="sub-info-label">{{ 'SUB_OVERVIEW.NEXT_INVOICE' | translate }}</span>
+          <strong class="sub-info-val sub-date-val">{{ dateLabel }}</strong>
+        </div>
+      </div>
+
+      <div class="sub-sep"></div>
+
+      <!-- Actions -->
+      <div class="sub-actions">
+        <button type="button" class="sub-btn-primary" (click)="openInvoice()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          {{ 'PLATFORM_INVOICES.VIEW' | translate }}
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ── Empty state ── -->
     <ng-template #noData>
-      <section class="subscription-card empty-state">
-        <p>Aucun abonnement n'a ete enregistre pour le moment.</p>
-        <button type="button" class="solid-btn" (click)="goToPayment()">Choisir un abonnement</button>
-      </section>
+      <div class="sub-card sub-empty anim-up delay-2">
+        <div class="sub-empty-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <h3>{{ 'SUB_OVERVIEW.NO_ACTIVE' | translate }}</h3>
+        <p>{{ 'SUB_OVERVIEW.NO_DATA_1' | translate }}<br>{{ 'SUB_OVERVIEW.NO_DATA_2' | translate }}</p>
+        <button type="button" class="sub-btn-primary" (click)="goToPayment()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          {{ 'SUB_OVERVIEW.CHOOSE' | translate }}
+        </button>
+      </div>
     </ng-template>
+
   </div>
 </section>

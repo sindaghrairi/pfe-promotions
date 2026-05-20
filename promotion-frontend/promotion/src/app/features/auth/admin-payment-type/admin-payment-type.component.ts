@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { switchMap } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { ActiveAdminPlanResponse } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 type PlanKey = 'BASIC' | 'STANDARD' | 'PREMIUM';
 
@@ -14,6 +16,7 @@ interface PricingPlan {
   id: number;
   key: PlanKey;
   label: string;
+  active: boolean;
   monthlyPrice: string;
   yearlyPrice: string;
   monthlyAmount: number;
@@ -35,67 +38,16 @@ interface SubscriptionSnapshot {
 @Component({
   selector: 'app-admin-payment-type',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './admin-payment-type.component.html',
   styleUrl: './admin-payment-type.component.css'
 })
-export class AdminPaymentTypeComponent {
+export class AdminPaymentTypeComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  readonly plans: PricingPlan[] = [
-    {
-      id: 1,
-      key: 'BASIC',
-      label: 'Basic',
-      monthlyPrice: '29 DT',
-      yearlyPrice: '29 DT',
-      monthlyAmount: 29,
-      yearlyAmount: 29,
-      subtitle:
-        'Basique : Acces aux fonctionnalites essentielles (gestion des produits, promotions et coupons) avec des limitations sur le nombre de promotions et l acces aux statistiques.',
-      features: [
-        'Gestion des produits, promotions et coupons',
-        'Nombre de promotions limite',
-        'Acces limite aux statistiques'
-      ]
-    },
-    {
-      id: 2,
-      key: 'STANDARD',
-      label: 'Standard',
-      monthlyPrice: '79 DT',
-      yearlyPrice: '79 DT',
-      monthlyAmount: 79,
-      yearlyAmount: 79,
-      subtitle:
-        'Formule intermediaire ideale pour les entreprises en croissance souhaitant une gestion avancee de leurs promotions.',
-      features: [
-        'Toutes les fonctionnalites du Basic',
-        'Nombre de promotions augmente',
-        'Acces complet aux statistiques',
-        'Recommandations simples via IA'
-      ]
-    },
-    {
-      id: 3,
-      key: 'PREMIUM',
-      label: 'Premium',
-      monthlyPrice: '149 DT',
-      yearlyPrice: '149 DT',
-      monthlyAmount: 149,
-      yearlyAmount: 149,
-      subtitle:
-        'Premium : Acces complet a toutes les fonctionnalites avec promotions et coupons illimites, statistiques avancees et recommandations completes via le module IA.',
-      features: [
-        'Promotions et coupons illimites',
-        'Statistiques avancees',
-        'Recommandations completes via le module IA'
-      ]
-    }
-  ];
-
+  plans: PricingPlan[] = [];
   companyName = '';
   contactEmail = '';
   redirectTo = '/entreprises/entreprise';
@@ -103,6 +55,7 @@ export class AdminPaymentTypeComponent {
   billingCycle: BillingCycle = 'MONTHLY';
 
   loading = false;
+  plansLoading = true;
   errorMessage = '';
 
   constructor() {
@@ -123,7 +76,16 @@ export class AdminPaymentTypeComponent {
     });
   }
 
+  ngOnInit(): void {
+    this.loadActivePlans();
+  }
+
   selectPlan(planKey: PlanKey): void {
+    const plan = this.plans.find((item) => item.key === planKey);
+    if (!plan?.active) {
+      return;
+    }
+
     this.selectedPlan = planKey;
   }
 
@@ -145,9 +107,9 @@ export class AdminPaymentTypeComponent {
     this.errorMessage = '';
 
     const selectedPlanMeta = this.plans.find((plan) => plan.key === this.selectedPlan);
-    if (!selectedPlanMeta) {
+    if (!selectedPlanMeta || !selectedPlanMeta.active) {
       this.loading = false;
-      this.errorMessage = 'Plan invalide.';
+      this.errorMessage = 'Ce plan est indisponible pour le moment.';
       return;
     }
 
@@ -222,6 +184,95 @@ export class AdminPaymentTypeComponent {
     }
 
     return "Echec de l'abonnement. Veuillez reessayer.";
+  }
+
+  private loadActivePlans(): void {
+    this.plansLoading = true;
+
+    this.authService.listActiveAdminPlans().subscribe({
+      next: (plans) => {
+        this.plansLoading = false;
+        this.plans = plans
+          .filter((plan) => this.isPlanKey(plan.name))
+          .map((plan) => this.toPricingPlan(plan));
+
+        const activePlans = this.plans.filter((plan) => plan.active);
+        if (!activePlans.length) {
+          this.errorMessage = 'Aucun plan actif disponible pour le moment.';
+          return;
+        }
+
+        if (!activePlans.some((plan) => plan.key === this.selectedPlan)) {
+          this.selectedPlan = activePlans[0].key;
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        this.plansLoading = false;
+        this.errorMessage = this.extractApiError(error);
+      }
+    });
+  }
+
+  private toPricingPlan(plan: ActiveAdminPlanResponse): PricingPlan {
+    const monthlyAmount = Number(plan.price || 0);
+    const yearlyAmount = monthlyAmount * 12;
+    const label = this.planLabel(plan.name);
+
+    return {
+      id: plan.id,
+      key: plan.name,
+      label,
+      active: plan.active,
+      monthlyPrice: `${this.formatPrice(monthlyAmount)} DT`,
+      yearlyPrice: `${this.formatPrice(yearlyAmount)} DT`,
+      monthlyAmount,
+      yearlyAmount,
+      subtitle: plan.description,
+      features: this.planFeatures(plan.name)
+    };
+  }
+
+  private formatPrice(amount: number): string {
+    return Number.isInteger(amount) ? `${amount}` : amount.toFixed(2);
+  }
+
+  private isPlanKey(value: string): value is PlanKey {
+    return value === 'BASIC' || value === 'STANDARD' || value === 'PREMIUM';
+  }
+
+  private planLabel(plan: PlanKey): string {
+    if (plan === 'BASIC') {
+      return 'Basic';
+    }
+    if (plan === 'PREMIUM') {
+      return 'Premium';
+    }
+    return 'Standard';
+  }
+
+  private planFeatures(plan: PlanKey): string[] {
+    if (plan === 'BASIC') {
+      return [
+        'Gestion des produits, promotions et coupons',
+        'Nombre de promotions limite',
+        'Acces limite aux statistiques'
+      ];
+    }
+
+    if (plan === 'PREMIUM') {
+      return [
+        'Promotions et coupons illimites',
+        'Statistiques avancees',
+        'Recommandations completes via le module IA'
+      ];
+    }
+
+    return [
+      'Toutes les fonctionnalites du Basic',
+      'Nombre de promotions augmente',
+      'Acces complet aux statistiques',
+      'Recommandations simples via IA'
+    ];
   }
 
   private buildCompanyRedirect(companyName: string): string {

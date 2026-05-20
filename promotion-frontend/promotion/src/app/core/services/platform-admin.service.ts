@@ -3,11 +3,17 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import {
+  AcquisitionStats,
+  PlatformAdminDashboard,
   PlatformAdminInvoice,
   PlatformAdminInvoiceResponse,
+  PlatformAdminPlan,
+  PlatformAdminPlanPayload,
+  PlatformAdminPromotion,
   PlatformAdminStats,
   PlatformAdminSubscription,
   PlatformAdminUser,
+  PlatformDashboardPeriod,
   PlatformUserRole
 } from '../models/platform-admin.model';
 
@@ -18,6 +24,16 @@ export class PlatformAdminService {
 
   getDashboardStats(): Observable<PlatformAdminStats> {
     return this.http.get<PlatformAdminStats>(`${this.apiUrl}/dashboard/stats`);
+  }
+
+  getAcquisitionStats(): Observable<AcquisitionStats> {
+    return this.http.get<AcquisitionStats>(`${this.apiUrl}/dashboard/acquisition-stats`);
+  }
+
+  getDashboardAnalytics(period: PlatformDashboardPeriod): Observable<PlatformAdminDashboard> {
+    return this.http.get<PlatformAdminDashboard>(`${this.apiUrl}/stats/dashboard`, {
+      params: { period }
+    });
   }
 
   listUsers(): Observable<PlatformAdminUser[]> {
@@ -36,11 +52,27 @@ export class PlatformAdminService {
     return this.http.get<PlatformAdminSubscription[]>(`${this.apiUrl}/subscriptions`);
   }
 
+  listPromotions(): Observable<PlatformAdminPromotion[]> {
+    return this.http.get<PlatformAdminPromotion[]>(`${this.apiUrl}/promotions`);
+  }
+
   listInvoices(): Observable<PlatformAdminInvoiceResponse> {
     return this.http.get<PlatformAdminInvoiceResponse>(`${this.apiUrl}/invoices`);
   }
 
   getInvoiceById(invoiceId: number): Observable<PlatformAdminInvoice> {
     return this.http.get<PlatformAdminInvoice>(`${this.apiUrl}/invoices/${invoiceId}`);
+  }
+
+  getPlans(): Observable<PlatformAdminPlan[]> {
+    return this.http.get<PlatformAdminPlan[]>(`${this.apiUrl}/plans`);
+  }
+
+  updatePlan(id: number, payload: PlatformAdminPlanPayload): Observable<PlatformAdminPlan> {
+    return this.http.put<PlatformAdminPlan>(`${this.apiUrl}/plans/${id}`, payload);
+  }
+
+  togglePlanStatus(id: number, active: boolean): Observable<PlatformAdminPlan> {
+    return this.http.patch<PlatformAdminPlan>(`${this.apiUrl}/plans/${id}/status`, { active });
   }
 }

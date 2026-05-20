@@ -7,12 +7,14 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pfe.promotionplatform.entity.AdminSubscription;
 import com.pfe.promotionplatform.entity.Promotion;
 import com.pfe.promotionplatform.entity.PromotionStatus;
 import com.pfe.promotionplatform.repository.AdminSubscriptionRepository;
 import com.pfe.promotionplatform.repository.PromotionRepository;
+import com.pfe.promotionplatform.service.CouponService;
 import com.pfe.promotionplatform.service.PromotionService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,27 +25,38 @@ public class PromotionServiceImpl implements PromotionService {
 
     private final PromotionRepository promotionRepository;
     private final AdminSubscriptionRepository adminSubscriptionRepository;
+    private final CouponService couponService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Promotion> listCompanyPromotions(String companySlug, String principalEmail) {
         validateOwner(companySlug, principalEmail);
-        return promotionRepository.findByCompanySlugOrderByIdDesc(normalizeSlug(companySlug));
+        return promotionRepository.findByCompanySlugOrderByIdDesc(normalizeSlug(companySlug)).stream()
+                .map(couponService::hydrateLegacyFields)
+                .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Promotion> listPublishedPromotions(String companySlug) {
         return promotionRepository.findByCompanySlugAndStatusInOrderByIdDesc(
                 normalizeSlug(companySlug),
-                Set.of(PromotionStatus.ACTIVE, PromotionStatus.EXPIRED));
+                Set.of(PromotionStatus.ACTIVE, PromotionStatus.EXPIRED)).stream()
+                .map(couponService::hydrateLegacyFields)
+                .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Promotion> listAllPublishedPromotions() {
         return promotionRepository.findByStatusInOrderByIdDesc(
-                Set.of(PromotionStatus.ACTIVE, PromotionStatus.EXPIRED));
+                Set.of(PromotionStatus.ACTIVE, PromotionStatus.EXPIRED)).stream()
+                .map(couponService::hydrateLegacyFields)
+                .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<String> listPublishedCompanySlugs() {
         Set<PromotionStatus> visibleStatuses = Set.of(PromotionStatus.ACTIVE, PromotionStatus.EXPIRED);
 
@@ -59,6 +72,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
+    @Transactional
     public Promotion createPromotion(String companySlug, Promotion promotion, String principalEmail) {
         validateOwner(companySlug, principalEmail);
         String normalizedCouponCode = normalizeCouponCode(promotion.getCouponCode());
@@ -76,10 +90,14 @@ public class PromotionServiceImpl implements PromotionService {
         if (promotion.getClaimedCount() == null) {
             promotion.setClaimedCount(0);
         }
-        return promotionRepository.save(promotion);
+
+        Promotion saved = promotionRepository.save(promotion);
+        couponService.syncFromPromotion(saved);
+        return couponService.hydrateLegacyFields(saved);
     }
 
     @Override
+    @Transactional
     public Promotion updatePromotion(String companySlug, Long promotionId, Promotion promotion, String principalEmail) {
         validateOwner(companySlug, principalEmail);
         String normalizedCouponCode = normalizeCouponCode(promotion.getCouponCode());
@@ -104,10 +122,13 @@ public class PromotionServiceImpl implements PromotionService {
         existing.setViews(promotion.getViews() == null ? existing.getViews() : promotion.getViews());
         existing.setClaimedCount(promotion.getClaimedCount() == null ? existing.getClaimedCount() : promotion.getClaimedCount());
 
-        return promotionRepository.save(existing);
+        Promotion saved = promotionRepository.save(existing);
+        couponService.syncFromPromotion(saved);
+        return couponService.hydrateLegacyFields(saved);
     }
 
     @Override
+    @Transactional
     public Promotion claimCoupon(String companySlug, Long promotionId) {
         Promotion existing = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new IllegalArgumentException("Promotion introuvable"));
@@ -120,30 +141,13 @@ public class PromotionServiceImpl implements PromotionService {
             throw new IllegalArgumentException("Cette promotion n'est plus active");
         }
 
-        String coupon = normalizeCouponCode(existing.getCouponCode());
-        if (coupon == null) {
-            throw new IllegalArgumentException("Aucun coupon disponible pour cette promotion");
-        }
-
-        int remaining = existing.getUsageCount() == null ? 0 : existing.getUsageCount();
-        if (remaining <= 0) {
-            existing.setStatus(PromotionStatus.EXPIRED);
-            existing.setUsageCount(0);
-            return promotionRepository.save(existing);
-        }
-
-        int nextRemaining = remaining - 1;
-        existing.setUsageCount(nextRemaining);
-        int currentClaimed = existing.getClaimedCount() == null ? 0 : existing.getClaimedCount();
-        existing.setClaimedCount(currentClaimed + 1);
-        if (nextRemaining == 0) {
-            existing.setStatus(PromotionStatus.EXPIRED);
-        }
-
-        return promotionRepository.save(existing);
+        couponService.hydrateLegacyFields(existing);
+        couponService.claimCoupon(existing);
+        return couponService.hydrateLegacyFields(promotionRepository.save(existing));
     }
 
     @Override
+    @Transactional
     public Promotion incrementViews(String companySlug, Long promotionId) {
         Promotion existing = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new IllegalArgumentException("Promotion introuvable"));
@@ -154,7 +158,7 @@ public class PromotionServiceImpl implements PromotionService {
 
         int currentViews = existing.getViews() == null ? 0 : existing.getViews();
         existing.setViews(currentViews + 1);
-        return promotionRepository.save(existing);
+        return couponService.hydrateLegacyFields(promotionRepository.save(existing));
     }
 
     @Override

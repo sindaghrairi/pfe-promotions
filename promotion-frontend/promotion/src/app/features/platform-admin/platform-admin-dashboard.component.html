@@ -1,35 +1,235 @@
-<section class="platform-dashboard-shell">
-  <header class="topbar">
-    <div>
-      <h1>Dashboard Admin Plateforme</h1>
-      <p>Bienvenue {{ email || 'admin' }}</p>
+<section class="ud-page">
+  <aside class="ud-nav">
+    <div class="ud-nav-brand">
+      <div class="ud-nav-mark">A</div>
+      <div>
+        <p class="ud-nav-name">{{ 'COMMON.BRAND' | translate }}</p>
+        <p class="ud-nav-tier">{{ 'PLATFORM_ADMIN.TIER' | translate }}</p>
+      </div>
     </div>
-    <div class="actions">
-      <a routerLink="/">Accueil</a>
-      <button type="button" (click)="logout()">Deconnexion</button>
+
+    <nav class="ud-nav-links" aria-label="Navigation admin">
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link ud-nav-active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        {{ 'NAV.DASHBOARD' | translate }}
+      </a>
+      <a routerLink="/platform-admin/subscriptions" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        {{ 'NAV.SUBSCRIPTIONS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/plans" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        {{ 'NAV.PLANS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/users" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ 'NAV.USERS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/invoices" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        {{ 'NAV.INVOICES' | translate }}
+      </a>
+    </nav>
+
+    <div class="ud-nav-foot">
+      <a routerLink="/" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        {{ 'NAV.HOME' | translate }}
+      </a>
     </div>
-  </header>
+  </aside>
 
-  <p class="state" *ngIf="loading">Chargement des statistiques...</p>
-  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <div class="ud-main">
+    <header class="ud-topbar">
+      <p class="ud-topbar-logo">PromoLink</p>
+      <div class="ud-topbar-actions">
+        <app-language-switcher />
+        <button
+          type="button"
+          class="ud-theme-toggle"
+          [class.is-dark]="(isDark$ | async)"
+          [attr.aria-pressed]="(isDark$ | async) ? 'true' : 'false'"
+          [attr.aria-label]="'PLATFORM_ADMIN.THEME_TOGGLE' | translate"
+          (click)="toggleTheme()">
+          <span class="ud-toggle-dot"></span>
+        </button>
+      </div>
+    </header>
 
-  <nav class="quick-nav" *ngIf="!loading && stats">
-    <a routerLink="/platform-admin/users">Utilisateurs</a>
-    <a routerLink="/platform-admin/subscriptions">Abonnements</a>
-    <a routerLink="/platform-admin/invoices">Factures</a>
-  </nav>
+    <main class="ud-content">
+      <section class="ud-hero">
+        <div>
+          <p class="ud-kicker">{{ 'PLATFORM_DASHBOARD.KICKER' | translate }}</p>
+          <h1>{{ 'PLATFORM_DASHBOARD.TITLE' | translate }}</h1>
+          <p class="ud-hero-sub">{{ 'PLATFORM_DASHBOARD.SUBTITLE' | translate }}</p>
+        </div>
 
-  <div class="cards" *ngIf="!loading && stats">
-    <article class="card"><h3>Utilisateurs</h3><strong>{{ stats.totalUsers }}</strong></article>
-    <article class="card"><h3>Clients</h3><strong>{{ stats.totalClients }}</strong></article>
-    <article class="card"><h3>Admins Societe</h3><strong>{{ stats.totalCompanyAdmins }}</strong></article>
-    <article class="card"><h3>Admin Plateforme</h3><strong>{{ stats.totalPlatformAdmins }}</strong></article>
-    <article class="card"><h3>Abonnements Actifs</h3><strong>{{ stats.activeSubscriptions }}</strong></article>
-    <article class="card"><h3>Abonnements Inactifs</h3><strong>{{ stats.inactiveSubscriptions }}</strong></article>
-    <article class="card"><h3>Promotions Totales</h3><strong>{{ stats.totalPromotions }}</strong></article>
-    <article class="card"><h3>Promotions Actives</h3><strong>{{ stats.activePromotions }}</strong></article>
-    <article class="card"><h3>Promotions Expirees</h3><strong>{{ stats.expiredPromotions }}</strong></article>
-    <article class="card"><h3>Promotions Planifiees</h3><strong>{{ stats.scheduledPromotions }}</strong></article>
-    <article class="card"><h3>Promotions Brouillon</h3><strong>{{ stats.draftPromotions }}</strong></article>
+        <div class="ud-periods" [attr.aria-label]="'PLATFORM_DASHBOARD.PERIOD_FILTER' | translate">
+          <button
+            *ngFor="let option of periodOptions"
+            type="button"
+            class="ud-period-btn"
+            [class.is-active]="selectedPeriod === option.value"
+            (click)="setPeriod(option.value)">
+            {{ option.labelKey | translate }}
+          </button>
+        </div>
+      </section>
+
+      <p class="ud-state" *ngIf="loading">{{ 'PLATFORM_DASHBOARD.LOADING' | translate }}</p>
+      <p class="ud-state ud-state-error" *ngIf="!loading && errorMessage">{{ errorMessage }}</p>
+
+      <ng-container *ngIf="!loading && dashboard as data">
+        <div class="ud-meta-row">
+          <span>{{ 'DASHBOARD.PERIOD_ANALYZED_PREFIX' | translate }} {{ periodLabel }}</span>
+          <span>{{ 'DASHBOARD.DATE_RANGE' | translate: { from: data.from, to: data.to } }}</span>
+        </div>
+
+        <section class="ud-kpi-grid" [attr.aria-label]="'PLATFORM_DASHBOARD.KPI_ARIA' | translate">
+          <article class="ud-kpi-card" *ngFor="let card of kpiCards" [ngClass]="'tone-' + card.tone">
+            <p class="ud-kpi-label">{{ card.label }}</p>
+            <strong class="ud-kpi-value">{{ card.value }}</strong>
+            <span class="ud-kpi-hint">{{ card.hint }}</span>
+          </article>
+        </section>
+
+        <section class="ud-chart-grid ud-chart-grid-main">
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.EVOLUTION_PERIOD' | translate: { period: periodLabel } }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.EVOLUTION_TITLE' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body">
+              <canvas #platformEvolutionChart [attr.aria-label]="'PLATFORM_DASHBOARD.EVOLUTION_ARIA' | translate"></canvas>
+            </div>
+          </article>
+
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.STATUS_KICKER' | translate }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.PROMO_STATUS' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body ud-chart-body-donut">
+              <canvas #statusChart [attr.aria-label]="'PLATFORM_DASHBOARD.PROMO_STATUS' | translate"></canvas>
+            </div>
+          </article>
+        </section>
+
+        <section class="ud-chart-grid">
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.ACQUISITION' | translate }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.COMPANIES_REGISTERED' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body">
+              <canvas #companiesChart [attr.aria-label]="'PLATFORM_DASHBOARD.COMPANIES_PERIOD_ARIA' | translate"></canvas>
+            </div>
+          </article>
+
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.OFFERS' | translate }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.PROMOS_CREATED' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body">
+              <canvas #promotionsChart [attr.aria-label]="'PLATFORM_DASHBOARD.PROMOS_PERIOD_ARIA' | translate"></canvas>
+            </div>
+          </article>
+        </section>
+
+        <section class="ud-chart-grid">
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.REVENUE_KICKER' | translate }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.PAID_INVOICES' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body">
+              <canvas #revenueChart [attr.aria-label]="'PLATFORM_DASHBOARD.REVENUE_ARIA' | translate"></canvas>
+            </div>
+          </article>
+
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'NAV.PLANS' | translate }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.SUBS_BY_PLAN' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body ud-chart-body-donut">
+              <canvas #plansChart [attr.aria-label]="'PLATFORM_DASHBOARD.PLANS_ARIA' | translate"></canvas>
+            </div>
+          </article>
+        </section>
+
+        <section class="ud-chart-grid">
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.RANKING' | translate }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.TOP_PROMOS' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body">
+              <canvas #topPromotionsChart [attr.aria-label]="'PLATFORM_DASHBOARD.TOP_PROMOS_ARIA' | translate"></canvas>
+            </div>
+          </article>
+
+          <article class="ud-panel">
+            <div class="ud-panel-header">
+              <div>
+                <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.COUPON_USAGE' | translate }}</p>
+                <h2>{{ 'PLATFORM_DASHBOARD.TOP_COUPONS' | translate }}</h2>
+              </div>
+            </div>
+            <div class="ud-chart-body">
+              <canvas #topCouponsChart [attr.aria-label]="'PLATFORM_DASHBOARD.TOP_COUPONS_ARIA' | translate"></canvas>
+            </div>
+          </article>
+        </section>
+
+        <section class="ud-panel">
+          <div class="ud-panel-header">
+            <div>
+              <p class="ud-chart-kicker">{{ 'PLATFORM_DASHBOARD.DECISION_READING' | translate }}</p>
+              <h2>{{ 'PLATFORM_DASHBOARD.COMPANIES_TO_WATCH' | translate }}</h2>
+            </div>
+          </div>
+
+          <div class="ud-insights-grid">
+            <div>
+              <h3>{{ 'PLATFORM_DASHBOARD.PROMO_VOLUME' | translate }}</h3>
+              <ul class="ud-ranking-list">
+                <li *ngFor="let row of topPromotionsRows">
+                  <span>{{ row.label }}</span>
+                  <strong>{{ row.value | number }} {{ 'PLATFORM_DASHBOARD.PROMOS_SHORT' | translate }}</strong>
+                </li>
+                <li *ngIf="topPromotionsRows.length === 0" class="ud-empty-row">{{ 'PLATFORM_DASHBOARD.NO_PROMO_BASE' | translate }}</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>{{ 'PLATFORM_DASHBOARD.COUPON_USAGE_TITLE' | translate }}</h3>
+              <ul class="ud-ranking-list">
+                <li *ngFor="let row of topCouponsRows">
+                  <span>{{ row.label }}</span>
+                  <strong>{{ row.value | number }} {{ 'PLATFORM_DASHBOARD.USAGES' | translate }}</strong>
+                </li>
+                <li *ngIf="topCouponsRows.length === 0" class="ud-empty-row">{{ 'PLATFORM_DASHBOARD.NO_COUPON_USED' | translate }}</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </ng-container>
+    </main>
   </div>
 </section>

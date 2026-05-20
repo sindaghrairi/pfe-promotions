@@ -33,7 +33,10 @@
     "@angular/ssr": "^20.3.10",
     "@fontsource/outfit": "^5.2.8",
     "@fontsource/sora": "^5.2.8",
+    "apexcharts": "^5.11.0",
+    "chart.js": "^4.4.9",
     "express": "^5.1.0",
+    "ng-apexcharts": "^2.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

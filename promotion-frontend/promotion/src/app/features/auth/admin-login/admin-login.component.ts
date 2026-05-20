@@ -6,11 +6,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { LoginRequest } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './admin-login.component.html',
   styleUrl: './admin-login.component.css'
 })
@@ -54,20 +56,14 @@ export class AdminLoginComponent {
     this.authService.adminLogin(payload).subscribe({
       next: () => {
         this.loading = false;
-        const selectedCompanySlug = this.extractCompanySlug(this.route.snapshot.queryParamMap.get('redirectTo'));
-        if (selectedCompanySlug) {
-          this.router.navigate(['/entreprises', selectedCompanySlug]);
+        const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+        if (redirectTo === '/dashboard') {
+          this.router.navigate(['/dashboard']);
           return;
         }
 
         this.authService.me().subscribe({
-          next: (response) => {
-            const connectedCompanySlug = (response.companySlug ?? '').trim();
-            if (connectedCompanySlug) {
-              this.router.navigate(['/entreprises', connectedCompanySlug]);
-              return;
-            }
-
+          next: () => {
             this.router.navigate(['/dashboard']);
           },
           error: () => {
@@ -118,12 +114,4 @@ export class AdminLoginComponent {
     return 'Echec de connexion admin. Verifiez vos identifiants.';
   }
 
-  private extractCompanySlug(redirectTo: string | null): string {
-    if (!redirectTo || !redirectTo.startsWith('/entreprises/')) {
-      return '';
-    }
-
-    const segments = redirectTo.split('/').filter(Boolean);
-    return segments.length >= 2 ? segments[1] : '';
-  }
 }

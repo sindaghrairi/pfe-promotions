@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { PromoStatus, PromoType, PromotionPayload } from '../../core/models/promo.model';
+import { TranslationService } from '../../core/i18n/translation.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { PromotionService } from '../../core/services/promotion.service';
 
 @Component({
   selector: 'app-add-promo',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, TranslatePipe],
   templateUrl: './add-promo.component.html',
   styleUrl: './add-promo.component.css'
 })
@@ -17,6 +19,7 @@ export class AddPromoComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly promotionService = inject(PromotionService);
+  private readonly translations = inject(TranslationService);
 
   readonly companySlug = (this.route.snapshot.paramMap.get('slug') ?? '').toLowerCase();
   readonly companyName = this.slugToLabel(this.companySlug);
@@ -25,17 +28,17 @@ export class AddPromoComponent {
   successMessage = '';
   errorMessage = '';
 
-  readonly statusOptions: Array<{ value: PromoStatus; label: string }> = [
-    { value: 'DRAFT', label: 'Brouillon' },
-    { value: 'ACTIVE', label: 'Active' },
-    { value: 'SCHEDULED', label: 'Planifiee' },
-    { value: 'EXPIRED', label: 'Expiree' }
+  readonly statusOptions: Array<{ value: PromoStatus; labelKey: string }> = [
+    { value: 'DRAFT', labelKey: 'PROMOS.STATUS_DRAFT' },
+    { value: 'ACTIVE', labelKey: 'PROMOS.STATUS_ACTIVE' },
+    { value: 'SCHEDULED', labelKey: 'PROMOS.STATUS_SCHEDULED' },
+    { value: 'EXPIRED', labelKey: 'PROMOS.STATUS_EXPIRED' }
   ];
 
-  readonly typeOptions: Array<{ value: PromoType; label: string }> = [
-    { value: 'PERCENT', label: 'Pourcentage' },
-    { value: 'FIXED', label: 'Montant fixe' },
-    { value: 'BOGO', label: '1 achete = 1 offert' }
+  readonly typeOptions: Array<{ value: PromoType; labelKey: string }> = [
+    { value: 'PERCENT', labelKey: 'PROMOS.MANAGEMENT.TYPE_PERCENT' },
+    { value: 'FIXED', labelKey: 'PROMOS.MANAGEMENT.TYPE_FIXED' },
+    { value: 'BOGO', labelKey: 'PROMOS.MANAGEMENT.TYPE_BOGO' }
   ];
 
   readonly categories = ['Mode', 'Beaute', 'Maison', 'Sport', 'Alimentaire', 'Quotidien'];
@@ -57,17 +60,17 @@ export class AddPromoComponent {
     this.successMessage = '';
 
     if (!this.companySlug) {
-      this.errorMessage = 'Entreprise invalide.';
+      this.errorMessage = this.t('PROMOS.MANAGEMENT.ERROR_INVALID_COMPANY');
       return;
     }
 
     if (!this.formModel.title || !this.formModel.startDate || !this.formModel.endDate) {
-      this.errorMessage = 'Veuillez remplir les champs obligatoires.';
+      this.errorMessage = this.t('PROMOS.MANAGEMENT.ERROR_REQUIRED_FIELDS');
       return;
     }
 
     if (this.formModel.status === 'ACTIVE' && !this.formModel.code.trim()) {
-      this.errorMessage = 'Le code coupon est obligatoire pour une promotion active.';
+      this.errorMessage = this.t('PROMOS.MANAGEMENT.ERROR_ACTIVE_COUPON');
       return;
     }
 
@@ -90,16 +93,29 @@ export class AddPromoComponent {
     this.promotionService.createPromotion(this.companySlug, payload).subscribe({
       next: () => {
         this.submitting = false;
-        this.successMessage = 'Promotion ajoutee avec succes.';
+        this.successMessage = this.t('PROMOS.MANAGEMENT.SUCCESS_CREATED');
         setTimeout(() => {
           this.router.navigate([`/entreprises/${this.companySlug}`]);
         }, 500);
       },
       error: () => {
         this.submitting = false;
-        this.errorMessage = "Impossible d'ajouter la promotion.";
+        this.errorMessage = this.t('PROMOS.MANAGEMENT.ERROR_CREATE');
       }
     });
+  }
+
+  categoryLabel(category: string): string {
+    const keyByCategory: Record<string, string> = {
+      mode: 'PROMOS.CATEGORY_FASHION',
+      beaute: 'PROMOS.CATEGORY_BEAUTY',
+      maison: 'PROMOS.CATEGORY_HOME',
+      sport: 'PROMOS.CATEGORY_SPORT',
+      alimentaire: 'PROMOS.CATEGORY_FOOD',
+      quotidien: 'PROMOS.CATEGORY_DAILY'
+    };
+    const key = keyByCategory[this.normalizeText(category)];
+    return key ? this.t(key) : category;
   }
 
   cancel(): void {
@@ -113,7 +129,7 @@ export class AddPromoComponent {
 
   private slugToLabel(slug: string): string {
     if (!slug) {
-      return 'Entreprise';
+      return this.t('TABLE.COMPANY');
     }
 
     return slug
@@ -121,5 +137,16 @@ export class AddPromoComponent {
       .filter(Boolean)
       .map((chunk) => chunk.charAt(0).toUpperCase() + chunk.slice(1))
       .join(' ');
+  }
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.translations.translate(key, params);
+  }
+
+  private normalizeText(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
   }
 }

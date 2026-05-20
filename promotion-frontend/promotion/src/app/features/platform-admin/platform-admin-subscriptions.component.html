@@ -1,43 +1,250 @@
-<section class="platform-page-shell">
-  <header class="page-topbar">
-    <div>
-      <h1>Abonnements entreprises</h1>
-      <p>Suivi global des abonnements actifs et inactifs.</p>
+<section class="ud-page">
+
+  <!-- ── Sidebar ── -->
+  <aside class="ud-nav">
+    <div class="ud-nav-brand">
+      <div class="ud-nav-mark">A</div>
+      <div>
+        <p class="ud-nav-name">{{ 'COMMON.BRAND' | translate }}</p>
+        <p class="ud-nav-tier">{{ 'PLATFORM_ADMIN.TIER' | translate }}</p>
+      </div>
     </div>
-    <a routerLink="/platform-admin/dashboard">Retour dashboard</a>
-  </header>
 
-  <p class="state" *ngIf="loading">Chargement des abonnements...</p>
-  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <nav class="ud-nav-links" aria-label="Navigation admin">
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        {{ 'NAV.DASHBOARD' | translate }}
+      </a>
+      <a routerLink="/platform-admin/subscriptions" class="ud-nav-link ud-nav-active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        {{ 'NAV.SUBSCRIPTIONS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/plans" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        {{ 'NAV.PLANS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/users" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ 'NAV.USERS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/invoices" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        {{ 'NAV.INVOICES' | translate }}
+      </a>
+    </nav>
 
-  <div class="table-wrap" *ngIf="!loading && subscriptions.length">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Entreprise</th>
-          <th>Email contact</th>
-          <th>Plan</th>
-          <th>Actif</th>
-          <th>Date creation</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of subscriptions">
-          <td>{{ item.id }}</td>
-          <td>{{ item.companyName }}</td>
-          <td>{{ item.contactEmail }}</td>
-          <td>{{ item.plan }}</td>
-          <td>
-            <span [class.badge-ok]="item.active" [class.badge-ko]="!item.active">
-              {{ item.active ? 'Oui' : 'Non' }}
-            </span>
-          </td>
-          <td>{{ item.createdAt | date: 'short' }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="ud-nav-foot">
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        {{ 'PLATFORM_ADMIN.HELP_CENTER' | translate }}
+      </a>
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        {{ 'PLATFORM_ADMIN.ACCOUNT' | translate }}
+      </a>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="ud-main">
+
+    <!-- Top bar -->
+    <header class="ud-topbar">
+      <p class="ud-topbar-logo">PromoLink</p>
+      <div class="ud-topbar-actions">
+        <app-language-switcher />
+        <button
+          type="button"
+          class="ud-theme-toggle"
+          [class.is-dark]="(isDark$ | async)"
+          [attr.aria-pressed]="(isDark$ | async) ? 'true' : 'false'"
+          [attr.aria-label]="'PLATFORM_ADMIN.THEME_TOGGLE' | translate"
+          (click)="toggleTheme()">
+          <svg class="ud-toggle-icon ud-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12 4.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0V5.5a1 1 0 0 1 1-1Zm0 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.5-3.2a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1ZM5.5 12.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1Zm11.9-6.9a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4ZM4.6 18.4a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4Zm14.2 1a1 1 0 0 1-1.4 0l-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1 0 1.4ZM6 6a1 1 0 0 1-1.4 0l-1-1A1 1 0 1 1 5 3.6l1 1A1 1 0 0 1 6 6Z" />
+          </svg>
+          <span class="ud-toggle-thumb"></span>
+          <svg class="ud-toggle-icon ud-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a.9.9 0 0 0-1.1 1.1A10.3 10.3 0 1 0 19.3 15.7a.9.9 0 0 0 1.1-1.1Z" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="ud-content">
+
+      <!-- Hero -->
+      <div class="ud-hero">
+        <p class="ud-kicker">{{ 'PLATFORM_SUBSCRIPTIONS.KICKER' | translate }}</p>
+        <h1>{{ 'PLATFORM_SUBSCRIPTIONS.TITLE' | translate }}</h1>
+        <p class="ud-hero-sub">{{ 'PLATFORM_SUBSCRIPTIONS.SUBTITLE' | translate }}</p>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="ud-kpi-grid" *ngIf="!loading">
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-indigo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_SUBSCRIPTIONS.KPI_TOTAL' | translate }}</p>
+            <strong class="ud-kpi-value">{{ subscriptions.length }}</strong>
+            <p class="ud-kpi-trend ud-trend-neutral">— {{ 'PLATFORM_SUBSCRIPTIONS.KPI_ALL_PLANS' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-violet">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'COMMON.ACTIVE_PLURAL' | translate }}</p>
+            <strong class="ud-kpi-value">{{ activeCount }}</strong>
+            <p class="ud-kpi-trend ud-trend-up">↑ {{ 'PLATFORM_SUBSCRIPTIONS.ACTIVE_HINT' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-emerald">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'COMMON.INACTIVE_PLURAL' | translate }}</p>
+            <strong class="ud-kpi-value">{{ inactiveCount }}</strong>
+            <p class="ud-kpi-trend ud-trend-down">↓ {{ 'PLATFORM_SUBSCRIPTIONS.INACTIVE_HINT' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-amber">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'NAV.PLANS' | translate }}</p>
+            <strong class="ud-kpi-value">{{ planOptions.length }}</strong>
+            <p class="ud-kpi-trend ud-trend-neutral">— {{ 'PLATFORM_SUBSCRIPTIONS.OFFERS_AVAILABLE' | translate }}</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Directory panel -->
+      <div class="ud-panel">
+
+        <!-- Toolbar -->
+        <div class="ud-toolbar">
+          <label class="ud-search-bar" [attr.aria-label]="'PLATFORM_SUBSCRIPTIONS.SEARCH_LABEL' | translate">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input
+              type="search"
+              [ngModel]="searchTerm"
+              (ngModelChange)="onSearchTermChange($event)"
+              [placeholder]="'PLATFORM_SUBSCRIPTIONS.SEARCH_PLACEHOLDER' | translate" />
+          </label>
+
+          <div class="toolbar-actions">
+            <label>
+              <span>{{ 'TABLE.PLAN' | translate }}</span>
+              <select [ngModel]="planFilter" (ngModelChange)="setPlanFilter($event)">
+                <option value="ALL">{{ 'COMMON.ALL' | translate }}</option>
+                <option *ngFor="let plan of planOptions" [value]="plan">{{ plan }}</option>
+              </select>
+            </label>
+
+            <label>
+              <span>{{ 'TABLE.STATE' | translate }}</span>
+              <select [ngModel]="activeFilter" (ngModelChange)="setActiveFilter($event)">
+                <option value="ALL">{{ 'COMMON.ALL' | translate }}</option>
+                <option value="ACTIVE">{{ 'COMMON.ACTIVE' | translate }}</option>
+                <option value="INACTIVE">{{ 'COMMON.INACTIVE' | translate }}</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <!-- States -->
+        <p class="ud-state" *ngIf="loading">{{ 'PLATFORM_SUBSCRIPTIONS.LOADING' | translate }}</p>
+        <p class="ud-state ud-state-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <!-- Table -->
+        <div class="ud-table-wrap" *ngIf="!loading && pagedSubscriptions.length">
+          <table class="ud-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>{{ 'TABLE.COMPANY' | translate }}</th>
+                <th>{{ 'TABLE.CONTACT_EMAIL' | translate }}</th>
+                <th>PLAN</th>
+                <th>{{ 'TABLE.STATE' | translate }}</th>
+                <th>{{ 'TABLE.CREATED_AT' | translate }}</th>
+                <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of pagedSubscriptions">
+                <td>
+                  <span class="ud-id-badge">#SB-{{ item.id }}</span>
+                </td>
+                <td>
+                  <p class="ud-user-name">{{ item.companyName }}</p>
+                </td>
+                <td>
+                  <p class="ud-user-email">{{ item.contactEmail }}</p>
+                </td>
+                <td>
+                  <select
+                    #planSelect
+                    class="ud-table-select"
+                    [disabled]="editingId !== item.id"
+                    [(ngModel)]="item.plan">
+                    <option *ngFor="let plan of planOptions" [value]="plan">{{ plan }}</option>
+                  </select>
+                </td>
+                <td>
+                  <select
+                    class="ud-table-select"
+                    [disabled]="editingId !== item.id"
+                    [(ngModel)]="item.active">
+                    <option [ngValue]="true">{{ 'COMMON.ACTIVE' | translate }}</option>
+                    <option [ngValue]="false">{{ 'COMMON.INACTIVE' | translate }}</option>
+                  </select>
+                </td>
+                <td>
+                  <span class="ud-date-pill">{{ item.createdAt | date: 'MMM d, y, h:mm a' }}</span>
+                </td>
+                <td>
+                  <div class="ud-action-buttons">
+                    <button
+                      type="button"
+                      class="ud-edit-btn"
+                      (click)="activateEdit(item.id, planSelect)"
+                      [title]="('COMMON.EDIT' | translate) + ' ' + item.companyName"
+                      [attr.aria-label]="'PLATFORM_SUBSCRIPTIONS.EDIT_ARIA' | translate">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="ud-state" *ngIf="!loading && !filteredSubscriptions.length">{{ 'PLATFORM_SUBSCRIPTIONS.EMPTY' | translate }}</p>
+
+        <footer class="ud-table-foot" *ngIf="!loading && filteredSubscriptions.length">
+          <p>{{ 'PAGINATION.SHOWING' | translate }} <strong>{{ startItem }}</strong> {{ 'PAGINATION.TO' | translate }} <strong>{{ endItem }}</strong> {{ 'PAGINATION.ON' | translate }} <strong>{{ filteredSubscriptions.length }}</strong> {{ 'PLATFORM_SUBSCRIPTIONS.ITEMS' | translate }}</p>
+          <nav class="ud-pagination" [attr.aria-label]="'PAGINATION.LABEL' | translate">
+            <button type="button" class="ud-page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+            <button
+              type="button"
+              class="ud-page-btn"
+              *ngFor="let item of paginationItems"
+              [class.ud-page-active]="item === currentPage"
+              [disabled]="item === '...'"
+              (click)="goToPageItem(item)">{{ item }}</button>
+            <button type="button" class="ud-page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+          </nav>
+        </footer>
+      </div>
+    </main>
   </div>
-
-  <p class="state" *ngIf="!loading && !subscriptions.length">Aucun abonnement trouve.</p>
 </section>

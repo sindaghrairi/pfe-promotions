@@ -1,63 +1,94 @@
 <section class="auth-page">
-  <div class="bg-orb orb-one" aria-hidden="true"></div>
-  <div class="bg-orb orb-two" aria-hidden="true"></div>
+  <header class="mini-topbar">
+    <p class="top-brand"><span>P</span> {{ 'COMMON.BRAND' | translate }}</p>
+    <nav aria-label="Navigation rapide admin">
+      <app-language-switcher />
+      <a routerLink="/admin/login" [queryParams]="authQueryParams">{{ 'ADMIN_SUBSCRIBE.ADMIN_LOGIN' | translate }}</a>
+      <a class="pill-link" routerLink="/admin/subscribe" [queryParams]="authQueryParams">{{ 'ADMIN_SUBSCRIBE.ADMIN_SUBSCRIPTION' | translate }}</a>
+    </nav>
+  </header>
 
   <div class="auth-layout">
-    <aside class="auth-showcase" aria-hidden="true">
-      <p class="showcase-kicker">PROMOLINK BUSINESS</p>
-      <h2>Prenez le controle de vos campagnes en 3 etapes</h2>
-      <p>Configurez votre espace marchand, activez le paiement et publiez vos offres en quelques minutes.</p>
-      <div class="showcase-metrics">
-        <article>
-          <strong>+1200</strong>
-          <span>promotions lancees</span>
+    <aside class="auth-intro" aria-hidden="true">
+      <p class="brand-row"><span class="brand-mark">P</span> {{ 'COMMON.BRAND' | translate }}</p>
+      <p class="sale-chip">{{ 'ADMIN_SUBSCRIBE.STEP' | translate }}</p>
+      <h1>{{ 'ADMIN_SUBSCRIBE.HERO_TITLE' | translate }}</h1>
+      <p class="intro-copy">
+        {{ 'ADMIN_SUBSCRIBE.HERO_TEXT' | translate }}
+      </p>
+
+      <div class="feature-list">
+        <article class="feature-item">
+          <span class="feature-icon growth">BIZ</span>
+          <div>
+            <h3>{{ 'ADMIN_SUBSCRIBE.FEATURE_PROFILE_TITLE' | translate }}</h3>
+            <p>{{ 'ADMIN_SUBSCRIBE.FEATURE_PROFILE_TEXT' | translate }}</p>
+          </div>
         </article>
-        <article>
-          <strong>98%</strong>
-          <span>taux de satisfaction</span>
+
+        <article class="feature-item">
+          <span class="feature-icon ai">PAY</span>
+          <div>
+            <h3>{{ 'ADMIN_SUBSCRIBE.FEATURE_PAYMENT_TITLE' | translate }}</h3>
+            <p>{{ 'ADMIN_SUBSCRIBE.FEATURE_PAYMENT_TEXT' | translate }}</p>
+          </div>
         </article>
       </div>
     </aside>
 
     <div class="auth-card">
-      <p class="eyebrow">ETAPE 1 SUR 3</p>
-      <h1>Abonnement Admin Societe</h1>
-      <p class="subtitle">Renseignez votre societe puis passez au choix du type de paiement.</p>
-
-      <div class="step-strip" aria-label="Progression inscription">
-        <span class="step active">Societe</span>
-        <span class="step">Paiement</span>
-        <span class="step">Validation</span>
+      <div class="form-head">
+        <h2>{{ 'ADMIN_SUBSCRIBE.FORM_TITLE' | translate }}</h2>
+        <p>{{ 'ADMIN_SUBSCRIBE.FORM_SUBTITLE' | translate }}</p>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="goToPaymentTypes()" novalidate>
-        <div class="field-group">
-          <label for="companyName">Nom de la societe</label>
-          <input id="companyName" type="text" formControlName="companyName" placeholder="Nom de votre societe" />
-          <small class="error" *ngIf="hasError('companyName', 'required')">Le nom de la societe est obligatoire.</small>
-          <small class="error" *ngIf="hasError('companyName', 'minlength')">2 caracteres minimum.</small>
+        <div class="field-block">
+          <label for="companyName">{{ 'ADMIN_SUBSCRIBE.COMPANY_NAME' | translate }}</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('companyName')">
+            <span class="field-icon" aria-hidden="true">B</span>
+            <input id="companyName" type="text" formControlName="companyName" [placeholder]="'ADMIN_SUBSCRIBE.COMPANY_PLACEHOLDER' | translate" />
+          </div>
+          <small class="error" *ngIf="hasError('companyName', 'required')">{{ 'ADMIN_SUBSCRIBE.COMPANY_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('companyName', 'minlength')">{{ 'ADMIN_SUBSCRIBE.COMPANY_MIN' | translate }}</small>
         </div>
 
-        <div class="field-group">
-          <label for="contactEmail">Email de contact</label>
-          <div class="field-shell">
-            <span class="field-icon" aria-hidden="true">✉</span>
+        <div class="field-block">
+          <label for="contactEmail">{{ 'ADMIN_SUBSCRIBE.CONTACT_EMAIL' | translate }}</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('contactEmail')">
+            <span class="field-icon" aria-hidden="true">@</span>
             <input id="contactEmail" type="email" formControlName="contactEmail" placeholder="contact@societe.com" />
           </div>
-          <small class="error" *ngIf="hasError('contactEmail', 'required')">L'email est obligatoire.</small>
-          <small class="error" *ngIf="hasError('contactEmail', 'email')">Format email invalide.</small>
+          <small class="error" *ngIf="hasError('contactEmail', 'required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('contactEmail', 'email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</small>
         </div>
 
         <button type="submit">
-          <span>Passer au type de paiement</span>
+          <span>{{ 'ADMIN_SUBSCRIBE.CONTINUE_PAYMENT' | translate }}</span>
           <span aria-hidden="true">→</span>
         </button>
       </form>
 
       <p class="switch-link">
-        Deja un compte admin ?
-        <a routerLink="/admin/login">Se connecter</a>
+        {{ 'ADMIN_SUBSCRIBE.ALREADY_ADMIN' | translate }}
+        <a routerLink="/admin/login" [queryParams]="authQueryParams">{{ 'AUTH.LOGIN_BUTTON' | translate }}</a>
+      </p>
+
+      <p class="switch-link">
+        {{ 'AUTH.BACK_SPACE_QUESTION' | translate }}
+        <a routerLink="/espace">{{ 'AUTH.CHOOSE_SPACE' | translate }}</a>
       </p>
     </div>
   </div>
+
+  <footer class="page-footer" aria-label="Liens footer admin">
+    <p class="footer-brand">{{ 'COMMON.BRAND' | translate }}</p>
+    <div class="footer-links">
+      <a routerLink="/espace">{{ 'AUTH.PRIVACY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.TERMS' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.SECURITY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.STATUS' | translate }}</a>
+    </div>
+    <p class="copyright">© 2026 {{ 'COMMON.BRAND' | translate }}. {{ 'AUTH.RIGHTS' | translate }}</p>
+  </footer>
 </section>

@@ -1,6 +1,7 @@
 package com.pfe.promotionplatform.controller;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -23,6 +24,7 @@ import com.pfe.promotionplatform.dto.AdminSubscribeRequest;
 import com.pfe.promotionplatform.dto.AuthResponse;
 import com.pfe.promotionplatform.dto.LoginRequest;
 import com.pfe.promotionplatform.dto.MessageResponse;
+import com.pfe.promotionplatform.dto.PlatformAdminPlanDto;
 import com.pfe.promotionplatform.dto.RegisterRequest;
 import com.pfe.promotionplatform.service.AuthService;
 
@@ -103,5 +105,10 @@ public class AuthController {
     @GetMapping("/admin/plan/{id}")
     public ResponseEntity<Map<String, Object>> getPlanById(@PathVariable Long id) {
     return ResponseEntity.ok(authService.getPlanById(id));
+    }
+
+    @GetMapping("/admin/plans")
+    public ResponseEntity<List<PlatformAdminPlanDto>> getActivePlans() {
+        return ResponseEntity.ok(authService.getActivePlans());
     }
 }

@@ -3,6 +3,8 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 type BillingCycle = 'MONTHLY' | 'YEARLY';
 type PlanKey = 'BASIC' | 'STANDARD' | 'PREMIUM';
@@ -10,7 +12,7 @@ type PlanKey = 'BASIC' | 'STANDARD' | 'PREMIUM';
 @Component({
   selector: 'app-admin-invoice',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './admin-invoice.component.html',
   styleUrl: './admin-invoice.component.css'
 })
@@ -18,6 +20,7 @@ export class AdminInvoiceComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly translations = inject(TranslationService);
 
   companyName = 'Societe';
   email = '';
@@ -86,7 +89,9 @@ export class AdminInvoiceComponent {
   }
 
   get cycleLabel(): string {
-    return this.billingCycle === 'YEARLY' ? 'Annuel' : 'Mensuel';
+    return this.billingCycle === 'YEARLY'
+      ? this.translations.translate('PAYMENT.YEARLY')
+      : this.translations.translate('PAYMENT.MONTHLY');
   }
 
   get issuedDateLabel(): string {

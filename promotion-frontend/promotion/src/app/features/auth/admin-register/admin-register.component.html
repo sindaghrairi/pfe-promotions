@@ -1,75 +1,157 @@
 <section class="auth-page">
-  <div class="bg-orb orb-one" aria-hidden="true"></div>
-  <div class="bg-orb orb-two" aria-hidden="true"></div>
+  <header class="mini-topbar">
+    <p class="top-brand"><span>P</span> Promotion Platform</p>
+    <nav aria-label="Navigation rapide admin">
+      <app-language-switcher />
+      <a routerLink="/admin/login" [queryParams]="{ redirectTo: redirectTo }">{{ 'ADMIN_SUBSCRIBE.ADMIN_LOGIN' | translate }}</a>
+      <a class="pill-link" routerLink="/admin/register" [queryParams]="{ redirectTo: redirectTo }">{{ 'ADMIN_REGISTER.ADMIN_REGISTER' | translate }}</a>
+    </nav>
+  </header>
 
   <div class="auth-layout">
-    <aside class="auth-showcase" aria-hidden="true">
-      <p class="showcase-kicker">VALIDATION FINALE</p>
-      <h2>Creez le compte admin pour piloter votre espace societe</h2>
-      <p>Utilisez l'email abonne, definissez un mot de passe securise et connectez-vous a votre dashboard.</p>
-      <div class="showcase-list">
-        <p>Acces securise</p>
-        <p>Gestion des promotions</p>
-        <p>Suivi des performances</p>
+    <aside class="auth-intro" aria-hidden="true">
+      <p class="brand-row"><span class="brand-mark">P</span> Promotion Platform</p>
+      <p class="sale-chip">{{ 'ADMIN_REGISTER.CHIP' | translate }}</p>
+      <h1>{{ 'ADMIN_REGISTER.HERO_TITLE' | translate }}</h1>
+      <p class="intro-copy">
+        {{ 'ADMIN_REGISTER.HERO_TEXT' | translate }}
+      </p>
+
+      <div class="feature-list">
+        <article class="feature-item">
+          <span class="feature-icon growth">SEC</span>
+          <div>
+            <h3>{{ 'ADMIN_REGISTER.FEATURE_ACCESS_TITLE' | translate }}</h3>
+            <p>{{ 'ADMIN_REGISTER.FEATURE_ACCESS_TEXT' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="feature-item">
+          <span class="feature-icon ai">PRO</span>
+          <div>
+            <h3>{{ 'ADMIN_REGISTER.FEATURE_CONTROL_TITLE' | translate }}</h3>
+            <p>{{ 'ADMIN_REGISTER.FEATURE_CONTROL_TEXT' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="feature-item">
+          <span class="feature-icon action">KPI</span>
+          <div>
+            <h3>{{ 'ADMIN_REGISTER.FEATURE_RESULTS_TITLE' | translate }}</h3>
+            <p>{{ 'ADMIN_REGISTER.FEATURE_RESULTS_TEXT' | translate }}</p>
+          </div>
+        </article>
       </div>
     </aside>
 
     <div class="auth-card">
-      <p class="eyebrow">ETAPE 3 SUR 3</p>
-      <h1>Inscription Admin Societe</h1>
-      <p class="subtitle">Creez votre compte admin avec l'email abonne.</p>
-
-      <div class="step-strip" aria-label="Progression inscription">
-        <span class="step done">Societe</span>
-        <span class="step done">Paiement</span>
-        <span class="step active">Validation</span>
+      <div class="form-head">
+        <h2>{{ 'ADMIN_REGISTER.FORM_TITLE' | translate }}</h2>
+        <p>{{ 'ADMIN_REGISTER.FORM_SUBTITLE' | translate }}</p>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <div class="field-group">
-          <label for="fullName">Nom complet</label>
-          <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
-          <small class="error" *ngIf="hasError('fullName', 'required')">Le nom complet est obligatoire.</small>
-          <small class="error" *ngIf="hasError('fullName', 'minlength')">3 caracteres minimum.</small>
+        <div class="field-block">
+          <label for="fullName">{{ 'PLATFORM_USERS.FULL_NAME' | translate }}</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('fullName')">
+            <span class="field-icon" aria-hidden="true">U</span>
+            <input id="fullName" type="text" formControlName="fullName" [placeholder]="'ADMIN_REGISTER.FULL_NAME_PLACEHOLDER' | translate" />
+          </div>
+          <small class="error" *ngIf="hasError('fullName', 'required')">{{ 'ADMIN_REGISTER.FULL_NAME_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('fullName', 'minlength')">{{ 'PLATFORM_USERS.NAME_MIN' | translate }}</small>
         </div>
 
-        <div class="field-group">
-          <label for="companyName">Nom de la societe</label>
-          <input id="companyName" type="text" formControlName="companyName" placeholder="Nom exact de la societe" />
-          <small class="error" *ngIf="hasError('companyName', 'required')">Le nom de la societe est obligatoire.</small>
+        <div class="field-block">
+          <label for="companyName">{{ 'ADMIN_SUBSCRIBE.COMPANY_NAME' | translate }}</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('companyName')">
+            <span class="field-icon" aria-hidden="true">B</span>
+            <input id="companyName" type="text" formControlName="companyName" [placeholder]="'ADMIN_REGISTER.COMPANY_PLACEHOLDER' | translate" />
+          </div>
+          <small class="error" *ngIf="hasError('companyName', 'required')">{{ 'ADMIN_SUBSCRIBE.COMPANY_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('companyName', 'minlength')">{{ 'ADMIN_SUBSCRIBE.COMPANY_MIN' | translate }}</small>
         </div>
 
-        <div class="field-group">
-          <label for="email">Email admin</label>
-          <input id="email" type="email" formControlName="email" placeholder="admin@societe.com" />
-          <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
-          <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+        <div class="field-block">
+          <label for="email">{{ 'ADMIN_REGISTER.ADMIN_EMAIL' | translate }}</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('email')">
+            <span class="field-icon" aria-hidden="true">@</span>
+            <input id="email" type="email" formControlName="email" placeholder="admin@societe.com" />
+          </div>
+          <small class="error" *ngIf="hasError('email', 'required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('email', 'email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</small>
         </div>
 
-        <div class="field-group">
-          <label for="password">Mot de passe</label>
-          <input id="password" type="password" formControlName="password" placeholder="Choisissez un mot de passe" />
-          <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
-          <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+        <div class="field-block">
+          <label for="password">{{ 'COMMON.PASSWORD' | translate }}</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('password')">
+            <span class="field-icon" aria-hidden="true">*</span>
+            <input id="password" type="password" formControlName="password" [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate" />
+          </div>
+
+          <div class="password-strength" *ngIf="form.controls.password.value">
+            <div class="strength-track"><span [style.width.%]="passwordStrengthPercent"></span></div>
+            <p>
+              {{ 'ADMIN_REGISTER.STRENGTH' | translate }}:
+              <strong [class.weak]="passwordStrengthPercent < 45" [class.medium]="passwordStrengthPercent >= 45 && passwordStrengthPercent < 75" [class.strong]="passwordStrengthPercent >= 75">
+                {{ passwordStrengthLabel }}
+              </strong>
+            </p>
+          </div>
+
+          <small class="error" *ngIf="hasError('password', 'required')">{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('password', 'minlength')">{{ 'AUTH.PASSWORD_MIN' | translate }}</small>
         </div>
 
-        <div class="field-group">
-          <label for="confirmPassword">Confirmer le mot de passe</label>
-          <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Confirmez le mot de passe" />
-          <small class="error" *ngIf="hasError('confirmPassword', 'required')">Confirmation obligatoire.</small>
+        <div class="field-block">
+          <label for="confirmPassword">{{ 'ADMIN_REGISTER.CONFIRM_PASSWORD' | translate }}</label>
+          <div class="field-shell" [class.is-valid]="isConfirmPasswordValid">
+            <span class="field-icon" aria-hidden="true">*</span>
+            <input id="confirmPassword" type="password" formControlName="confirmPassword" [placeholder]="'ADMIN_REGISTER.CONFIRM_PASSWORD_PLACEHOLDER' | translate" />
+          </div>
+          <small class="error" *ngIf="hasError('confirmPassword', 'required')">{{ 'ADMIN_REGISTER.CONFIRM_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="form.controls.confirmPassword.touched && !isConfirmPasswordValid && form.controls.confirmPassword.value">{{ 'ADMIN_REGISTER.PASSWORD_MISMATCH' | translate }}</small>
         </div>
+
+        <label class="terms-line" for="terms-check">
+          <input id="terms-check" type="checkbox" />
+          <span>{{ 'ADMIN_REGISTER.ACCEPT_TERMS' | translate }}</span>
+        </label>
 
         <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
         <button type="submit" [disabled]="loading">
-          {{ loading ? 'Creation en cours...' : 'Creer le compte admin' }}
+          <span class="btn-loader" *ngIf="loading" aria-hidden="true"></span>
+          <span>{{ loading ? ('ADMIN_REGISTER.CREATING' | translate) : ('ADMIN_REGISTER.CREATE_BUTTON' | translate) }}</span>
         </button>
+
       </form>
 
       <p class="switch-link">
-        Etape 1 pas encore faite ?
-        <a routerLink="/admin/subscribe">Commencer par abonnement</a>
+        {{ 'ADMIN_SUBSCRIBE.ALREADY_ADMIN' | translate }}
+        <a routerLink="/admin/login" [queryParams]="{ redirectTo: redirectTo }">{{ 'AUTH.LOGIN_BUTTON' | translate }}</a>
+      </p>
+
+      <p class="switch-link">
+        {{ 'ADMIN_REGISTER.STEP_ONE_MISSING' | translate }}
+        <a routerLink="/admin/subscribe" [queryParams]="{ redirectTo: redirectTo }">{{ 'ADMIN_REGISTER.START_SUBSCRIPTION' | translate }}</a>
+      </p>
+
+      <p class="switch-link">
+        {{ 'AUTH.BACK_SPACE_QUESTION' | translate }}
+        <a routerLink="/espace">{{ 'AUTH.CHOOSE_SPACE' | translate }}</a>
       </p>
     </div>
   </div>
+
+  <footer class="page-footer" aria-label="Liens footer admin">
+    <p class="footer-brand">Promotion Platform</p>
+    <div class="footer-links">
+      <a routerLink="/espace">{{ 'AUTH.PRIVACY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.TERMS' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.SECURITY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.STATUS' | translate }}</a>
+    </div>
+    <p class="copyright">© 2026 Promotion Platform. {{ 'AUTH.RIGHTS' | translate }}</p>
+  </footer>
 </section>
+

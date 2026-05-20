@@ -1,5 +1,6 @@
 package com.pfe.promotionplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,6 +15,10 @@ public interface AdminSubscriptionRepository extends JpaRepository<AdminSubscrip
     Optional<AdminSubscription> findByContactEmailIgnoreCase(String contactEmail);
     Optional<AdminSubscription> findByContactEmailIgnoreCaseAndActiveTrue(String contactEmail);
     Optional<AdminSubscription> findTopByCompanyNameIgnoreCaseAndActiveTrueOrderByCreatedAtDesc(String companyName);
+    long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT MAX(s.createdAt) FROM AdminSubscription s")
+    Optional<LocalDateTime> findMaxCreatedAt();
 
     @Modifying
     @Transactional

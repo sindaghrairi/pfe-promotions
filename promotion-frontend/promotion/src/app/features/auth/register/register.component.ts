@@ -30,6 +30,84 @@ export class RegisterComponent {
   loading = false;
   errorMessage = '';
 
+  get completionPercent(): number {
+    const controls = this.form.controls;
+    const filledCount = [
+      controls.fullName.value,
+      controls.email.value,
+      controls.password.value,
+      controls.confirmPassword.value
+    ].filter((value) => value.trim().length > 0).length;
+
+    return Math.round((filledCount / 4) * 100);
+  }
+
+  get isPersonalStepDone(): boolean {
+    return this.form.controls.fullName.valid && this.form.controls.email.valid;
+  }
+
+  get isSecurityStepActive(): boolean {
+    return this.form.controls.password.value.length > 0 || this.form.controls.confirmPassword.value.length > 0;
+  }
+
+  get isSecurityStepDone(): boolean {
+    return this.form.controls.password.valid && this.isConfirmPasswordValid;
+  }
+
+  get isConfirmPasswordValid(): boolean {
+    const confirmControl = this.form.controls.confirmPassword;
+    if (!confirmControl.value) {
+      return false;
+    }
+
+    return confirmControl.valid && confirmControl.value === this.form.controls.password.value;
+  }
+
+  get passwordStrengthPercent(): number {
+    const password = this.form.controls.password.value;
+    if (!password) {
+      return 0;
+    }
+
+    let score = 0;
+
+    if (password.length >= 8) {
+      score += 30;
+    } else if (password.length >= 6) {
+      score += 15;
+    }
+
+    if (/[a-z]/.test(password)) {
+      score += 20;
+    }
+
+    if (/[A-Z]/.test(password)) {
+      score += 20;
+    }
+
+    if (/\d/.test(password)) {
+      score += 15;
+    }
+
+    if (/[^A-Za-z0-9]/.test(password)) {
+      score += 15;
+    }
+
+    return Math.min(100, score);
+  }
+
+  get passwordStrengthLabel(): string {
+    if (this.passwordStrengthPercent >= 75) {
+      return 'Fort';
+    }
+
+    if (this.passwordStrengthPercent >= 45) {
+      return 'Moyen';
+    }
+
+    return 'Faible';
+  }
+
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -66,6 +144,11 @@ export class RegisterComponent {
   hasError(controlName: 'fullName' | 'email' | 'password' | 'confirmPassword', errorName: string): boolean {
     const control = this.form.controls[controlName];
     return control.touched && control.hasError(errorName);
+  }
+
+  isControlValid(controlName: 'fullName' | 'email' | 'password' | 'confirmPassword'): boolean {
+    const control = this.form.controls[controlName];
+    return control.touched && control.valid;
   }
 
   private extractApiError(error: HttpErrorResponse): string {

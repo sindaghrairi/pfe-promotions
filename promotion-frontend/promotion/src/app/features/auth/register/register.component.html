@@ -1,53 +1,146 @@
 <section class="auth-page">
-  <div class="auth-card">
-    <h1>Inscription</h1>
-    <p class="subtitle">Creez votre compte pour acceder a la plateforme.</p>
+  <header class="mini-topbar">
+    <p class="top-brand"><span>P</span> Promotion Platform</p>
+    <nav aria-label="Navigation rapide">
+      <a routerLink="/login">Connexion</a>
+      <a class="pill-link" routerLink="/register">Essai gratuit</a>
+    </nav>
+  </header>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <label for="fullName">Nom complet</label>
-      <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
-      <small class="error" *ngIf="hasError('fullName', 'required')">Le nom complet est obligatoire.</small>
-      <small class="error" *ngIf="hasError('fullName', 'minlength')">3 caracteres minimum.</small>
+  <div class="auth-layout">
+    <aside class="auth-intro" aria-hidden="true">
+      <p class="brand-row"><span class="brand-mark">P</span> Promotion Platform</p>
+      <p class="sale-chip">Inscription gratuite et immediate</p>
+      <h1>Decouvrez les meilleures offres pres de <span>chez vous</span></h1>
+      <p class="intro-copy">
+        Inscrivez-vous gratuitement pour recevoir les promotions exclusives,
+        suivre vos reductions preferees et ne jamais rater une bonne affaire.
+      </p>
 
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" placeholder="exemple@domaine.com" />
-      <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
-      <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+      <div class="feature-list">
+        <article class="feature-item">
+          <span class="feature-icon growth">%</span>
+          <div>
+            <h3>Promos exclusives</h3>
+            <p>Acces aux meilleures reductions en temps reel.</p>
+          </div>
+        </article>
 
-      <label for="password">Mot de passe</label>
-      <input id="password" type="password" formControlName="password" placeholder="Choisissez un mot de passe" />
-      <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
-      <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+        <article class="feature-item">
+          <span class="feature-icon ai">♥</span>
+          <div>
+            <h3>Offres personnalisees</h3>
+            <p>Des promotions adaptees a vos habitudes d'achat.</p>
+          </div>
+        </article>
 
-      <label for="confirmPassword">Confirmer le mot de passe</label>
-      <input
-        id="confirmPassword"
-        type="password"
-        formControlName="confirmPassword"
-        placeholder="Confirmez le mot de passe"
-      />
-      <small class="error" *ngIf="hasError('confirmPassword', 'required')">Confirmation obligatoire.</small>
+        <article class="feature-item">
+          <span class="feature-icon action">🔔</span>
+          <div>
+            <h3>Alertes instantanees</h3>
+            <p>Soyez le premier informe des nouvelles offres.</p>
+          </div>
+        </article>
+      </div>
+    </aside>
 
-      <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <div class="auth-card">
+      <div class="form-head">
+        <h2>Creer votre compte client</h2>
+        <p>Rejoignez la communaute et profitez des meilleures offres.</p>
+      </div>
 
-      <button type="submit" [disabled]="loading">
-        {{ loading ? 'Creation en cours...' : 'Creer mon compte' }}
-      </button>
-    </form>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field-block">
+          <label for="fullName">Nom complet</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('fullName')">
+            <span class="field-icon" aria-hidden="true">U</span>
+            <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
+          </div>
+          <small class="error" *ngIf="hasError('fullName', 'required')">Le nom complet est obligatoire.</small>
+          <small class="error" *ngIf="hasError('fullName', 'minlength')">3 caracteres minimum.</small>
+        </div>
 
-    <p class="switch-link">
-      Vous avez deja un compte ?
-      <a routerLink="/login">Se connecter</a>
-    </p>
+        <div class="field-block">
+          <label for="email">Email</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('email')">
+            <span class="field-icon" aria-hidden="true">@</span>
+            <input id="email" type="email" formControlName="email" placeholder="exemple@gmail.com" />
+          </div>
+          <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
+          <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+        </div>
 
-    <p class="switch-link">
-      Vous etes une societe ?
-      <a routerLink="/admin/subscribe">Commencer par l'abonnement admin</a>
-    </p>
+        <div class="field-block">
+          <label for="password">Mot de passe</label>
+          <div class="field-shell" [class.is-valid]="isControlValid('password')">
+            <span class="field-icon" aria-hidden="true">*</span>
+            <input id="password" type="password" formControlName="password" placeholder="Choisissez un mot de passe" />
+          </div>
 
-    <p class="switch-link">
-      Retour a la selection des espaces ?
-      <a routerLink="/espace">Choisir un espace</a>
-    </p>
+          <div class="password-strength" *ngIf="form.controls.password.value">
+            <div class="strength-track"><span [style.width.%]="passwordStrengthPercent"></span></div>
+            <p>
+              Force:
+              <strong [class.weak]="passwordStrengthPercent < 45" [class.medium]="passwordStrengthPercent >= 45 && passwordStrengthPercent < 75" [class.strong]="passwordStrengthPercent >= 75">
+                {{ passwordStrengthLabel }}
+              </strong>
+            </p>
+          </div>
+
+          <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
+          <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+        </div>
+
+        <div class="field-block">
+          <label for="confirmPassword">Confirmer le mot de passe</label>
+          <div class="field-shell" [class.is-valid]="isConfirmPasswordValid">
+            <span class="field-icon" aria-hidden="true">*</span>
+            <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Confirmez le mot de passe" />
+          </div>
+          <small class="error" *ngIf="hasError('confirmPassword', 'required')">Confirmation obligatoire.</small>
+          <small class="error" *ngIf="form.controls.confirmPassword.touched && !isConfirmPasswordValid && form.controls.confirmPassword.value">Les mots de passe ne correspondent pas.</small>
+        </div>
+
+        <label class="terms-line" for="terms-check">
+          <input id="terms-check" type="checkbox" />
+          <span>J'accepte les conditions d'utilisation.</span>
+        </label>
+
+        <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+        <button type="submit" [disabled]="loading">
+          <span class="btn-loader" *ngIf="loading" aria-hidden="true"></span>
+          <span>{{ loading ? 'Creation en cours...' : 'Creer mon compte' }}</span>
+        </button>
+
+      </form>
+
+      <p class="switch-link">
+        Deja membre ?
+        <a routerLink="/login">Se connecter</a>
+      </p>
+
+      <p class="switch-link">
+        Besoin d'aide pour debuter ?
+        <a routerLink="/espace">Voir nos offres du moment</a>
+      </p>
+
+      <p class="switch-link">
+        Retour a la selection des espaces ?
+        <a routerLink="/espace">Choisir un espace</a>
+      </p>
+    </div>
   </div>
+
+  <footer class="page-footer" aria-label="Liens footer">
+    <p class="footer-brand">Promotion Platform</p>
+    <div class="footer-links">
+      <a routerLink="/espace">Confidentialite</a>
+      <a routerLink="/espace">Conditions</a>
+      <a routerLink="/espace">Securite</a>
+      <a routerLink="/espace">Statut</a>
+    </div>
+    <p class="copyright">© 2026 Promotion Platform. Tous droits reserves.</p>
+  </footer>
 </section>

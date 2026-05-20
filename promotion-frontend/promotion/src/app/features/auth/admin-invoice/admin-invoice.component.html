@@ -1,75 +1,110 @@
 <section class="invoice-page">
-  <div class="bg-orb orb-one" aria-hidden="true"></div>
-  <div class="bg-orb orb-two" aria-hidden="true"></div>
-
   <div class="invoice-layout">
-    <aside class="invoice-showcase no-print" aria-hidden="true">
-      <p class="showcase-kicker">ETAPE 3 SUR 3</p>
-      <h2>Votre abonnement est pret a etre active</h2>
-      <p>Conservez cette facture comme reference. Vous pouvez ensuite creer le compte admin de votre societe.</p>
-      <div class="showcase-list">
-        <p>Numero unique</p>
-        <p>Montant transparent</p>
-        <p>Activation immediate</p>
-      </div>
-    </aside>
-
     <div class="invoice-shell">
       <header class="invoice-header">
-        <div>
-          <p class="eyebrow">Facture d'abonnement</p>
-          <h1>Facture societe</h1>
-          <p class="subtitle">Votre societe est inscrite. Vous pouvez imprimer cette facture en PDF.</p>
+        <div class="brand-panel">
+          <div class="brand-lockup" aria-label="PromoLink">
+            <span class="brand-mark">P</span>
+            <div>
+              <p class="brand-name">PromoLink</p>
+              <p class="brand-tagline">{{ 'INVOICE.BRAND_SUBTITLE' | translate }}</p>
+            </div>
+          </div>
+
+          <div class="invoice-title-block">
+            <p class="eyebrow">{{ 'INVOICE.EYEBROW' | translate }}</p>
+            <h1>{{ 'INVOICE.TITLE' | translate }}</h1>
+            <p class="subtitle">{{ 'INVOICE.SUBTITLE' | translate }}</p>
+          </div>
 
           <div class="step-strip no-print" aria-label="Progression inscription">
-            <span class="step done">Societe</span>
-            <span class="step done">Paiement</span>
-            <span class="step active">Validation</span>
+            <span class="step done">{{ 'INVOICE.STEP_COMPANY' | translate }}</span>
+            <span class="step done">{{ 'INVOICE.STEP_PAYMENT' | translate }}</span>
+            <span class="step active">{{ 'INVOICE.STEP_INVOICE' | translate }}</span>
           </div>
         </div>
+
         <div class="invoice-meta">
-          <p><span>Numero</span><strong>{{ invoiceNumber }}</strong></p>
-          <p><span>Date</span><strong>{{ issuedDateLabel }}</strong></p>
+          <p class="meta-label">{{ 'INVOICE.DOCUMENT' | translate }}</p>
+          <p><span>{{ 'INVOICE.NUMBER' | translate }}</span><strong>{{ invoiceNumber }}</strong></p>
+          <p><span>{{ 'INVOICE.DATE' | translate }}</span><strong>{{ issuedDateLabel }}</strong></p>
         </div>
       </header>
 
       <section class="invoice-card" aria-label="Details de facture">
-        <div class="identity-block">
-          <h2>Client</h2>
-          <p><strong>Societe:</strong> {{ companyName }}</p>
-          <p><strong>Email:</strong> {{ email || '-' }}</p>
+        <div class="invoice-section identity-block">
+          <div class="section-heading">
+            <span class="section-icon">01</span>
+            <div>
+              <p>{{ 'INVOICE.CLIENT_INFO' | translate }}</p>
+              <h2>{{ 'INVOICE.BILLED_COMPANY' | translate }}</h2>
+            </div>
+          </div>
+
+          <div class="identity-grid">
+            <p><span>{{ 'INVOICE.STEP_COMPANY' | translate }}</span><strong>{{ companyName }}</strong></p>
+            <p><span>{{ 'INVOICE.BILLING_EMAIL' | translate }}</span><strong>{{ email || '-' }}</strong></p>
+          </div>
         </div>
 
-        <div class="details-block">
-          <h2>Abonnement</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Plan</th>
-                <th>Cycle</th>
-                <th>Montant</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{{ planLabel }}</td>
-                <td>{{ cycleLabel }}</td>
-                <td>{{ totalLabel }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="invoice-section details-block">
+          <div class="section-heading">
+            <span class="section-icon">02</span>
+            <div>
+              <p>{{ 'INVOICE.SUBSCRIPTION_DETAILS' | translate }}</p>
+              <h2>{{ 'INVOICE.SERVICE' | translate }}</h2>
+            </div>
+          </div>
+
+          <div class="invoice-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>{{ 'INVOICE.DESCRIPTION' | translate }}</th>
+                  <th>{{ 'INVOICE.CYCLE' | translate }}</th>
+                  <th>{{ 'INVOICE.QUANTITY' | translate }}</th>
+                  <th>{{ 'COMMON.TOTAL' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong class="table-title">{{ 'INVOICE.SUBSCRIPTION' | translate: { plan: planLabel } }}</strong>
+                    <span class="table-subtitle">{{ 'INVOICE.ACCESS' | translate }}</span>
+                  </td>
+                  <td><span class="cycle-pill">{{ cycleLabel }}</span></td>
+                  <td>1</td>
+                  <td><strong class="amount-cell">{{ totalLabel }}</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="total-line">
-          <p>Total TTC</p>
+          <div>
+            <p>{{ 'INVOICE.TOTAL_TTC' | translate }}</p>
+            <span>{{ 'INVOICE.PAYMENT' | translate }}</span>
+          </div>
           <strong>{{ totalLabel }}</strong>
         </div>
+
+        <footer class="invoice-footer">
+          <div>
+            <strong>{{ 'INVOICE.THANKS' | translate }}</strong>
+            <p>{{ 'INVOICE.THANKS_TEXT' | translate }}</p>
+          </div>
+          <div class="footer-contact">
+            <span>www.promolink.com</span>
+            <span>support@promolink.com</span>
+          </div>
+        </footer>
       </section>
 
       <div class="actions no-print">
-        <a routerLink="/dashboard">Retour au dashboard</a>
-        <button type="button" class="print-btn" (click)="printInvoice()">Imprimer facture (PDF)</button>
-        <button type="button" class="next-btn" *ngIf="showAdminRegisterButton" (click)="continueToAdminRegister()">Continuer vers creation du compte admin</button>
+        <a class="back-link" routerLink="/dashboard">{{ 'INVOICE.BACK_DASHBOARD' | translate }}</a>
+        <button type="button" class="print-btn" (click)="printInvoice()">{{ 'INVOICE.PRINT' | translate }}</button>
+        <button type="button" class="next-btn" *ngIf="showAdminRegisterButton" (click)="continueToAdminRegister()">{{ 'INVOICE.CONTINUE_ADMIN' | translate }}</button>
       </div>
     </div>
   </div>

@@ -1,106 +1,176 @@
-<section class="platform-page-shell">
-  <div class="bg-orb orb-one" aria-hidden="true"></div>
-  <div class="bg-orb orb-two" aria-hidden="true"></div>
-
-  <header class="page-topbar">
-    <div class="title-wrap">
-      <p class="kicker">Platform billing command</p>
-      <h1>Factures</h1>
-      <p>Vision globale des factures de la plateforme.</p>
-    </div>
-    <a class="back-link" routerLink="/platform-admin/dashboard">Retour dashboard</a>
-  </header>
-
-  <p class="state" *ngIf="loading">Chargement des factures...</p>
-  <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <section class="kpi-grid" *ngIf="!loading && invoices">
-    <article class="kpi-card">
-      <p>Total factures</p>
-      <strong>{{ invoices.total }}</strong>
-    </article>
-    <article class="kpi-card">
-      <p>Reglees</p>
-      <strong>{{ countByStatus('PAID') }}</strong>
-    </article>
-    <article class="kpi-card">
-      <p>En attente</p>
-      <strong>{{ countByStatus('PENDING') }}</strong>
-    </article>
-    <article class="kpi-card">
-      <p>En retard</p>
-      <strong>{{ countByStatus('OVERDUE') }}</strong>
-    </article>
-  </section>
-
-  <section class="invoice-box" *ngIf="!loading && invoices">
-    <div class="box-topline">
-      <p class="box-caption">{{ invoices.message }}</p>
-      <div class="progress-pill">
-        <span>Taux paiement</span>
-        <strong>{{ paymentRate }}%</strong>
+<section class="ud-page">
+  <aside class="ud-nav">
+    <div class="ud-nav-brand">
+      <div class="ud-nav-mark">A</div>
+      <div>
+        <p class="ud-nav-name">{{ 'COMMON.BRAND' | translate }}</p>
+        <p class="ud-nav-tier">{{ 'PLATFORM_ADMIN.TIER' | translate }}</p>
       </div>
     </div>
 
-    <p class="hint" *ngIf="!invoices.items.length">
-      Aucun element facture disponible pour le moment.
-    </p>
+    <nav class="ud-nav-links" aria-label="Navigation admin">
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        {{ 'NAV.DASHBOARD' | translate }}
+      </a>
+      <a routerLink="/platform-admin/subscriptions" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        {{ 'NAV.SUBSCRIPTIONS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/plans" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        {{ 'NAV.PLANS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/users" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ 'NAV.USERS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/invoices" class="ud-nav-link ud-nav-active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        {{ 'NAV.INVOICES' | translate }}
+      </a>
+    </nav>
 
-    <div class="table-wrap" *ngIf="invoices.items.length">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Entreprise</th>
-            <th>Email</th>
-            <th>Plan</th>
-            <th>Montant</th>
-            <th>Statut</th>
-            <th>Emission</th>
-            <th>Echeance</th>
-            <th>Paiement</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of invoices.items; let i = index" [style.--row-index]="i">
-            <td>{{ item.id }}</td>
-            <td>{{ item.companyName }}</td>
-            <td>{{ item.companyEmail }}</td>
-            <td>
-              <span
-                class="plan-badge"
-                [ngClass]="{
-                  'plan-basic': item.plan === 'BASIC',
-                  'plan-standard': item.plan === 'STANDARD',
-                  'plan-premium': item.plan === 'PREMIUM'
-                }"
-              >
-                {{ item.plan }}
-              </span>
-            </td>
-            <td>{{ item.amount | number: '1.2-2' }} DT</td>
-            <td>
-              <span
-                class="status-badge"
-                [ngClass]="{
-                  'status-paid': item.status === 'PAID',
-                  'status-pending': item.status === 'PENDING',
-                  'status-overdue': item.status === 'OVERDUE'
-                }"
-              >
-                {{ item.status }}
-              </span>
-            </td>
-            <td>{{ item.issuedAt | date: 'shortDate' }}</td>
-            <td>{{ item.dueAt | date: 'shortDate' }}</td>
-            <td>{{ item.paidAt ? (item.paidAt | date: 'shortDate') : '-' }}</td>
-            <td>
-              <a class="view-btn" [routerLink]="['/platform-admin/invoices', item.id]">Voir facture</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="ud-nav-foot">
+      <a routerLink="/" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        {{ 'NAV.HOME' | translate }}
+      </a>
     </div>
-  </section>
+  </aside>
+
+  <div class="ud-main">
+    <header class="ud-topbar">
+      <p class="ud-topbar-logo">PromoLink</p>
+      <div class="ud-topbar-actions">
+        <app-language-switcher />
+        <button
+          type="button"
+          class="ud-theme-toggle"
+          [class.is-dark]="(isDark$ | async)"
+          [attr.aria-pressed]="(isDark$ | async) ? 'true' : 'false'"
+          [attr.aria-label]="'PLATFORM_ADMIN.THEME_TOGGLE' | translate"
+          (click)="toggleTheme()">
+          <svg class="ud-toggle-icon ud-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12 4.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0V5.5a1 1 0 0 1 1-1Zm0 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.5-3.2a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1ZM5.5 12.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1Zm11.9-6.9a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4ZM4.6 18.4a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4Zm14.2 1a1 1 0 0 1-1.4 0l-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1 0 1.4ZM6 6a1 1 0 0 1-1.4 0l-1-1A1 1 0 1 1 5 3.6l1 1A1 1 0 0 1 6 6Z" />
+          </svg>
+          <span class="ud-toggle-thumb"></span>
+          <svg class="ud-toggle-icon ud-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a.9.9 0 0 0-1.1 1.1A10.3 10.3 0 1 0 19.3 15.7a.9.9 0 0 0 1.1-1.1Z" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="ud-content">
+      <div class="ud-hero">
+        <p class="ud-kicker">{{ 'PLATFORM_INVOICES.KICKER' | translate }}</p>
+        <h1>{{ 'NAV.INVOICES' | translate }}</h1>
+        <p class="ud-hero-sub">{{ 'PLATFORM_INVOICES.SUBTITLE' | translate }}</p>
+      </div>
+
+      <p class="ud-state" *ngIf="loading">{{ 'PLATFORM_INVOICES.LOADING' | translate }}</p>
+      <p class="ud-state ud-state-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <div class="ud-kpi-grid" *ngIf="!loading && invoices">
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-indigo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_INVOICES.KPI_TOTAL' | translate }}</p>
+            <strong class="ud-kpi-value">{{ invoices.total }}</strong>
+            <p class="ud-kpi-trend ud-trend-neutral">— {{ 'PLATFORM_INVOICES.KPI_ALL' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-emerald">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/><path d="M21 10v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_INVOICES.KPI_PAID' | translate }}</p>
+            <strong class="ud-kpi-value">{{ countByStatus('PAID') }}</strong>
+            <p class="ud-kpi-trend ud-trend-up">↑ {{ 'PLATFORM_INVOICES.KPI_CONFIRMED' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-amber">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9"/><polyline points="22 4 12 14 9 11"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_INVOICES.KPI_PENDING' | translate }}</p>
+            <strong class="ud-kpi-value">{{ countByStatus('PENDING') }}</strong>
+            <p class="ud-kpi-trend ud-trend-neutral">— {{ 'PLATFORM_INVOICES.KPI_IN_PROGRESS' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-violet">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_INVOICES.KPI_OVERDUE' | translate }}</p>
+            <strong class="ud-kpi-value">{{ countByStatus('OVERDUE') }}</strong>
+            <p class="ud-kpi-trend ud-trend-down">↓ {{ 'PLATFORM_INVOICES.KPI_FOLLOW_UP' | translate }}</p>
+          </div>
+        </article>
+      </div>
+
+      <section class="ud-panel" *ngIf="!loading && invoices">
+        <div class="ud-panel-header">
+          <h2 class="ud-chart-title">{{ invoicesTitle }}</h2>
+          <div class="ud-progress-pill">
+            <span>{{ 'PLATFORM_INVOICES.PAYMENT_RATE' | translate }}</span>
+            <strong>{{ paymentRate }}%</strong>
+          </div>
+        </div>
+
+        <p class="ud-state" *ngIf="!invoices.items.length">{{ 'PLATFORM_INVOICES.EMPTY' | translate }}</p>
+
+        <div class="ud-table-wrap" *ngIf="invoices.items.length">
+          <table class="ud-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>{{ 'TABLE.COMPANY' | translate }}</th>
+                <th>{{ 'COMMON.EMAIL' | translate }}</th>
+                <th>{{ 'TABLE.PLAN' | translate }}</th>
+                <th>{{ 'TABLE.AMOUNT' | translate }}</th>
+                <th>{{ 'TABLE.STATUS' | translate }}</th>
+                <th>{{ 'TABLE.ISSUED_AT' | translate }}</th>
+                <th>{{ 'TABLE.DUE_AT' | translate }}</th>
+                <th>{{ 'TABLE.PAYMENT' | translate }}</th>
+                <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of invoices.items">
+                <td><span class="ud-id-badge">#{{ item.id }}</span></td>
+                <td><span class="ud-company-name">{{ item.companyName }}</span></td>
+                <td><span class="ud-email-cell">{{ item.companyEmail }}</span></td>
+                <td><span class="ud-plan-badge">{{ item.plan }}</span></td>
+                <td><span class="ud-amount">{{ item.amount | number: '1.2-2' }} DT</span></td>
+                <td>
+                  <span class="ud-status-badge" [class.ud-status-active]="item.status === 'PAID'" [class.ud-status-inactive]="item.status !== 'PAID'">
+                    {{ statusLabel(item.status) }}
+                  </span>
+                </td>
+                <td><span class="ud-date-pill">{{ item.issuedAt | date: 'shortDate' }}</span></td>
+                <td><span class="ud-date-pill">{{ item.dueAt | date: 'shortDate' }}</span></td>
+                <td>
+                  <span *ngIf="item.paidAt; else notPaid" class="ud-paid">{{ item.paidAt | date: 'shortDate' }}</span>
+                  <ng-template #notPaid><span class="ud-muted">-</span></ng-template>
+                </td>
+                <td>
+                  <a class="ud-view-btn" [routerLink]="['/platform-admin/invoices', item.id]">{{ 'PLATFORM_INVOICES.VIEW' | translate }}</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
 </section>

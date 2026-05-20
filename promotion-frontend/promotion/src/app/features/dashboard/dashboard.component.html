@@ -3,75 +3,235 @@
     <a class="nav-brand" routerLink="/">PromoLink</a>
 
     <nav class="nav-links" aria-label="Navigation dashboard">
-      <a routerLink="/">Accueil</a>
-      <a [routerLink]="allPromosLink">Promos</a>
-      <button type="button" class="nav-logout" (click)="logout()">Deconnexion</button>
+      <a routerLink="/">{{ 'NAV.HOME' | translate }}</a>
+      <a class="nav-primary" [routerLink]="addPromoLink" *ngIf="!isClientSpace">{{ 'NAV.ADD_PROMO' | translate }}</a>
+      <a routerLink="/admin/subscribe/overview" [queryParams]="subscriptionQueryParams" *ngIf="!isClientSpace">{{ 'NAV.SUBSCRIPTIONS' | translate }}</a>
+      <app-language-switcher />
+      <button type="button" class="nav-logout" (click)="logout()">{{ 'COMMON.LOGOUT' | translate }}</button>
     </nav>
   </header>
 
-  <div class="dashboard-shell">
-    <div class="dashboard-card">
-      <h1>{{ isClientSpace ? 'Espace Utilisateur' : 'Espace Entreprise' }}</h1>
+  <main class="dashboard-shell">
+    <p class="state-card" *ngIf="loadingUser">{{ 'DASHBOARD.LOADING_PROFILE' | translate }}</p>
 
-    <p class="subtitle">Choisissez une action pour continuer.</p>
-
-    <p *ngIf="loadingUser">Chargement du profil...</p>
-
-    <p *ngIf="!loadingUser">
-      Vous etes connecte avec l'email:
-      <strong>{{ email }}</strong>
-    </p>
-
-    <section *ngIf="isClientSpace" class="user-space">
-      <p class="company-selected" *ngIf="hasSelectedCompany">
-        Entreprise selectionnee: <strong>{{ selectedCompanyLabel }}</strong>
-      </p>
-
-      <p *ngIf="loadingCompanies">Chargement des entreprises avec promotions publiees...</p>
-      <p class="company-missing" *ngIf="!loadingCompanies && companiesError">{{ companiesError }}</p>
-
-      <p class="subtitle" *ngIf="!loadingCompanies && !companiesError">
-        Consulter les promotions publiees de toutes les entreprises.
-      </p>
-
-      <div class="company-list" *ngIf="!loadingCompanies && !companiesError">
-        <a class="details-link" [routerLink]="allPromosLink">
-          Consulter toutes les promos
-        </a>
-      </div>
-
-      <div class="dashboard-actions">
-        <button type="button" (click)="logout()">Se deconnecter</button>
-      </div>
+    <section *ngIf="!loadingUser && isClientSpace" class="client-card">
+      <h1>{{ 'DASHBOARD.CLIENT_TITLE' | translate }}</h1>
+      <p>{{ 'DASHBOARD.CLIENT_REDIRECT' | translate }}</p>
     </section>
 
-    <section *ngIf="!isClientSpace">
-    <p class="company-selected" *ngIf="hasConnectedCompany">
-      Entreprise connectee (gestion): <strong>{{ connectedCompanyLabel }}</strong>
-    </p>
+    <section *ngIf="!loadingUser && !isClientSpace" class="company-dashboard">
+      <div class="hero-row">
+        <div>
+          <p class="eyebrow">{{ 'DASHBOARD.COMPANY_EYEBROW' | translate }}</p>
+          <h1>{{ dashboard?.companyName || connectedCompanyName || ('DASHBOARD.COMPANY_FALLBACK' | translate) }}</h1>
+          <p class="subtitle">{{ 'DASHBOARD.COMPANY_SUBTITLE' | translate }}</p>
+        </div>
 
-    <p class="company-missing" *ngIf="!hasConnectedCompany">
-      Aucun lien entreprise n'a ete trouve pour ce compte admin. La gestion promos est desactivee.
-    </p>
+        <div class="period-control" [attr.aria-label]="'DASHBOARD.PERIOD_FILTER' | translate">
+          <button
+            *ngFor="let option of periodOptions"
+            type="button"
+            [class.is-active]="selectedPeriod === option.value"
+            (click)="setPeriod(option.value)">
+            {{ option.labelKey | translate }}
+          </button>
+        </div>
+      </div>
 
-    <p class="company-selected" *ngIf="hasSelectedCompany">
-      Entreprise selectionnee (details): <strong>{{ selectedCompanyLabel }}</strong>
-    </p>
+      <p class="state-card" *ngIf="loadingDashboard">{{ 'DASHBOARD.LOADING_DASHBOARD' | translate }}</p>
+      <p class="state-card state-error" *ngIf="!loadingDashboard && dashboardError">{{ dashboardError }}</p>
 
-    <p class="company-missing" *ngIf="!hasSelectedCompany">
-      Aucune entreprise n'est selectionnee. Passez d'abord par la page d'accueil pour cliquer sur une entreprise.
-    </p>
+      <ng-container *ngIf="!loadingDashboard && dashboard as data">
+        <div class="meta-strip">
+          <span>{{ 'DASHBOARD.PERIOD_ANALYZED' | translate: { period: periodLabel } }}</span>
+          <span>{{ 'DASHBOARD.DATE_RANGE' | translate: { from: data.from, to: data.to } }}</span>
+          <span>{{ email }}</span>
+        </div>
 
-    <div class="dashboard-actions" *ngIf="hasConnectedCompany || hasSelectedCompany">
-      <a [routerLink]="managePromosLink" class="manage-promos-link" *ngIf="hasConnectedCompany">Gerer promos</a>
-      <button type="button" (click)="logout()">Se deconnecter</button>
-    </div>
+        <section class="kpi-grid">
+          <article class="kpi-card" *ngFor="let card of kpiCards" [ngClass]="'tone-' + card.tone">
+            <p>{{ card.label }}</p>
+            <strong>{{ card.value }}</strong>
+            <span>{{ card.hint }}</span>
+          </article>
+        </section>
 
-    <div class="dashboard-actions" *ngIf="!hasConnectedCompany && !hasSelectedCompany">
-      <a routerLink="/" class="manage-promos-link">Aller a l'accueil</a>
-      <button type="button" (click)="logout()">Se deconnecter</button>
-    </div>
+        <section class="panel coupons-panel" [attr.aria-label]="'DASHBOARD.COUPON_PANEL_ARIA' | translate">
+          <div class="panel-heading">
+            <p>{{ 'DASHBOARD.COUPONS_LABEL' | translate }}</p>
+            <h2>{{ 'DASHBOARD.COUPONS_TITLE' | translate }}</h2>
+          </div>
+
+          <p class="state-card" *ngIf="loadingCoupons">{{ 'DASHBOARD.LOADING_COUPONS' | translate }}</p>
+          <p class="state-card state-error" *ngIf="!loadingCoupons && couponsError">{{ couponsError }}</p>
+          <p class="state-card" *ngIf="!loadingCoupons && !couponsError && !coupons.length">{{ 'DASHBOARD.NO_COUPONS' | translate }}</p>
+
+          <div class="coupon-table-wrap" *ngIf="!loadingCoupons && !couponsError && coupons.length">
+            <table class="coupon-table">
+              <thead>
+                <tr>
+                  <th>{{ 'DASHBOARD.TABLE_COUPON_CODE' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLE_PROMOTION' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLE_DISCOUNT' | translate }}</th>
+                  <th>{{ 'TABLE.CREATED_AT' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLE_EXPIRATION' | translate }}</th>
+                  <th>{{ 'TABLE.STATUS' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLE_USAGES' | translate }}</th>
+                  <th>{{ 'DASHBOARD.TABLE_USER' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let coupon of coupons">
+                  <td><span class="coupon-code">{{ coupon.code || '-' }}</span></td>
+                  <td>{{ coupon.promotionTitle }}</td>
+                  <td>{{ coupon.discount || '-' }}</td>
+                  <td>{{ coupon.createdAt ? (coupon.createdAt | date: 'shortDate') : '-' }}</td>
+                  <td>{{ coupon.expirationDate || '-' }}</td>
+                  <td>
+                    <span class="coupon-status" [ngClass]="couponStatusClass(coupon.status)">
+                      {{ couponStatusLabel(coupon.status) }}
+                    </span>
+                  </td>
+                  <td>{{ coupon.usedCount | number }} / {{ coupon.allowedCount | number }}</td>
+                  <td>{{ coupon.usedByEmail || coupon.usedByUser || '-' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="empty-state" *ngIf="!hasData">
+          <h2>{{ 'DASHBOARD.EMPTY_TITLE' | translate }}</h2>
+          <p>{{ 'DASHBOARD.EMPTY_TEXT' | translate }}</p>
+          <a [routerLink]="managePromosLink">{{ 'DASHBOARD.CREATE_PROMO' | translate }}</a>
+        </section>
+
+        <ng-container *ngIf="hasData">
+          <section class="chart-grid chart-grid-main">
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_EVOLUTION_PERIOD' | translate: { period: periodLabel } }}</p>
+                <h2>{{ 'DASHBOARD.CHART_VIEWS_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body">
+                <canvas #viewsChart [attr.aria-label]="'DASHBOARD.CHART_VIEWS_ARIA' | translate"></canvas>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_STATUS_KICKER' | translate }}</p>
+                <h2>{{ 'DASHBOARD.CHART_STATUS_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body donut-body">
+                <canvas #statusChart [attr.aria-label]="'DASHBOARD.CHART_STATUS_TITLE' | translate"></canvas>
+              </div>
+            </article>
+          </section>
+
+          <section class="chart-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_COUPONS_PERIOD' | translate: { period: periodLabel } }}</p>
+                <h2>{{ 'DASHBOARD.CHART_COUPONS_USED_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body">
+                <canvas #couponsChart [attr.aria-label]="'DASHBOARD.CHART_COUPONS_ARIA' | translate"></canvas>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_CREATION_KICKER' | translate }}</p>
+                <h2>{{ 'DASHBOARD.CHART_CREATED_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body">
+                <canvas #creationsChart [attr.aria-label]="'DASHBOARD.CHART_CREATED_ARIA' | translate"></canvas>
+              </div>
+            </article>
+          </section>
+
+          <section class="chart-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_TOP_PERFORMANCE' | translate }}</p>
+                <h2>{{ 'DASHBOARD.CHART_TOP_VIEWS_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body">
+                <canvas #topViewsChart [attr.aria-label]="'DASHBOARD.CHART_TOP_VIEWS_ARIA' | translate"></canvas>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_COUPON_USAGE' | translate }}</p>
+                <h2>{{ 'DASHBOARD.CHART_TOP_COUPONS_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body">
+                <canvas #topCouponsChart [attr.aria-label]="'DASHBOARD.CHART_TOP_COUPONS_ARIA' | translate"></canvas>
+              </div>
+            </article>
+          </section>
+
+          <section class="chart-grid">
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_CONVERSION' | translate }}</p>
+                <h2>{{ 'DASHBOARD.CHART_VIEWS_VS_COUPONS_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body">
+                <canvas #viewsVsCouponsChart [attr.aria-label]="'DASHBOARD.CHART_VIEWS_VS_COUPONS_ARIA' | translate"></canvas>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_ACTIVE_KICKER' | translate }}</p>
+                <h2>{{ 'DASHBOARD.CHART_ACTIVE_TITLE' | translate }}</h2>
+              </div>
+              <div class="chart-body">
+                <canvas #activePerformanceChart [attr.aria-label]="'DASHBOARD.CHART_ACTIVE_ARIA' | translate"></canvas>
+              </div>
+            </article>
+          </section>
+
+          <section class="chart-grid chart-grid-main">
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_DECISION' | translate }}</p>
+                <h2>{{ 'DASHBOARD.PROMOS_TO_WATCH' | translate }}</h2>
+              </div>
+
+              <div class="ranking-list">
+                <div class="ranking-row" *ngFor="let promo of data.topPromotions">
+                  <div>
+                    <strong>{{ promo.title }}</strong>
+                    <span>{{ promo.status }} - {{ 'DASHBOARD.ENGAGEMENT' | translate }} {{ promo.engagementRate | number: '1.1-1' }}%</span>
+                  </div>
+                  <div class="ranking-metrics">
+                    <span>{{ promo.views | number }} {{ 'DASHBOARD.VIEWS' | translate }}</span>
+                    <span>{{ promo.couponsUsed | number }} {{ 'DASHBOARD.COUPONS_WORD' | translate }}</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <p>{{ 'DASHBOARD.CHART_COUPON_STOCK' | translate }}</p>
+                <h2>{{ 'DASHBOARD.CHART_USED_VS_REMAINING' | translate }}</h2>
+              </div>
+              <div class="chart-body donut-body">
+                <canvas #couponSplitChart [attr.aria-label]="'DASHBOARD.CHART_USED_VS_REMAINING_ARIA' | translate"></canvas>
+              </div>
+            </article>
+          </section>
+
+          <section class="note-card" *ngIf="data.notes.length">
+            <p *ngFor="let note of data.notes">{{ note }}</p>
+          </section>
+        </ng-container>
+      </ng-container>
     </section>
-    </div>
-  </div>
+  </main>
 </section>

@@ -1,167 +1,292 @@
-<section class="users-layout">
-  <aside class="left-nav">
-    <div class="brand-block">
-      <div class="brand-mark" aria-hidden="true">A</div>
+<section class="ud-page">
+
+  <!-- ── Sidebar ── -->
+  <aside class="ud-nav">
+    <div class="ud-nav-brand">
+      <div class="ud-nav-mark">A</div>
       <div>
-        <h2>Admin Console</h2>
-        <p>Enterprise Tier</p>
+        <p class="ud-nav-name">{{ 'COMMON.BRAND' | translate }}</p>
+        <p class="ud-nav-tier">{{ 'PLATFORM_ADMIN.TIER' | translate }}</p>
       </div>
     </div>
 
-    <nav class="menu-links" aria-label="Navigation admin">
-      <a routerLink="/platform-admin/dashboard">Dashboard</a>
-      <a routerLink="/platform-admin/subscriptions">Abonnements</a>
-      <a class="active" routerLink="/platform-admin/users">User Directory</a>
-      <a routerLink="/platform-admin/invoices">Factures</a>
+    <nav class="ud-nav-links" aria-label="Navigation admin">
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        {{ 'NAV.DASHBOARD' | translate }}
+      </a>
+      <a routerLink="/platform-admin/subscriptions" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        {{ 'NAV.SUBSCRIPTIONS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/plans" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        {{ 'NAV.PLANS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/users" class="ud-nav-link ud-nav-active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        {{ 'NAV.USERS' | translate }}
+      </a>
+      <a routerLink="/platform-admin/invoices" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        {{ 'NAV.INVOICES' | translate }}
+      </a>
     </nav>
 
-    <div class="menu-footer">
-      <a routerLink="/platform-admin/dashboard">Help Center</a>
-      <a routerLink="/platform-admin/dashboard">Account</a>
+    <div class="ud-nav-foot">
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Help Center
+      </a>
+      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Account
+      </a>
     </div>
   </aside>
 
-  <div class="main-shell">
-    <header class="top-dock">
-      <div class="top-brand">StrategyArch</div>
-      <label class="top-search" aria-label="Rechercher">
-        <span aria-hidden="true">⌕</span>
-        <input type="search" placeholder="Search resources..." />
-      </label>
-      <a class="back-btn" routerLink="/platform-admin/dashboard">Retour dashboard</a>
+  <!-- ── Main ── -->
+  <div class="ud-main">
+
+    <!-- Top bar -->
+    <header class="ud-topbar">
+      <p class="ud-topbar-logo">PromoLink</p>
+      <div class="ud-topbar-actions">
+        <app-language-switcher />
+        <button
+          type="button"
+          class="ud-theme-toggle"
+          [class.is-dark]="(isDark$ | async)"
+          [attr.aria-pressed]="(isDark$ | async) ? 'true' : 'false'"
+          [attr.aria-label]="'PLATFORM_ADMIN.THEME_TOGGLE' | translate"
+          (click)="toggleTheme()">
+          <svg class="ud-toggle-icon ud-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M12 4.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0V5.5a1 1 0 0 1 1-1Zm0 11.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Zm7.5-3.2a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1ZM5.5 12.5a1 1 0 0 1 1 1v1.4a1 1 0 1 1-2 0v-1.4a1 1 0 0 1 1-1Zm11.9-6.9a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4ZM4.6 18.4a1 1 0 0 1 1.4 0l1 1a1 1 0 0 1-1.4 1.4l-1-1a1 1 0 0 1 0-1.4Zm14.2 1a1 1 0 0 1-1.4 0l-1-1a1 1 0 1 1 1.4-1.4l1 1a1 1 0 0 1 0 1.4ZM6 6a1 1 0 0 1-1.4 0l-1-1A1 1 0 1 1 5 3.6l1 1A1 1 0 0 1 6 6Z" />
+          </svg>
+          <span class="ud-toggle-thumb"></span>
+          <svg class="ud-toggle-icon ud-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M20.4 14.6A8.5 8.5 0 0 1 9.4 3.6a.9.9 0 0 0-1.1 1.1A10.3 10.3 0 1 0 19.3 15.7a.9.9 0 0 0 1.1-1.1Z" />
+          </svg>
+        </button>
+      </div>
     </header>
 
-    <main class="content-canvas">
-      <section class="hero-head">
+    <main class="ud-content">
+
+      <!-- Hero -->
+      <div class="ud-hero">
         <div>
-          <p class="kicker">Console · Directory</p>
-          <h1>Gestion des Utilisateurs</h1>
+        <p class="ud-kicker">{{ 'PLATFORM_USERS.KICKER' | translate }}</p>
+        <h1>{{ 'PLATFORM_USERS.TITLE' | translate }}</h1>
+        <p class="ud-hero-sub">{{ 'PLATFORM_USERS.SUBTITLE' | translate }}</p>
         </div>
-        <button type="button" class="new-user-btn">New User</button>
-      </section>
+        <button type="button" class="ud-add-user-btn" (click)="toggleAddUserForm()">
+          {{ showAddUserForm ? ('COMMON.CLOSE' | translate) : ('PLATFORM_USERS.ADD_USER' | translate) }}
+        </button>
+      </div>
 
-      <section class="stats-grid" *ngIf="!loading">
-        <article class="stat-card">
-          <p>Total Users</p>
-          <strong>{{ users.length }}</strong>
-        </article>
-        <article class="stat-card">
-          <p>Company Admins</p>
-          <strong>{{ countByRole('ADMIN') }}</strong>
-        </article>
-        <article class="stat-card">
-          <p>Active Clients</p>
-          <strong>{{ countByRole('CLIENT') }}</strong>
-        </article>
-        <article class="stat-card">
-          <p>Platform Admins</p>
-          <strong>{{ countByRole('PLATFORM_ADMIN') }}</strong>
-        </article>
-      </section>
+      <form class="ud-add-user-panel" *ngIf="showAddUserForm" [formGroup]="addUserForm" (ngSubmit)="submitAddUser()">
+        <div class="ud-add-user-head">
+          <div>
+            <p class="ud-kicker">{{ 'PLATFORM_USERS.NEW_USER' | translate }}</p>
+            <h2>{{ 'PLATFORM_USERS.ADD_TITLE' | translate }}</h2>
+          </div>
+          <button type="button" class="ud-form-close" (click)="cancelAddUser()" [attr.aria-label]="'PLATFORM_USERS.CLOSE_FORM' | translate">x</button>
+        </div>
 
-      <section class="directory-panel">
-        <div class="toolbar">
-          <label class="table-search" aria-label="Recherche utilisateurs">
-            <span aria-hidden="true">⌕</span>
-            <input
-              type="search"
-              [(ngModel)]="searchTerm"
-              placeholder="Search by name, email or ID..."
-            />
+        <p class="ud-state ud-state-notice" *ngIf="addUserSuccess">{{ addUserSuccess }}</p>
+        <p class="ud-state ud-state-error" *ngIf="addUserError">{{ addUserError }}</p>
+
+        <div class="ud-add-user-grid">
+          <label>
+            <span>{{ 'PLATFORM_USERS.FULL_NAME' | translate }}</span>
+            <input type="text" formControlName="fullName" [placeholder]="'PLATFORM_USERS.FULL_NAME' | translate" />
+            <small *ngIf="hasAddUserError('fullName', 'required')">{{ 'PLATFORM_USERS.NAME_REQUIRED' | translate }}</small>
+            <small *ngIf="hasAddUserError('fullName', 'minlength')">{{ 'PLATFORM_USERS.NAME_MIN' | translate }}</small>
           </label>
 
-          <div class="toolbar-actions">
-            <label>
-              <span>Role</span>
-              <select [(ngModel)]="roleFilter">
-                <option value="ALL">Tous</option>
-                <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
-              </select>
-            </label>
-            <button type="button" class="ghost-action">Date</button>
-            <button type="button" class="ghost-action">Download</button>
+          <label>
+            <span>{{ 'COMMON.EMAIL' | translate }}</span>
+            <input type="email" formControlName="email" placeholder="user@email.com" />
+            <small *ngIf="hasAddUserError('email', 'required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</small>
+            <small *ngIf="hasAddUserError('email', 'email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</small>
+          </label>
+
+          <label>
+            <span>{{ 'COMMON.PASSWORD' | translate }}</span>
+            <input type="password" formControlName="password" [placeholder]="'AUTH.PASSWORD_MIN' | translate" />
+            <small *ngIf="hasAddUserError('password', 'required')">{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</small>
+            <small *ngIf="hasAddUserError('password', 'minlength')">{{ 'AUTH.PASSWORD_MIN' | translate }}</small>
+          </label>
+        </div>
+
+        <div class="ud-add-user-actions">
+          <button type="button" class="ud-form-secondary" (click)="cancelAddUser()">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button type="submit" class="ud-form-primary" [disabled]="creatingUser">
+            {{ creatingUser ? ('PLATFORM_USERS.ADDING' | translate) : ('PLATFORM_USERS.ADD_USER' | translate) }}
+          </button>
+        </div>
+      </form>
+
+      <!-- KPI Cards -->
+      <div class="ud-kpi-grid" *ngIf="!loading">
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-indigo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_USERS.KPI_TOTAL' | translate }}</p>
+            <strong class="ud-kpi-value">{{ users.length }}</strong>
+            <p class="ud-kpi-trend ud-trend-up">↑ {{ 'PLATFORM_USERS.ALL_ROLES' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-violet">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_USERS.COMPANY_ADMINS' | translate }}</p>
+            <strong class="ud-kpi-value">{{ countByRole('ADMIN') }}</strong>
+            <p class="ud-kpi-trend ud-trend-up">↑ {{ 'PLATFORM_USERS.ACTIVE_ADMINS' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-emerald">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_USERS.ACTIVE_CLIENTS' | translate }}</p>
+            <strong class="ud-kpi-value">{{ countByRole('CLIENT') }}</strong>
+            <p class="ud-kpi-trend ud-trend-up">↑ {{ 'PLATFORM_USERS.REGISTERED_CLIENTS' | translate }}</p>
+          </div>
+        </article>
+
+        <article class="ud-kpi-card">
+          <div class="ud-kpi-icon ud-kpi-amber">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div>
+            <p class="ud-kpi-label">{{ 'PLATFORM_USERS.PLATFORM_ADMINS' | translate }}</p>
+            <strong class="ud-kpi-value">{{ countByRole('PLATFORM_ADMIN') }}</strong>
+            <p class="ud-kpi-trend ud-trend-neutral">— {{ 'PLATFORM_USERS.SUPER_ADMINS' | translate }}</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Directory panel -->
+      <div class="ud-panel">
+
+        <!-- Toolbar -->
+        <div class="ud-toolbar">
+          <label class="ud-search-bar" [attr.aria-label]="'PLATFORM_USERS.SEARCH_LABEL' | translate">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input
+              type="search"
+              [ngModel]="searchTerm"
+              (ngModelChange)="onSearchTermChange($event)"
+              [placeholder]="'PLATFORM_USERS.SEARCH_PLACEHOLDER' | translate" />
+          </label>
+
+          <div class="ud-role-chips" role="group" [attr.aria-label]="'PLATFORM_USERS.ROLE_FILTER' | translate">
+            <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'ALL'" (click)="setRoleFilter('ALL')">{{ 'COMMON.ALL' | translate }}</button>
+            <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'ADMIN'" (click)="setRoleFilter('ADMIN')">{{ 'PLATFORM_USERS.ADMINS' | translate }}</button>
+            <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'CLIENT'" (click)="setRoleFilter('CLIENT')">{{ 'PLATFORM_USERS.CLIENTS' | translate }}</button>
+            <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'PLATFORM_ADMIN'" (click)="setRoleFilter('PLATFORM_ADMIN')">Platform</button>
           </div>
         </div>
 
-        <p class="state" *ngIf="loading">Chargement des utilisateurs...</p>
-        <p class="state error" *ngIf="errorMessage">{{ errorMessage }}</p>
-        <p class="state notice" *ngIf="saving">Mise a jour en cours...</p>
+        <!-- States -->
+        <p class="ud-state" *ngIf="loading">{{ 'PLATFORM_USERS.LOADING' | translate }}</p>
+        <p class="ud-state ud-state-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p class="ud-state ud-state-notice" *ngIf="saving">{{ 'PLATFORM_USERS.SAVING' | translate }}</p>
 
-        <div class="table-wrap" *ngIf="!loading && filteredUsers.length">
-          <table>
+        <!-- Table -->
+        <div class="ud-table-wrap" *ngIf="!loading && pagedUsers.length">
+          <table class="ud-table">
             <thead>
               <tr>
                 <th>ID</th>
-                <th>User</th>
-                <th>Role</th>
-                <th>Created At</th>
-                <th>Actions</th>
+                <th>{{ 'PLATFORM_USERS.USER' | translate }}</th>
+                <th>{{ 'PLATFORM_USERS.ROLE' | translate }}</th>
+                <th>{{ 'TABLE.CREATED_AT' | translate }}</th>
+                <th>{{ 'COMMON.ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let user of filteredUsers">
+              <tr *ngFor="let user of pagedUsers">
                 <td>
-                  <span class="id-badge">#UA-{{ user.id }}</span>
+                  <span class="ud-id-badge">#UA-{{ user.id }}</span>
                 </td>
                 <td>
-                  <div class="user-cell">
-                    <span class="avatar-fallback">{{ userInitials(user.fullName) }}</span>
+                  <div class="ud-user-cell">
+                    <span class="ud-avatar" [ngClass]="avatarClass(user.id)">{{ userInitials(user.fullName) }}</span>
                     <div>
-                      <p class="user-name">{{ user.fullName }}</p>
-                      <p class="user-email">{{ user.email }}</p>
+                      <p class="ud-user-name">{{ user.fullName }}</p>
+                      <p class="ud-user-email">{{ user.email }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <div class="role-cell">
-                    <span
-                      class="role-badge"
+                  <div class="ud-role-cell">
+                    <span class="ud-role-badge"
                       [ngClass]="{
-                        'role-client': user.role === 'CLIENT',
-                        'role-admin': user.role === 'ADMIN',
-                        'role-platform': user.role === 'PLATFORM_ADMIN'
-                      }"
-                    >
-                      {{ user.role }}
-                    </span>
-                    <select [ngModel]="user.role" (ngModelChange)="onRoleChange(user, $event)">
+                        'ud-rb-client':   user.role === 'CLIENT',
+                        'ud-rb-admin':    user.role === 'ADMIN',
+                        'ud-rb-platform': user.role === 'PLATFORM_ADMIN'
+                      }">{{ user.role }}</span>
+                    <select #roleSelect [ngModel]="user.role" (ngModelChange)="onRoleChange(user, $event)">
                       <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
                     </select>
                   </div>
                 </td>
                 <td>
-                  <span class="date-pill">{{ user.createdAt | date: 'MMM d, y' }}</span>
+                  <span class="ud-date-pill">{{ user.createdAt | date: 'MMM d, y' }}</span>
                 </td>
                 <td>
-                  <button type="button" class="danger" (click)="deleteUser(user)">Supprimer</button>
+                  <div class="ud-action-buttons">
+                    <button
+                      type="button"
+                      class="ud-edit-btn"
+                      (click)="focusRoleSelect(roleSelect)"
+                      [title]="('COMMON.EDIT' | translate) + ' ' + user.email"
+                      [attr.aria-label]="'PLATFORM_USERS.EDIT_ARIA' | translate">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                    </button>
+                    <button
+                      type="button"
+                      class="ud-delete-btn"
+                      (click)="deleteUser(user)"
+                      [title]="('COMMON.DELETE' | translate) + ' ' + user.email"
+                      [attr.aria-label]="'PLATFORM_USERS.DELETE_ARIA' | translate">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p class="state" *ngIf="!loading && !filteredUsers.length">Aucun utilisateur trouve.</p>
+        <p class="ud-state" *ngIf="!loading && !filteredUsers.length">{{ 'PLATFORM_USERS.EMPTY' | translate }}</p>
 
-        <footer class="table-foot" *ngIf="!loading && filteredUsers.length">
-          <p>Showing <strong>{{ filteredUsers.length }}</strong> of <strong>{{ users.length }}</strong> users</p>
-          <div class="pager">
-            <button type="button">1</button>
-          </div>
+        <footer class="ud-table-foot" *ngIf="!loading && filteredUsers.length">
+          <p>{{ 'PAGINATION.SHOWING' | translate }} <strong>{{ startItem }}</strong> {{ 'PAGINATION.TO' | translate }} <strong>{{ endItem }}</strong> {{ 'PAGINATION.ON' | translate }} <strong>{{ filteredUsers.length }}</strong> {{ 'PLATFORM_USERS.ITEMS' | translate }}</p>
+          <nav class="ud-pagination" [attr.aria-label]="'PAGINATION.LABEL' | translate">
+            <button type="button" class="ud-page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+            <button
+              type="button"
+              class="ud-page-btn"
+              *ngFor="let item of paginationItems"
+              [class.ud-page-active]="item === currentPage"
+              [disabled]="item === '...'"
+              (click)="goToPageItem(item)">{{ item }}</button>
+            <button type="button" class="ud-page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+          </nav>
         </footer>
-      </section>
+      </div>
 
-      <section class="insight-row" *ngIf="!loading">
-        <article class="insight-main">
-          <p class="insight-kicker">Platform Growth</p>
-          <h2>Optimizing Enterprise User Management Strategies.</h2>
-          <p>Scale your operations with authoritative permission mapping and real-time promotion tracking across global teams.</p>
-        </article>
-        <article class="insight-side">
-          <p>Active Users</p>
-          <strong>98.4%</strong>
-          <span>Retention rate over the last fiscal quarter.</span>
-        </article>
-      </section>
     </main>
   </div>
 </section>

@@ -1,238 +1,465 @@
-<section class="home-shell">
-  <div class="screen-glow" aria-hidden="true"></div>
-
-  <header class="site-header">
-    <div class="utility-bar">
-      <p class="utility-pill">+500 offres actives aujourd hui</p>
-      <div class="utility-actions">
-        <a routerLink="/login">Connexion</a>
-      </div>
-    </div>
-
-    <div class="main-nav">
-      <div class="nav-glow" aria-hidden="true"></div>
+<section class="home-page">
+  <!-- ═══ NAVIGATION ═══ -->
+  <header class="top-nav">
+    <div class="top-nav-inner">
       <a class="brand" routerLink="/">
-        <span class="brand-mark">PL</span>
-        <span class="brand-stack">
-          <span class="brand-text">PromoLink</span>
-          <span class="brand-sub">Growth Promo Platform</span>
-        </span>
+        <span class="brand-icon">P</span>
+        PromoLink
       </a>
 
-      <nav class="primary-nav" aria-label="Navigation principale">
-        <a class="nav-link is-hot" href="#partners">Offres du jour</a>
-        <a class="nav-link" routerLink="/admin/subscribe">Espace commercant</a>
-        <a class="nav-link" routerLink="/espace">Espace client</a>
+      <nav class="menu" aria-label="Navigation principale">
+        <a class="menu-link active" href="#stats">{{ 'NAV.HOME' | translate }}</a>
+        <a class="menu-link" href="#how">{{ 'NAV.HOW_IT_WORKS' | translate }}</a>
+        <a class="menu-link" href="#offers">{{ 'NAV.PROMOTIONS' | translate }}</a>
+        <a class="menu-link" href="#partners">{{ 'NAV.PARTNERS' | translate }}</a>
       </nav>
 
-      <a class="company-cta" routerLink="/admin/subscribe">Lancer mes promotions</a>
-      <a class="login-cta" routerLink="/login">Connexion</a>
-
-      <button class="icon-btn" type="button" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <div class="top-actions">
+        <app-language-switcher />
+        <a class="nav-ghost-btn" routerLink="/login">{{ 'NAV.LOGIN' | translate }}</a>
+        <a class="upgrade-btn" routerLink="/login">
+          <span>{{ 'NAV.CLIENT_PROMOS' | translate }}</span>
+        </a>
+        <a class="upgrade-btn accent-2" routerLink="/admin/login">
+          <span>{{ 'NAV.LAUNCH_PROMOS' | translate }}</span>
+        </a>
+      </div>
     </div>
   </header>
 
-  <main class="landing">
-    <section class="hero" aria-label="Presentation">
-      <div class="hero-copy">
-        <p class="hero-chip">Nouveau : promos et coupons en temps reel</p>
-        <h1>
-          <span class="title-blue">Boostez vos ventes</span>
-          <span class="title-orange">avec nos promotions !</span>
-        </h1>
-        <p>
-          Activez des campagnes plus vite, pilotez les performances en direct et transformez vos visiteurs en clients
-          fideles.
+  <main>
+    <!-- ═══ HERO ═══ -->
+    <section class="hero" id="stats">
+      <div class="hero-bg" aria-hidden="true">
+        <img src="stitch-acceuil.png" alt="" />
+      </div>
+      <div class="hero-motif" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="hero-trust-row" aria-hidden="true">
+            <span class="trust-dot"></span>
+            <span class="trust-dot"></span>
+            <span class="trust-dot"></span>
+            <span class="trust-dot"></span>
+            <span class="trust-dot"></span>
+            <span class="trust-text">{{ 'HOME.TRUST' | translate }}</span>
+          </div>
+          <p class="hero-chip">{{ 'HOME.CHIP' | translate }}</p>
+          <p class="hero-kicker">{{ 'HOME.KICKER' | translate }}</p>
+          <h1>
+            {{ 'HOME.TITLE_LINE_1' | translate }}<br />
+            <span>{{ 'HOME.TITLE_LINE_2' | translate }}</span>
+          </h1>
+          <div class="hero-badges" aria-hidden="true">
+            <span class="hero-badge">{{ 'HOME.BADGE_ANALYTICS' | translate }}</span>
+            <span class="hero-badge alt">{{ 'HOME.BADGE_FAST' | translate }}</span>
+            <span class="hero-badge green">{{ 'HOME.BADGE_ROI' | translate }}</span>
+          </div>
+          <p class="hero-desc">
+            {{ 'HOME.DESCRIPTION' | translate }}
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" routerLink="/admin/login">
+              {{ 'NAV.LAUNCH_PROMOS' | translate }}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <a class="btn btn-ghost" routerLink="/login">{{ 'NAV.LOGIN' | translate }}</a>
+          </div>
+        </div>
+
+        <div class="hero-media" aria-hidden="true">
+          <img class="tone-image" src="stitch-acceuil.png" alt="Équipe marketing en réunion" />
+          <article class="float-card card-bottom-left">
+            <div class="float-card-icon">📈</div>
+            <span>1 245</span>
+            <p>{{ 'HOME.ACTIVE_CAMPAIGNS' | translate }}</p>
+          </article>
+          <article class="float-card card-top-right">
+            <div class="float-card-icon">🎟</div>
+            <span>+84K</span>
+            <p>{{ 'HOME.USED_COUPONS' | translate }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ STATS BAR ═══ -->
+    <section class="stats-bar">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number">1 245</span>
+            <span class="stat-label">{{ 'HOME.ACTIVE_CAMPAIGNS' | translate }}</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-item">
+            <span class="stat-number">+84K</span>
+            <span class="stat-label">{{ 'HOME.DISTRIBUTED_COUPONS' | translate }}</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-item">
+            <span class="stat-number">5</span>
+            <span class="stat-label">{{ 'HOME.PARTNER_BRANDS' | translate }}</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-item">
+            <span class="stat-number">+32%</span>
+            <span class="stat-label">{{ 'HOME.AVERAGE_GROWTH' | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ COMMENT ÇA MARCHE ═══ -->
+    <section class="how-it-works" id="how">
+      <div class="container">
+        <div class="section-badge">
+          <span>{{ 'HOME.SIMPLE_FAST' | translate }}</span>
+        </div>
+        <h2 class="how-title">{{ 'HOME.HOW_TITLE' | translate }}</h2>
+        <p class="how-subtitle">
+          {{ 'HOME.HOW_SUBTITLE' | translate }}
         </p>
 
-        <div class="hero-actions">
-          <a class="cta btn-primary" routerLink="/admin/subscribe">Inscrire votre entreprise</a>
-          <a class="cta btn-secondary" routerLink="/promos/consulter-toutes">Voir les promos</a>
-        </div>
-      </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <div class="step-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h3>{{ 'HOME.STEP_REGISTER' | translate }}</h3>
+            <p>{{ 'HOME.STEP_REGISTER_DESC' | translate }}</p>
+            <a class="step-link" routerLink="/espace">{{ 'HOME.STEP_REGISTER_LINK' | translate }}</a>
+          </div>
 
-      <div class="hero-visual" aria-hidden="true">
-        <div class="signal-card">
-          <p>Campagnes actives</p>
-          <strong>124</strong>
-          <small>+18% cette semaine</small>
+          <div class="step-connector" aria-hidden="true">
+            <div class="connector-line"></div>
+            <div class="connector-dot"></div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <div class="step-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+            </div>
+            <h3>{{ 'HOME.STEP_CHOOSE' | translate }}</h3>
+            <p>{{ 'HOME.STEP_CHOOSE_DESC' | translate }}</p>
+            <a class="step-link" href="#offers">{{ 'HOME.STEP_CHOOSE_LINK' | translate }}</a>
+          </div>
+
+          <div class="step-connector" aria-hidden="true">
+            <div class="connector-line"></div>
+            <div class="connector-dot"></div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <div class="step-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <h3>{{ 'HOME.STEP_SAVE' | translate }}</h3>
+            <p>Activez vos coupons et réalisez des économies immédiates sur vos achats préférés.</p>
+            <a class="step-link" routerLink="/espace">Commencer →</a>
+          </div>
         </div>
-        <div class="signal-card alt">
-          <p>Coupons utilises</p>
-          <strong>2 480</strong>
-          <small>Conversion en hausse</small>
-        </div>
-        <div class="floating-pill one">Flash Deal -30%</div>
-        <div class="floating-pill two">Nouveau partenaire</div>
       </div>
     </section>
 
-    <section class="partners" id="partners" aria-label="Nos partenaires">
-      <div class="section-head">
-        <h2>Nos partenaires</h2>
-        <p>Decouvrez les offres qui vous entourent en un clin d'oeil.</p>
-      </div>
-      <div class="partner-ribbon" aria-label="Liste des partenaires">
-        <article
-          class="partner-card"
-          routerLink="/entreprises/decathlon/consulter-promos"
-        >
-          <div class="partner-cover">
-            <img src="partners/decathlon.png" alt="Decathlon" />
-            <span class="promo-chip">-10%</span>
-            <div class="partner-badge">
-              <img src="partners/decathlon.png" alt="Logo Decathlon" />
+    <!-- ═══ PARTNERS ═══ -->
+    <section class="partners" id="partners">
+      <div class="container">
+        <div class="partners-header">
+          <span class="partners-eyebrow">Ils nous font confiance</span>
+          <h2>Nos partenaires de confiance</h2>
+          <p>Des marques leaders qui boostent leurs ventes grâce à notre plateforme</p>
+        </div>
+
+        <div class="partner-cards-grid">
+          <a routerLink="/entreprises/decathlon/consulter-promos" class="partner-card" style="--accent:#0082c8;">
+            <div class="partner-card-glow"></div>
+            <div class="partner-logo-wrap">
+              <span class="partner-initial">D</span>
             </div>
-          </div>
-          <div class="partner-body">
-            <h3>DECATHLON</h3>
-            <p class="partner-sector">Sport & Loisirs</p>
-            <p class="partner-discount">10% de remise</p>
-            <a
-              class="partner-more"
-              routerLink="/entreprises/decathlon/consulter-promos"
-              >Voir offre</a
-            >
-          </div>
-        </article>
-        <article
-          class="partner-card"
-          routerLink="/entreprises/aziza/consulter-promos"
-        >
-          <div class="partner-cover">
-            <img src="partners/aziza.jpg" alt="Aziza" />
-            <span class="promo-chip">-12%</span>
-            <div class="partner-badge">
-              <img src="partners/aziza.jpg" alt="Logo Aziza" />
+            <div class="partner-info">
+              <strong>DECATHLON</strong>
+              <span>Sport & Outdoor</span>
             </div>
-          </div>
-          <div class="partner-body">
-            <h3>AZIZA</h3>
-            <p class="partner-sector">Grande distribution</p>
-            <p class="partner-discount">12% de remise</p>
-            <a
-              class="partner-more"
-              routerLink="/entreprises/aziza/consulter-promos"
-              >Voir offre</a
-            >
-          </div>
-        </article>
-        <article
-          class="partner-card"
-          routerLink="/entreprises/fatales/consulter-promos"
-        >
-          <div class="partner-cover">
-            <img src="partners/fatales.png" alt="Fatales" />
-            <span class="promo-chip">-15%</span>
             <div class="partner-badge">
-              <img src="partners/fatales.png" alt="Logo Fatales" />
+              <span class="badge-dot"></span>
+              Actif
             </div>
-          </div>
-          <div class="partner-body">
-            <h3>FATALES</h3>
-            <p class="partner-sector">Beaute & Cosmetique</p>
-            <p class="partner-discount">15% de remise</p>
-            <a
-              class="partner-more"
-              routerLink="/entreprises/fatales/consulter-promos"
-              >Voir offre</a
-            >
-          </div>
-        </article>
-        <article
-          class="partner-card"
-          routerLink="/entreprises/monoprix/consulter-promos"
-        >
-          <div class="partner-cover">
-            <img src="partners/monoprix.jpg" alt="Monoprix" />
-            <span class="promo-chip">-10%</span>
+            <div class="partner-arrow">→</div>
+          </a>
+
+          <a routerLink="/entreprises/aziza/consulter-promos" class="partner-card" style="--accent:#e63946;">
+            <div class="partner-card-glow"></div>
+            <div class="partner-logo-wrap">
+              <span class="partner-initial">A</span>
+            </div>
+            <div class="partner-info">
+              <strong>AZIZA</strong>
+              <span>Grande Distribution</span>
+            </div>
             <div class="partner-badge">
-              <img src="partners/monoprix.jpg" alt="Logo Monoprix" />
+              <span class="badge-dot"></span>
+              Actif
             </div>
-          </div>
-          <div class="partner-body">
-            <h3>MONOPRIX</h3>
-            <p class="partner-sector">Boutique & Maison</p>
-            <p class="partner-discount">10% de remise</p>
-            <a
-              class="partner-more"
-              routerLink="/entreprises/monoprix/consulter-promos"
-              >Voir offre</a
-            >
-          </div>
-        </article>
-        <article
-          class="partner-card"
-          routerLink="/entreprises/zara/consulter-promos"
-        >
-          <div class="partner-cover">
-            <img src="partners/zara.jpg" alt="Zara" />
-            <span class="promo-chip">-18%</span>
+            <div class="partner-arrow">→</div>
+          </a>
+
+          <a routerLink="/entreprises/fatales/consulter-promos" class="partner-card" style="--accent:#c77dff;">
+            <div class="partner-card-glow"></div>
+            <div class="partner-logo-wrap">
+              <span class="partner-initial">F</span>
+            </div>
+            <div class="partner-info">
+              <strong>FATALES</strong>
+              <span>Beauté & Soins</span>
+            </div>
             <div class="partner-badge">
-              <img src="partners/zara.jpg" alt="Logo Zara" />
+              <span class="badge-dot"></span>
+              Actif
             </div>
+            <div class="partner-arrow">→</div>
+          </a>
+
+          <a routerLink="/entreprises/monoprix/consulter-promos" class="partner-card" style="--accent:#f4a261;">
+            <div class="partner-card-glow"></div>
+            <div class="partner-logo-wrap">
+              <span class="partner-initial">M</span>
+            </div>
+            <div class="partner-info">
+              <strong>MONOPRIX</strong>
+              <span>Mode & Lifestyle</span>
+            </div>
+            <div class="partner-badge">
+              <span class="badge-dot"></span>
+              Actif
+            </div>
+            <div class="partner-arrow">→</div>
+          </a>
+
+          <a routerLink="/entreprises/zara/consulter-promos" class="partner-card" style="--accent:#2d6a4f;">
+            <div class="partner-card-glow"></div>
+            <div class="partner-logo-wrap">
+              <span class="partner-initial">Z</span>
+            </div>
+            <div class="partner-info">
+              <strong>ZARA</strong>
+              <span>Mode & Tendances</span>
+            </div>
+            <div class="partner-badge">
+              <span class="badge-dot"></span>
+              Actif
+            </div>
+            <div class="partner-arrow">→</div>
+          </a>
+        </div>
+
+        <div class="partner-ticker-wrap" aria-hidden="true">
+          <div class="partner-ticker">
+            <span>DECATHLON</span><span>·</span>
+            <span>AZIZA</span><span>·</span>
+            <span>FATALES</span><span>·</span>
+            <span>MONOPRIX</span><span>·</span>
+            <span>ZARA</span><span>·</span>
+            <span>DECATHLON</span><span>·</span>
+            <span>AZIZA</span><span>·</span>
+            <span>FATALES</span><span>·</span>
+            <span>MONOPRIX</span><span>·</span>
+            <span>ZARA</span><span>·</span>
           </div>
-          <div class="partner-body">
-            <h3>ZARA</h3>
-            <p class="partner-sector">Mode & Accessoires</p>
-            <p class="partner-discount">18% de remise</p>
-            <a
-              class="partner-more"
-              routerLink="/entreprises/zara/consulter-promos"
-              >Voir offre</a
-            >
-          </div>
-        </article>
+        </div>
       </div>
     </section>
 
-    <section class="offers" aria-label="Promotions du moment">
-      <div class="section-head">
-        <h2>Promotions du moment</h2>
-        <p>Activez rapidement une offre ou consultez tous les bons plans.</p>
-      </div>
+    <!-- ═══ OFFERS ═══ -->
+    <section class="offers" id="offers">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-badge"><span>Exclusif</span></div>
+            <h2>Promotions du moment</h2>
+            <p>Découvrez les offres les plus performantes de notre réseau.</p>
+          </div>
+          <a class="view-all" routerLink="/promos/consulter-toutes">Voir toutes les offres →</a>
+        </div>
 
-      <div class="offers-grid">
-        <article class="promo-card">
-          <span class="promo-badge">-30%</span>
-          <h3>ZARA</h3>
-          <p>Collection printemps</p>
-          <small>Expire le 28/04/2026</small>
-          <a routerLink="/entreprises/zara/consulter-promos">Activer</a>
-        </article>
+        <div class="offer-grid">
+          <article class="offer-card">
+            <div class="offer-media">
+              <img class="tone-image" src="partners/decathlon.png" alt="Chaussure running" />
+              <span class="discount">-30%</span>
+              <div class="offer-media-overlay"></div>
+            </div>
+            <div class="offer-body">
+              <div class="offer-meta">
+                <span class="offer-brand-tag" style="--brand-color:#0082c8;">DECATHLON</span>
+                <small>Collection Running Elite</small>
+              </div>
+              <p>Profitez de réductions exceptionnelles sur notre dernière gamme de chaussures.</p>
+              <a class="offer-cta" routerLink="/entreprises/decathlon/consulter-promos">
+                Voir l'offre
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </article>
 
-        <article class="promo-card">
-          <span class="promo-badge">-20%</span>
-          <h3>DECATHLON</h3>
-          <p>Equipement running</p>
-          <small>Expire le 02/05/2026</small>
-          <a routerLink="/entreprises/decathlon/consulter-promos">Activer</a>
-        </article>
+          <article class="offer-card">
+            <div class="offer-media">
+              <img class="tone-image" src="partners/fatales.jpg" alt="Produits de soins" />
+              <span class="discount">-15%</span>
+              <div class="offer-media-overlay"></div>
+            </div>
+            <div class="offer-body">
+              <div class="offer-meta">
+                <span class="offer-brand-tag" style="--brand-color:#c77dff;">FATALES</span>
+                <small>Soins Visage Premium</small>
+              </div>
+              <p>Une routine beauté complète avec nos meilleurs sérums anti-âge.</p>
+              <a class="offer-cta" routerLink="/entreprises/fatales/consulter-promos">
+                Voir l'offre
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </article>
 
-        <article class="promo-card">
-          <span class="promo-badge">-15%</span>
-          <h3>FATALES</h3>
-          <p>Pack skincare premium</p>
-          <small>Expire le 30/04/2026</small>
-          <a routerLink="/entreprises/fatales/consulter-promos">Activer</a>
-        </article>
+          <article class="offer-card">
+            <div class="offer-media">
+              <img class="tone-image" src="partners/monoprix-food.jpg" alt="Produits frais" />
+              <span class="discount">-20%</span>
+              <div class="offer-media-overlay"></div>
+            </div>
+            <div class="offer-body">
+              <div class="offer-meta">
+                <span class="offer-brand-tag" style="--brand-color:#f4a261;">MONOPRIX</span>
+                <small>Sélection Fraîcheur & Saveurs</small>
+              </div>
+              <p>Profitez d'une sélection de produits frais et gourmands à prix réduit.</p>
+              <a class="offer-cta" routerLink="/entreprises/monoprix/consulter-promos">
+                Voir l'offre
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section class="signup-panel" id="signup" aria-label="Inscription aux coupons">
-      <div class="signup-icon">PROMO</div>
-      <h2>Inscrivez-vous pour profiter des coupons</h2>
-      <p>Ne ratez plus aucune offre exclusive. Recevez des notifications personnalisees selon vos centres d'interet et votre localisation.</p>
-      <form class="signup-form" action="#" method="post">
-        <input type="email" placeholder="votre@email.com" aria-label="Email" />
-        <button type="button">Je m'inscris</button>
-      </form>
-      <small>Gratuit pour les utilisateurs. Desinscription possible en un clic.</small>
+    <!-- ═══ FEATURES ═══ -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="features-header">
+          <div class="section-badge"><span>Nos avantages</span></div>
+          <h2>Pourquoi choisir PromoLink&nbsp;?</h2>
+          <p>Une suite complète d'outils pour maximiser l'impact de vos campagnes promotionnelles.</p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card feature-card--large">
+            <div class="feature-icon-wrap">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <h3>Gestion centralisée</h3>
+            <p>Pilotez toutes vos campagnes depuis un seul tableau de bord intuitif. Créez, modifiez et suivez vos promotions en temps réel.</p>
+            <div class="feature-visual-bar">
+              <div class="fv-bar-row"><span>Campagnes</span><div class="fv-bar"><div class="fv-bar-fill" style="--w:88%"></div></div><span>88%</span></div>
+              <div class="fv-bar-row"><span>Coupons</span><div class="fv-bar"><div class="fv-bar-fill" style="--w:74%"></div></div><span>74%</span></div>
+              <div class="fv-bar-row"><span>Conversion</span><div class="fv-bar"><div class="fv-bar-fill" style="--w:61%"></div></div><span>61%</span></div>
+            </div>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <h3>Analytics temps réel</h3>
+            <p>Suivez vos performances et optimisez votre ROI grâce à des données actualisées en continu.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <h3>Activation rapide</h3>
+            <p>Lancez une campagne promotionnelle en moins de 5 minutes grâce à notre interface simplifiée.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Réseau qualifié</h3>
+            <p>Accédez à une base d'utilisateurs engagés et qualifiés, prêts à adopter vos offres.</p>
+          </div>
+
+          <div class="feature-card feature-card--accent">
+            <div class="feature-icon-wrap">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Sécurité garantie</h3>
+            <p>Vos données et celles de vos clients sont protégées par un chiffrement de bout en bout.</p>
+            <a class="feature-cta" routerLink="/admin/subscribe">En savoir plus →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ NEWSLETTER ═══ -->
+    <section class="newsletter">
+      <div class="newsletter-glow" aria-hidden="true"></div>
+      <div class="container newsletter-inner">
+        <div class="newsletter-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <h2>Ne manquez aucune opportunité</h2>
+        <p>Inscrivez-vous pour profiter des coupons exclusifs et propulser votre stratégie de croissance.</p>
+        <form class="newsletter-form" action="#" method="post">
+          <input type="email" placeholder="Votre adresse email professionnelle" />
+          <button type="button">
+            S'inscrire
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+        <p class="newsletter-hint">Pas de spam. Désinscription à tout moment.</p>
+      </div>
     </section>
   </main>
 
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a class="brand" routerLink="/">
+          <span class="brand-icon">P</span>
+          PromoLink
+        </a>
+        <p>La plateforme B2B de référence pour vos campagnes promotionnelles.</p>
+        <p class="footer-copy">© 2026 PromoLink. Tous droits réservés.</p>
+      </div>
+
+      <div class="footer-cols">
+        <div class="footer-col">
+          <strong>Plateforme</strong>
+          <a routerLink="/espace">Bénéficier des promos</a>
+          <a routerLink="/admin/login">Lancer mes promotions</a>
+          <a routerLink="/promos/consulter-toutes">Toutes les offres</a>
+        </div>
+        <div class="footer-col">
+          <strong>Partenaires</strong>
+          <a routerLink="/entreprises/decathlon/consulter-promos">Decathlon</a>
+          <a routerLink="/entreprises/aziza/consulter-promos">Aziza</a>
+          <a routerLink="/entreprises/fatales/consulter-promos">Fatales</a>
+          <a routerLink="/entreprises/monoprix/consulter-promos">Monoprix</a>
+          <a routerLink="/entreprises/zara/consulter-promos">Zara</a>
+        </div>
+        <div class="footer-col">
+          <strong>Légal</strong>
+          <a routerLink="/espace">Politique de confidentialité</a>
+          <a routerLink="/espace">Conditions d'utilisation</a>
+          <a routerLink="/espace">Support</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 </section>
