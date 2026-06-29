@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Diagramme de classes d'objet - Authentification PromoLink</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5c667a;
+      --line: #526070;
+      --blue: #e8f1ff;
+      --blue-border: #5b8fd6;
+      --green: #e8f7ef;
+      --green-border: #4f9b68;
+      --orange: #fff1df;
+      --orange-border: #d6933c;
+      --pink: #ffe9ef;
+      --pink-border: #d76a89;
+      --gray: #f4f6f8;
+      --gray-border: #8c98a8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .page {
+      width: 1600px;
+      height: 1080px;
+      position: relative;
+      padding: 34px 44px;
+      background:
+        linear-gradient(90deg, rgba(16, 24, 40, 0.035) 1px, transparent 1px),
+        linear-gradient(rgba(16, 24, 40, 0.035) 1px, transparent 1px),
+        #fff;
+      background-size: 28px 28px;
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 20px;
+      color: var(--muted);
+    }
+
+    .box {
+      position: absolute;
+      width: 285px;
+      border: 3px solid var(--gray-border);
+      border-radius: 8px;
+      background: var(--gray);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .box.small {
+      width: 240px;
+    }
+
+    .box.wide {
+      width: 330px;
+    }
+
+    .head {
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 20px;
+      text-align: center;
+      border-bottom: 2px solid rgba(23, 32, 51, 0.16);
+    }
+
+    .body {
+      padding: 12px 18px 14px;
+      font-size: 18px;
+      line-height: 1.45;
+    }
+
+    .body div {
+      margin: 4px 0;
+    }
+
+    .screen {
+      background: var(--blue);
+      border-color: var(--blue-border);
+    }
+
+    .control {
+      background: var(--green);
+      border-color: var(--green-border);
+    }
+
+    .service {
+      background: var(--orange);
+      border-color: var(--orange-border);
+    }
+
+    .data {
+      background: var(--pink);
+      border-color: var(--pink-border);
+    }
+
+    .note {
+      position: absolute;
+      width: 560px;
+      left: 520px;
+      top: 930px;
+      padding: 14px 18px;
+      border: 2px dashed #7d8794;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #2b3445;
+      font-size: 18px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    svg {
+      position: absolute;
+      inset: 0;
+      width: 1600px;
+      height: 1080px;
+      pointer-events: none;
+    }
+
+    .arrow {
+      stroke: var(--line);
+      stroke-width: 3;
+      fill: none;
+      marker-end: url(#arrow);
+    }
+
+    .dash {
+      stroke-dasharray: 9 8;
+    }
+
+    .label {
+      font: 700 17px Arial, Helvetica, sans-serif;
+      fill: #2f3a4e;
+    }
+
+    .label-muted {
+      font: 16px Arial, Helvetica, sans-serif;
+      fill: #5c667a;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Diagramme de classes d'objet - Authentification PromoLink</h1>
+    <div class="subtitle">Connexion classique et connexion Google, conforme au backend Spring Boot</div>
+
+    <svg aria-hidden="true">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#526070"></path>
+        </marker>
+      </defs>
+
+      <path class="arrow" d="M 290 220 L 430 220"></path>
+      <text class="label" x="302" y="203">POST identifiants</text>
+
+      <path class="arrow" d="M 290 395 L 430 395"></path>
+      <text class="label" x="305" y="378">code Google</text>
+
+      <path class="arrow" d="M 715 255 L 855 255"></path>
+      <text class="label" x="727" y="238">login()</text>
+
+      <path class="arrow" d="M 715 370 L 855 370"></path>
+      <text class="label" x="724" y="353">callback()</text>
+
+      <path class="arrow" d="M 1135 245 L 1268 245"></path>
+      <text class="label" x="1140" y="226">findByEmail</text>
+
+      <path class="arrow" d="M 1135 395 L 1268 395"></path>
+      <text class="label" x="1142" y="376">find / create</text>
+
+      <path class="arrow" d="M 1392 340 L 1392 510"></path>
+      <text class="label" x="1407" y="430">table users</text>
+
+      <path class="arrow" d="M 985 465 L 985 605"></path>
+      <text class="label" x="1003" y="540">generateToken()</text>
+
+      <path class="arrow dash" d="M 855 690 L 715 690"></path>
+      <path class="arrow dash" d="M 855 735 L 715 735"></path>
+      <text class="label" x="730" y="671">AuthResponse</text>
+
+      <path class="arrow dash" d="M 540 555 L 290 555"></path>
+      <text class="label" x="323" y="535">token + email + role</text>
+
+      <path class="arrow" d="M 405 725 L 585 725"></path>
+      <text class="label" x="420" y="706">reponse utilise</text>
+
+      <path class="arrow dash" d="M 720 605 L 855 605"></path>
+      <text class="label-muted" x="700" y="590">donnees UserDetails</text>
+    </svg>
+
+    <section class="box screen small" style="left: 50px; top: 150px;">
+      <div class="head">&lt;&lt;boundary&gt;&gt;<br>IHM Login</div>
+      <div class="body">
+        <div>+ saisirEmail()</div>
+        <div>+ saisirMotDePasse()</div>
+        <div>+ afficherErreur()</div>
+        <div>+ ouvrirEspace()</div>
+      </div>
+    </section>
+
+    <section class="box screen small" style="left: 50px; top: 330px;">
+      <div class="head">&lt;&lt;boundary&gt;&gt;<br>IHM Google</div>
+      <div class="body">
+        <div>+ cliquerGoogle()</div>
+        <div>+ recevoirCode()</div>
+        <div>+ connexionReussie()</div>
+      </div>
+    </section>
+
+    <section class="box control" style="left: 430px; top: 185px;">
+      <div class="head">&lt;&lt;control&gt;&gt;<br>AuthController</div>
+      <div class="body">
+        <div>+ login(request)</div>
+        <div>+ adminLogin(request)</div>
+        <div>+ platformAdminLogin(request)</div>
+        <div>+ googleAuthorizationUrl(state)</div>
+        <div>+ googleCallback(request)</div>
+      </div>
+    </section>
+
+    <section class="box service" style="left: 855px; top: 165px;">
+      <div class="head">&lt;&lt;service&gt;&gt;<br>AuthServiceImpl</div>
+      <div class="body">
+        <div>+ login(LoginRequest)</div>
+        <div>+ adminLogin(LoginRequest)</div>
+        <div>+ platformAdminLogin(LoginRequest)</div>
+        <div>- verifierEmail()</div>
+        <div>- verifierMotDePasse()</div>
+        <div>- verifierCompteActif()</div>
+      </div>
+    </section>
+
+    <section class="box service" style="left: 855px; top: 330px;">
+      <div class="head">&lt;&lt;service&gt;&gt;<br>OAuth2ServiceImpl</div>
+      <div class="body">
+        <div>+ getGoogleAuthorizationUrl(state)</div>
+        <div>+ handleGoogleCallback(code, state)</div>
+        <div>- exchangeCodeForToken()</div>
+        <div>- fetchUserInfo()</div>
+        <div>- findOrCreateGoogleUser()</div>
+      </div>
+    </section>
+
+    <section class="box service small" style="left: 865px; top: 605px;">
+      <div class="head">&lt;&lt;security&gt;&gt;<br>JwtService</div>
+      <div class="body">
+        <div>+ generateToken()</div>
+        <div>+ extractUsername()</div>
+        <div>+ isTokenValid()</div>
+      </div>
+    </section>
+
+    <section class="box data small" style="left: 1268px; top: 215px;">
+      <div class="head">&lt;&lt;repository&gt;&gt;<br>UserRepository</div>
+      <div class="body">
+        <div>+ findByEmailIgnoreCase()</div>
+        <div>+ findByOauthProviderAndOauthId()</div>
+        <div>+ existsByEmailIgnoreCase()</div>
+        <div>+ save(User)</div>
+      </div>
+    </section>
+
+    <section class="box data small" style="left: 1270px; top: 510px;">
+      <div class="head">&lt;&lt;entity&gt;&gt;<br>User</div>
+      <div class="body">
+        <div>- id</div>
+        <div>- fullName</div>
+        <div>- email</div>
+        <div>- password</div>
+        <div>- role</div>
+        <div>- active</div>
+        <div>- oauthProvider</div>
+        <div>- oauthId</div>
+      </div>
+    </section>
+
+    <section class="box data small" style="left: 1255px; top: 775px;">
+      <div class="head">&lt;&lt;database&gt;&gt;<br>PostgreSQL</div>
+      <div class="body">
+        <div>table users</div>
+        <div>stocke les comptes</div>
+        <div>et leurs roles</div>
+      </div>
+    </section>
+
+    <section class="box small" style="left: 540px; top: 610px;">
+      <div class="head">&lt;&lt;dto&gt;&gt;<br>AuthResponse</div>
+      <div class="body">
+        <div>- token</div>
+        <div>- email</div>
+        <div>- role</div>
+      </div>
+    </section>
+
+    <section class="box small" style="left: 540px; top: 760px;">
+      <div class="head">&lt;&lt;dto&gt;&gt;<br>LoginRequest</div>
+      <div class="body">
+        <div>- email</div>
+        <div>- password</div>
+      </div>
+    </section>
+
+    <section class="box small" style="left: 50px; top: 710px;">
+      <div class="head">&lt;&lt;dto&gt;&gt;<br>OAuth2CallbackRequest</div>
+      <div class="body">
+        <div>- code</div>
+        <div>- state</div>
+      </div>
+    </section>
+
+    <section class="box wide" style="left: 1120px; top: 42px;">
+      <div class="head">&lt;&lt;enum&gt;&gt;<br>Role / OAuthProvider</div>
+      <div class="body">
+        <div>Role : CLIENT, ADMIN, PLATFORM_ADMIN</div>
+        <div>OAuthProvider : LOCAL, GOOGLE</div>
+      </div>
+    </section>
+
+    <div class="note">
+      Endpoints representes : /api/auth/login, /api/auth/admin/login,
+      /api/auth/platform-admin/login, /api/auth/oauth2/google/url,
+      /api/auth/oauth2/google/callback.
+    </div>
+  </main>
+</body>
+</html>

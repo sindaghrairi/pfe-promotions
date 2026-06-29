@@ -13,6 +13,8 @@ import {
   LoginRequest,
   MeResponse,
   MessageResponse,
+  OAuth2CallbackRequest,
+  OAuth2UrlResponse,
   RegisterRequest
 } from '../models/auth.model';
 
@@ -48,6 +50,28 @@ export class AuthService {
   login(payload: LoginRequest): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.apiUrl}/login`, payload)
+      .pipe(tap((response) => this.saveSession(response)));
+  }
+
+  loginWithGoogle(admin: boolean = false): void {
+    this.logout();
+    const params = admin ? '?state=admin' : '';
+    this.http.get<OAuth2UrlResponse>(`${this.apiUrl}/oauth2/google/url${params}`).subscribe({
+      next: (response) => {
+        if (this.isBrowser()) {
+          window.location.href = response.url;
+        }
+      },
+      error: () => {
+        console.error('[oauth2] unable to fetch Google authorization URL');
+      }
+    });
+  }
+
+  handleGoogleCallback(code: string, state?: string): Observable<AuthResponse> {
+    const payload: OAuth2CallbackRequest = { code, state };
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/oauth2/google/callback`, payload)
       .pipe(tap((response) => this.saveSession(response)));
   }
 
@@ -169,6 +193,14 @@ export class AuthService {
     }
 
     return this.getStoredRole() === 'PLATFORM_ADMIN';
+  }
+
+  refreshStoredSession(token: string | null | undefined, email: string, role: string): void {
+    if (!token || !this.isBrowser()) {
+      return;
+    }
+
+    this.saveSession({ token, email, role });
   }
 
   private saveSession(response: AuthResponse): void {

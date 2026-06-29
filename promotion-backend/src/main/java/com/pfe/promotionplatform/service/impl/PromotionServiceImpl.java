@@ -1,5 +1,7 @@
 package com.pfe.promotionplatform.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.Normalizer;
 import java.util.Comparator;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pfe.promotionplatform.dto.PromotionRequest;
 import com.pfe.promotionplatform.entity.AdminSubscription;
 import com.pfe.promotionplatform.entity.Promotion;
 import com.pfe.promotionplatform.entity.PromotionStatus;
@@ -73,23 +76,28 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     @Transactional
-    public Promotion createPromotion(String companySlug, Promotion promotion, String principalEmail) {
+    public Promotion createPromotion(String companySlug, PromotionRequest request, String principalEmail) {
         validateOwner(companySlug, principalEmail);
-        String normalizedCouponCode = normalizeCouponCode(promotion.getCouponCode());
-        validateCouponForActiveStatus(promotion.getStatus(), normalizedCouponCode);
+        String normalizedCouponCode = normalizeCouponCode(request.couponCode());
+        validateCouponForActiveStatus(request.status(), normalizedCouponCode);
+        validatePrices(request.initialPrice(), request.promotionalPrice());
 
-        promotion.setId(null);
-        promotion.setCompanySlug(normalizeSlug(companySlug));
-        promotion.setCouponCode(normalizedCouponCode);
-        if (promotion.getUsageCount() == null) {
-            promotion.setUsageCount(0);
-        }
-        if (promotion.getViews() == null) {
-            promotion.setViews(0);
-        }
-        if (promotion.getClaimedCount() == null) {
-            promotion.setClaimedCount(0);
-        }
+        Promotion promotion = Promotion.builder()
+                .companySlug(normalizeSlug(companySlug))
+                .title(request.title())
+                .type(request.type())
+                .category(request.category())
+                .couponCode(normalizedCouponCode)
+                .startDate(request.startDate())
+                .endDate(request.endDate())
+                .status(request.status())
+                .usageCount(request.usageCount() == null ? 0 : request.usageCount())
+                .views(request.views() == null ? 0 : request.views())
+                .claimedCount(request.claimedCount() == null ? 0 : request.claimedCount())
+                .initialPrice(request.initialPrice())
+                .promotionalPrice(request.promotionalPrice())
+                .discount(calculateDiscountLabel(request.initialPrice(), request.promotionalPrice()))
+                .build();
 
         Promotion saved = promotionRepository.save(promotion);
         couponService.syncFromPromotion(saved);
@@ -98,10 +106,11 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     @Transactional
-    public Promotion updatePromotion(String companySlug, Long promotionId, Promotion promotion, String principalEmail) {
+    public Promotion updatePromotion(String companySlug, Long promotionId, PromotionRequest request, String principalEmail) {
         validateOwner(companySlug, principalEmail);
-        String normalizedCouponCode = normalizeCouponCode(promotion.getCouponCode());
-        validateCouponForActiveStatus(promotion.getStatus(), normalizedCouponCode);
+        String normalizedCouponCode = normalizeCouponCode(request.couponCode());
+        validateCouponForActiveStatus(request.status(), normalizedCouponCode);
+        validatePrices(request.initialPrice(), request.promotionalPrice());
 
         Promotion existing = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new IllegalArgumentException("Promotion introuvable"));
@@ -110,17 +119,20 @@ public class PromotionServiceImpl implements PromotionService {
             throw new IllegalArgumentException("Promotion invalide pour cette entreprise");
         }
 
-        existing.setTitle(promotion.getTitle());
-        existing.setType(promotion.getType());
-        existing.setCategory(promotion.getCategory());
-        existing.setDiscount(promotion.getDiscount());
+        existing.setTitle(request.title());
+        existing.setType(request.type());
+        existing.setCategory(request.category());
+        existing.setInitialPrice(request.initialPrice());
+        existing.setPromotionalPrice(request.promotionalPrice());
+        // Discount is derived here so clients cannot persist an inconsistent percentage.
+        existing.setDiscount(calculateDiscountLabel(request.initialPrice(), request.promotionalPrice()));
         existing.setCouponCode(normalizedCouponCode);
-        existing.setStartDate(promotion.getStartDate());
-        existing.setEndDate(promotion.getEndDate());
-        existing.setStatus(promotion.getStatus());
-        existing.setUsageCount(promotion.getUsageCount() == null ? existing.getUsageCount() : promotion.getUsageCount());
-        existing.setViews(promotion.getViews() == null ? existing.getViews() : promotion.getViews());
-        existing.setClaimedCount(promotion.getClaimedCount() == null ? existing.getClaimedCount() : promotion.getClaimedCount());
+        existing.setStartDate(request.startDate());
+        existing.setEndDate(request.endDate());
+        existing.setStatus(request.status());
+        existing.setUsageCount(request.usageCount() == null ? existing.getUsageCount() : request.usageCount());
+        existing.setViews(request.views() == null ? existing.getViews() : request.views());
+        existing.setClaimedCount(request.claimedCount() == null ? existing.getClaimedCount() : request.claimedCount());
 
         Promotion saved = promotionRepository.save(existing);
         couponService.syncFromPromotion(saved);
@@ -204,6 +216,28 @@ public class PromotionServiceImpl implements PromotionService {
         if (status == PromotionStatus.ACTIVE && (couponCode == null || couponCode.isBlank())) {
             throw new IllegalArgumentException("Un coupon est obligatoire pour une promotion active");
         }
+    }
+
+    private void validatePrices(BigDecimal initialPrice, BigDecimal promotionalPrice) {
+        if (initialPrice == null || promotionalPrice == null) {
+            throw new IllegalArgumentException("Les prix initial et promotionnel sont obligatoires");
+        }
+
+        if (initialPrice.signum() <= 0 || promotionalPrice.signum() <= 0) {
+            throw new IllegalArgumentException("Les prix doivent etre superieurs a 0");
+        }
+
+        if (promotionalPrice.compareTo(initialPrice) >= 0) {
+            throw new IllegalArgumentException("Le prix promotionnel doit etre inferieur au prix initial.");
+        }
+    }
+
+    private String calculateDiscountLabel(BigDecimal initialPrice, BigDecimal promotionalPrice) {
+        BigDecimal reduction = initialPrice.subtract(promotionalPrice)
+                .multiply(BigDecimal.valueOf(100))
+                .divide(initialPrice, 2, RoundingMode.HALF_UP)
+                .stripTrailingZeros();
+        return "-" + reduction.toPlainString() + "%";
     }
 
     private String normalizeSlug(String value) {

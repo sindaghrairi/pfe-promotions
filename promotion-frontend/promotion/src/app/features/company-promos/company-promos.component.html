@@ -4,11 +4,12 @@
 
   <nav class="client-navbar" *ngIf="readOnlyMode">
     <a class="client-nav-brand" routerLink="/">
-      <span class="client-nav-logo">P</span>
+      <img class="client-nav-logo" src="promolink-logo-icon.png" alt="" />
       PromoLink
     </a>
     <div class="client-nav-links">
       <a class="client-nav-link" routerLink="/">{{ 'NAV.HOME' | translate }}</a>
+      <a class="client-nav-link" routerLink="/client/profile" *ngIf="isUserAuthenticated">{{ 'PROFILE.CLIENT_NAV' | translate }}</a>
       <app-language-switcher />
       <button type="button" class="client-nav-logout" (click)="logout()">{{ 'COMMON.LOGOUT' | translate }}</button>
     </div>
@@ -18,8 +19,16 @@
     <header class="read-only-header curated-header">
       <div class="curated-title-wrap">
         <p class="kicker">{{ 'PROMOS.PUBLISHED_KICKER' | translate }}</p>
-        <h1>{{ allCompaniesMode ? ('PROMOS.PARTNER_EXCLUSIVES' | translate) : companyName }}</h1>
-        <p *ngIf="allCompaniesMode">{{ 'PROMOS.PARTNER_SUBTITLE' | translate }}</p>
+        <h1>
+          <ng-container *ngIf="allCompaniesMode; else companyHeroTitle">
+            <span>Exclusivités</span>
+            <span>partenaires</span>
+            <span class="hero-title-accent">rien que pour vous</span>
+          </ng-container>
+          <ng-template #companyHeroTitle>{{ companyName }}</ng-template>
+        </h1>
+        <p *ngIf="allCompaniesMode && selectedReadCategoryLabel">Promotions {{ selectedReadCategoryLabel }}</p>
+        <p *ngIf="allCompaniesMode && !selectedReadCategoryLabel">{{ 'PROMOS.PARTNER_SUBTITLE' | translate }}</p>
         <p *ngIf="!allCompaniesMode">{{ 'PROMOS.COMPANY_SUBTITLE' | translate }}</p>
       </div>
 
@@ -39,6 +48,16 @@
           <span>{{ 'PROMOS.VERIFIED_OFFERS' | translate }}</span>
         </div>
       </div>
+
+      <div class="curated-hero-art" aria-hidden="true">
+        <div class="curated-podium"></div>
+        <div class="curated-gift"></div>
+        <div class="curated-bag"><span>%</span></div>
+        <div class="curated-tag">%</div>
+        <span class="curated-spark curated-spark-one"></span>
+        <span class="curated-spark curated-spark-two"></span>
+      </div>
+    </header>
 
       <div class="curated-search" *ngIf="allCompaniesMode">
         <span class="search-icon" aria-hidden="true">⌕</span>
@@ -62,7 +81,6 @@
           {{ item.labelKey | translate }}
         </button>
       </div>
-    </header>
 
     <section class="published-grid curated-grid" [class.single-company-grid]="!allCompaniesMode" [attr.aria-label]="'PROMOS.PUBLISHED_ARIA' | translate">
 
@@ -93,6 +111,8 @@
             <button
               type="button"
               class="copy-coupon-btn"
+              [disabled]="isCouponUnavailable(promo)"
+              [attr.title]="couponUnavailableReason(promo)"
               (click)="handleCouponAction(promo)"
             >
               {{ couponActionLabel(promo) }}
@@ -137,6 +157,7 @@
           {{ 'PROMOS.MANAGEMENT.FILTERS' | translate }}
         </button>
         <app-language-switcher />
+        <a class="pf-btn-secondary" routerLink="/admin/profile">{{ 'PROFILE.ADMIN_NAV' | translate }}</a>
         <button type="button" class="pf-btn-secondary" (click)="openSubscriptionPage()">{{ 'NAV.SUBSCRIPTIONS' | translate }}</button>
         <button type="button" class="pf-btn-primary" (click)="openCreateForm()">{{ 'PROMOS.MANAGEMENT.NEW_PROMOTION' | translate }}</button>
         <button type="button" class="pf-btn-ghost" (click)="logout()">{{ 'COMMON.LOGOUT' | translate }}</button>
@@ -494,10 +515,6 @@
                 </div>
               </td>
               <td class="pf-actions-cell" *ngIf="!readOnlyMode">
-                <button type="button" class="pf-action-main" (click)="editPromotion(promo)"
-                  [ngClass]="promoScoreBadge(promo).cls === 'score-excellent' ? 'pf-act-green' : promoScoreBadge(promo).cls === 'score-moyen' ? 'pf-act-orange' : 'pf-act-red'">
-                  {{ promoScoreBadge(promo).cls === 'score-excellent' ? ('PROMOS.MANAGEMENT.ACTION_BOOST' | translate) : promoScoreBadge(promo).cls === 'score-moyen' ? ('PROMOS.MANAGEMENT.ACTION_EXTEND' | translate) : ('PROMOS.MANAGEMENT.ACTION_OPTIMIZE' | translate) }}
-                </button>
                 <button type="button" class="pf-icon-btn" (click)="editPromotion(promo)" [title]="'COMMON.EDIT' | translate">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>

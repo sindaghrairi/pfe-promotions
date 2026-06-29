@@ -1,0 +1,17 @@
+<section class="oauth-page">
+  <article class="oauth-card">
+    <p class="brand"><span>P</span> PromoLink</p>
+
+    <ng-container *ngIf="loading; else result">
+      <div class="loader" aria-hidden="true"></div>
+      <h1>{{ 'OAUTH.LOADING_TITLE' | translate }}</h1>
+      <p>{{ 'OAUTH.LOADING_TEXT' | translate }}</p>
+    </ng-container>
+
+    <ng-template #result>
+      <h1>{{ 'OAUTH.ERROR_TITLE' | translate }}</h1>
+      <p>{{ errorMessage }}</p>
+      <a routerLink="/login">{{ 'OAUTH.BACK_LOGIN' | translate }}</a>
+    </ng-template>
+  </article>
+</section>

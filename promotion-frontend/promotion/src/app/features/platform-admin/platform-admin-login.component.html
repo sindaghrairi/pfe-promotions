@@ -4,37 +4,38 @@
 
   <div class="platform-auth-shell">
     <div class="platform-auth-card">
-      <p class="eyebrow">PROMOLINK CONTROL</p>
-      <p class="card-kicker">Connexion securisee</p>
-      <h2>Admin Plateforme</h2>
-      <p class="subtitle">Accedez a votre console premium.</p>
+      <p class="eyebrow">{{ 'PLATFORM_LOGIN.EYEBROW' | translate }}</p>
+      <app-language-switcher />
+      <p class="card-kicker">{{ 'PLATFORM_LOGIN.KICKER' | translate }}</p>
+      <h2>{{ 'PLATFORM_LOGIN.TITLE' | translate }}</h2>
+      <p class="subtitle">{{ 'PLATFORM_LOGIN.SUBTITLE' | translate }}</p>
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <label for="email">Email</label>
+        <label for="email">{{ 'COMMON.EMAIL' | translate }}</label>
         <div class="input-wrap">
           <span aria-hidden="true">@</span>
           <input id="email" type="email" formControlName="email" placeholder="admin.plateforme@promolink.com" />
         </div>
-        <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
-        <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+        <small class="error" *ngIf="hasError('email', 'required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</small>
+        <small class="error" *ngIf="hasError('email', 'email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</small>
 
-        <label for="password">Mot de passe</label>
+        <label for="password">{{ 'COMMON.PASSWORD' | translate }}</label>
         <div class="input-wrap">
           <span aria-hidden="true">*</span>
-          <input id="password" type="password" formControlName="password" placeholder="Votre mot de passe" />
+          <input id="password" type="password" formControlName="password" [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate" />
         </div>
-        <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
-        <small class="error" *ngIf="hasError('password', 'minlength')">3 caracteres minimum.</small>
+        <small class="error" *ngIf="hasError('password', 'required')">{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</small>
+        <small class="error" *ngIf="hasError('password', 'minlength')">{{ 'PLATFORM_LOGIN.PASSWORD_MIN' | translate }}</small>
 
         <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
         <button type="submit" [disabled]="loading">
-          <span>{{ loading ? 'Connexion en cours...' : 'Entrer dans la console' }}</span>
+          <span>{{ loading ? ('AUTH.LOGIN_LOADING' | translate) : ('PLATFORM_LOGIN.ENTER' | translate) }}</span>
         </button>
       </form>
 
       <p class="switch-link">
-        Retour a <a routerLink="/">l'accueil</a>
+        {{ 'PLATFORM_LOGIN.BACK_TO' | translate }} <a routerLink="/">{{ 'NAV.HOME' | translate }}</a>
       </p>
     </div>
   </div>

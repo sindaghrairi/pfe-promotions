@@ -23,15 +23,15 @@
   backdrop-filter: blur(8px);
   padding: 0.55rem 0.75rem;
   display: flex;
-  align-items: center;
+  align-items:center;
   justify-content: space-between;
   gap: 0.6rem;
 }
 
 .top-brand {
   margin: 0;
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex;
+  align-items:center;
   gap: 0.45rem;
   font: 800 1rem/1 'Sora', sans-serif;
   color: #2563eb;
@@ -49,8 +49,8 @@
 }
 
 .mini-topbar nav {
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex;
+  align-items:center;
   gap: 0.48rem;
 }
 
@@ -64,8 +64,8 @@
 .mini-topbar nav .pill-link {
   min-height: 34px;
   border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex;
+  align-items:center;
   padding: 0 0.8rem;
   color: #fff;
   background: #2563eb;
@@ -78,7 +78,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
   gap: clamp(1.1rem, 2.8vw, 2.2rem);
-  align-items: center;
+  align-items:center;
 }
 
 .auth-intro {
@@ -87,8 +87,8 @@
 
 .brand-row {
   margin: 0;
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex;
+  align-items:center;
   gap: 0.55rem;
   font: 800 1.1rem/1 'Sora', sans-serif;
   color: #1657da;
@@ -145,7 +145,7 @@ h1 {
   padding: 1rem;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
+  align-items:center;
   gap: 0.85rem;
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.6);
@@ -234,7 +234,7 @@ label {
   border: 1px solid #d8dfe5;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
+  align-items:center;
   gap: 0.62rem;
   padding: 0 0.75rem;
   background: rgba(255, 255, 255, 0.88);
@@ -339,8 +339,8 @@ button {
   background: linear-gradient(135deg, #34d399, #16a34a);
   box-shadow: 0 14px 28px rgba(22, 163, 74, 0.35);
   transition: transform 0.22s ease, box-shadow 0.22s ease;
-  display: inline-flex;
-  align-items: center;
+  display:inline-flex;
+  align-items:center;
   justify-content: center;
   gap: 0.45rem;
 }
@@ -552,5 +552,518 @@ button:disabled {
 
   .footer-links {
     gap: 0.75rem;
+  }
+}
+
+.auth-page {
+  min-height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(900px 520px at 12% 94%, rgba(91, 33, 182, 0.09), transparent 58%),
+    linear-gradient(130deg, #ffffff 0 48%, #5b21b6 48.2% 100%);
+}
+
+.auth-page::before {
+  inset: 0 0 0 52.5%;
+  clip-path: none;
+  background:
+    radial-gradient(720px 460px at 58% 46%, rgba(167, 139, 250, 0.34), transparent 66%),
+    radial-gradient(420px 300px at 78% 86%, rgba(76, 29, 149, 0.5), transparent 68%),
+    linear-gradient(145deg, #6d28d9 0%, #7c3aed 42%, #2e1065 100%);
+}
+
+.auth-page::after {
+  left: -14%;
+  bottom: -24%;
+  width: 62%;
+  height: 72%;
+  border-radius: 50%;
+  background:
+    linear-gradient(35deg, transparent 0 42%, rgba(91, 33, 182, 0.08) 42.5% 58%, transparent 58.5%),
+    rgba(91, 33, 182, 0.035);
+}
+
+.mini-topbar {
+  height: 104px;
+  min-height: 104px;
+  padding: 0 clamp(1.4rem, 3.7vw, 4rem);
+}
+
+.top-brand {
+  gap: 0.8rem;
+  font: 900 1.35rem/1 'Sora', sans-serif;
+  color: #0f172a;
+}
+
+.top-brand span {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 1.35rem;
+  box-shadow: 0 10px 20px rgba(91, 33, 182, 0.28);
+}
+
+.mini-topbar nav {
+  gap: 1.05rem;
+}
+
+.mini-topbar nav a {
+  min-height: 42px;line-height:42px;
+  padding: 0 1rem;
+  border-radius: 12px;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.mini-topbar nav .pill-link {
+  min-width: 78px;
+  justify-content: center;
+  background: #5b21b6;
+  box-shadow: 0 14px 26px rgba(46, 16, 101, 0.22);
+}
+
+.auth-layout {
+  width: 100%;
+  min-height: calc(100vh - 104px);
+  margin: 0;
+  display: block;
+}
+
+.auth-intro {
+  display: none;
+}
+
+.auth-card {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 24px);
+  z-index: 5;
+  width: min(720px, calc(100vw - 2rem));
+  max-height: calc(100vh - 132px);
+  transform: translate(-50%, -50%);
+  padding: clamp(2rem, 4vh, 3.2rem) clamp(2rem, 4.8vw, 4.6rem);
+  border: 0;
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.985);
+  box-shadow: 0 34px 90px rgba(28, 16, 65, 0.18);
+}
+
+.auth-card::before {
+  width: 62px;
+  height: 62px;
+  margin-bottom: 1rem;
+  border-radius: 17px;
+  font-size: 2.1rem;
+  box-shadow: 0 0 0 8px #ffffff, 0 18px 34px rgba(91, 33, 182, 0.28);
+}
+
+.form-head h2 {
+  color: #11102b;
+  font-size: clamp(2rem, 3vw, 2.45rem);
+}
+
+.form-head p {
+  color: #35375f;
+  font-size: 1rem;
+}
+
+.google-btn {
+  margin-top: 1.55rem;
+  border: 1px solid #e4e7f3 !important;
+  border-radius: 17px !important;
+  background: #ffffff !important;
+  color: #11102b !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06) !important;
+}
+
+.auth-divider {
+  margin: 1.75rem 0 !important;
+}
+
+label {
+  color: #333a60;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.field-shell {
+  height: 58px;
+  border: 1px solid #e2e6f4;
+  border-radius: 15px;
+  background: #ffffff;
+}
+
+.field-icon {
+  background: #f4f1ff;
+  color: #5b21b6;
+}
+
+form > button,
+button[type="submit"] {
+  height: 64px;
+  margin-top: 0.55rem;
+  border-radius: 999px;
+  font-size: 1.12rem;
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  box-shadow: 0 16px 32px rgba(91, 33, 182, 0.28);
+}
+
+.switch-link {
+  margin-top: 1.05rem;
+  color: #35375f;
+  text-align: center;
+}
+
+.switch-link a {
+  color: #5b21b6;
+  font-weight: 900;
+}
+
+.page-footer {
+  display: none;
+}
+
+@media (max-width: 1050px) {
+  .auth-page {
+    overflow: auto;
+    background:
+      linear-gradient(180deg, #ffffff 0 42%, #5b21b6 42% 100%);
+  }
+
+  .auth-page::before,
+  .auth-page::after,
+  .auth-layout::before,
+  .auth-layout::after {
+    display: none;
+  }
+
+  .mini-topbar {
+    height: auto;
+    min-height: 86px;
+  }
+
+  .mini-topbar nav a {
+    color: #5b21b6;
+  }
+
+  .auth-layout {
+    min-height: calc(100vh - 86px);
+    padding: 1rem 0 2rem;
+  }
+
+  .auth-card {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    margin: 0 auto;
+  }
+}
+
+.top-brand img {
+  width: 38px;
+  height: 38px;
+}
+
+.top-brand span {
+  display: none;
+}
+
+.auth-card {
+  width: min(600px, calc(100vw - 2rem));
+  padding: clamp(1.2rem, 2.4vh, 1.8rem) clamp(1.45rem, 3vw, 2.5rem);
+  border-radius: 28px;
+}
+
+.auth-card::before {
+  content: '';
+  width: 52px;
+  height: 52px;
+  background: url('/promolink-logo-icon.png') center / contain no-repeat;
+  box-shadow: none;
+}
+
+.form-head {
+  margin-bottom: 0.85rem;
+}
+
+.form-head h2 {
+  font-size: clamp(1.5rem, 2.1vw, 1.9rem);
+}
+
+.google-btn {
+  min-height: 48px;
+  margin-top: 0.8rem;
+}
+
+.auth-divider {
+  margin: 0.95rem 0 !important;
+}
+
+.field-shell {
+  height: 47px;
+}
+
+form > button,
+button[type="submit"] {
+  height: 54px;
+}
+
+.switch-link {
+  margin-top: 0.55rem;
+  font-size: 0.9rem;
+}
+
+/* Final layout pass: align this page with the other authentication screens
+   while keeping the existing form and business logic untouched. */
+.auth-page {
+  min-height: 100vh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.mini-topbar {
+  height: 88px;
+  min-height: 88px;
+}
+
+.auth-layout {
+  min-height: calc(100vh - 88px);
+  display: grid;
+  place-items: center;
+  padding: 1rem 1rem 2rem;
+}
+
+.auth-card {
+  position: relative;
+  inset: auto;
+  top: auto;
+  left: auto;
+  transform: none;
+  width: min(560px, calc(100vw - 2rem));
+  max-height: none;
+  overflow: visible;
+  margin: 0 auto;
+  padding: clamp(1.15rem, 2.2vh, 1.55rem) clamp(1.35rem, 3vw, 2.25rem);
+}
+
+.auth-card::before {
+  display: block;
+  margin: 0 auto 0.45rem;
+}
+
+.form-head {
+  margin-bottom: 0.65rem;
+}
+
+.form-head h2 {
+  font-size: clamp(1.45rem, 2vw, 1.85rem);
+  line-height: 1.08;
+}
+
+.form-head p {
+  font-size: 0.92rem;
+}
+
+.google-btn {
+  min-height: 44px;
+  margin: 0.65rem 0 0.55rem !important;
+  padding: 0.7rem 1rem !important;
+  border-radius: 15px !important;
+}
+
+.auth-divider {
+  margin: 0.7rem 0 !important;
+}
+
+form {
+  gap: 0.46rem;
+}
+
+.field-block {
+  gap: 0.2rem;
+}
+
+label {
+  font-size: 0.7rem;
+}
+
+.field-shell {
+  height: 43px;
+}
+
+.terms-line {
+  margin-top: 0.14rem;
+  color: #4b5574;
+}
+
+form > button,
+button[type="submit"] {
+  width: 100%;
+  height: 48px;
+  margin-top: 0.35rem;
+}
+
+.switch-link {
+  margin-top: 0.42rem;
+  line-height: 1.25;
+}
+
+@media (max-height: 820px) and (min-width: 900px) {
+  .mini-topbar {
+    height: 76px;
+    min-height: 76px;
+  }
+
+  .auth-layout {
+    min-height: calc(100vh - 76px);
+    padding-top: 0.4rem;
+  }
+
+  .auth-card {
+    width: min(540px, calc(100vw - 2rem));
+    padding: 0.85rem 1.9rem 1.15rem;
+  }
+
+  .auth-card::before {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 0.3rem;
+  }
+
+  .form-head h2 {
+    font-size: 1.45rem;
+  }
+
+  .form-head p,
+  .switch-link {
+    font-size: 0.82rem;
+  }
+
+  .field-shell {
+    height: 40px;
+  }
+
+  .google-btn {
+    min-height: 40px;
+  }
+
+  form > button,
+  button[type="submit"] {
+    height: 44px;
+  }
+}
+
+/* Center the company-admin registration form exactly like the other auth pages. */
+.auth-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-layout {
+  flex: 1 1 auto;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: center;
+  align-items: center;
+  place-items: center;
+  padding: clamp(1.25rem, 3vh, 2.4rem) 1rem;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  justify-self: center;
+  align-self: center;
+  margin: auto;
+}
+
+@media (max-height: 820px) and (min-width: 900px) {
+  .auth-layout {
+    padding-top: 1rem;
+    padding-bottom: 1.25rem;
+  }
+}
+
+/* True viewport centering: the previous rule centered the form below the topbar. */
+.auth-layout {
+  min-height: 100vh !important;
+  margin-top: -88px !important;
+  padding: 0 1rem !important;
+}
+
+.auth-card {
+  transform: none !important;
+}
+
+@media (max-height: 820px) and (min-width: 900px) {
+  .auth-layout {
+    margin-top: -76px !important;
+    min-height: 100vh !important;
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+/* Keep the topbar visible: center the form in the remaining auth area. */
+.auth-layout {
+  min-height: calc(100vh - 88px) !important;
+  margin-top: 0 !important;
+  padding: 1.25rem 1rem 2rem !important;
+}
+
+@media (max-height: 820px) and (min-width: 900px) {
+  .auth-layout {
+    min-height: calc(100vh - 76px) !important;
+    margin-top: 0 !important;
+    padding: 0.8rem 1rem 1.25rem !important;
+  }
+}
+
+/* Final override: keep the admin registration card centered on the page. */
+.auth-page > .auth-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  place-items: center !important;
+  width: 100% !important;
+  min-height: calc(100vh - 88px) !important;
+  margin: 0 !important;
+  padding: 1.25rem 1rem 2rem !important;
+  box-sizing: border-box !important;
+}
+
+.auth-page > .auth-layout > .auth-card {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  margin: 0 auto !important;
+  justify-self: center !important;
+  align-self: center !important;
+}
+
+@media (max-height: 820px) and (min-width: 900px) {
+  .auth-page > .auth-layout {
+    min-height: calc(100vh - 76px) !important;
+    padding: 0.8rem 1rem 1.25rem !important;
+  }
+}
+
+@media (min-width: 1051px) {
+  .auth-page > .auth-layout {
+    position: relative !important;
+    display: block !important;
+    min-height: calc(100vh - 88px) !important;
+    padding: 0 !important;
+  }
+
+  .auth-page > .auth-layout > .auth-card {
+    position: fixed !important;
+    left: 50vw !important;
+    top: 52vh !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
   }
 }

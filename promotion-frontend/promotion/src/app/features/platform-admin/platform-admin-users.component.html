@@ -34,13 +34,9 @@
     </nav>
 
     <div class="ud-nav-foot">
-      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Help Center
-      </a>
-      <a routerLink="/platform-admin/dashboard" class="ud-nav-link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Account
+      <a routerLink="/" class="ud-nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        {{ 'NAV.HOME' | translate }}
       </a>
     </div>
   </aside>
@@ -193,7 +189,7 @@
             <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'ALL'" (click)="setRoleFilter('ALL')">{{ 'COMMON.ALL' | translate }}</button>
             <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'ADMIN'" (click)="setRoleFilter('ADMIN')">{{ 'PLATFORM_USERS.ADMINS' | translate }}</button>
             <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'CLIENT'" (click)="setRoleFilter('CLIENT')">{{ 'PLATFORM_USERS.CLIENTS' | translate }}</button>
-            <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'PLATFORM_ADMIN'" (click)="setRoleFilter('PLATFORM_ADMIN')">Platform</button>
+            <button type="button" class="ud-chip" [class.ud-chip-active]="roleFilter === 'PLATFORM_ADMIN'" (click)="setRoleFilter('PLATFORM_ADMIN')">{{ 'PLATFORM_USERS.PLATFORM' | translate }}</button>
           </div>
         </div>
 
@@ -210,6 +206,7 @@
                 <th>ID</th>
                 <th>{{ 'PLATFORM_USERS.USER' | translate }}</th>
                 <th>{{ 'PLATFORM_USERS.ROLE' | translate }}</th>
+                <th>{{ 'TABLE.STATE' | translate }}</th>
                 <th>{{ 'TABLE.CREATED_AT' | translate }}</th>
                 <th>{{ 'COMMON.ACTIONS' | translate }}</th>
               </tr>
@@ -240,6 +237,16 @@
                       <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
                     </select>
                   </div>
+                </td>
+                <td>
+                  <select
+                    class="ud-table-select"
+                    [disabled]="savingStatusId === user.id"
+                    [ngModel]="user.active"
+                    (ngModelChange)="onStatusChange(user, $event)">
+                    <option [ngValue]="true">{{ 'COMMON.ACTIVE' | translate }}</option>
+                    <option [ngValue]="false">{{ 'COMMON.INACTIVE' | translate }}</option>
+                  </select>
                 </td>
                 <td>
                   <span class="ud-date-pill">{{ user.createdAt | date: 'MMM d, y' }}</span>

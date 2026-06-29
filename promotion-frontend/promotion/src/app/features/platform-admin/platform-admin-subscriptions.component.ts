@@ -8,6 +8,7 @@ import { PlatformAdminSubscription } from '../../core/models/platform-admin.mode
 import { PlatformAdminService } from '../../core/services/platform-admin.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { TranslationService } from '../../core/i18n/translation.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 
 @Component({
@@ -20,6 +21,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 export class PlatformAdminSubscriptionsComponent implements OnInit {
   private readonly platformAdminService = inject(PlatformAdminService);
   private readonly themeService = inject(ThemeService);
+  private readonly translations = inject(TranslationService);
 
   readonly isDark$ = this.themeService.isDark$;
 
@@ -32,6 +34,7 @@ export class PlatformAdminSubscriptionsComponent implements OnInit {
   pageSize = 6;
   currentPage = 1;
   editingId: number | null = null;
+  savingStatusId: number | null = null;
 
   get activeCount(): number {
     return this.subscriptions.filter((item) => item.active).length;
@@ -154,6 +157,55 @@ export class PlatformAdminSubscriptionsComponent implements OnInit {
     select.click();
   }
 
+  onStatusChange(item: PlatformAdminSubscription, active: boolean): void {
+    if (item.active === active || this.savingStatusId === item.id) {
+      return;
+    }
+
+    const previous = item.active;
+    item.active = active;
+    this.savingStatusId = item.id;
+    this.errorMessage = '';
+
+    this.platformAdminService.updateSubscriptionStatus(item.id, active).subscribe({
+      next: (updated) => {
+        this.savingStatusId = null;
+        const index = this.subscriptions.findIndex((subscription) => subscription.id === updated.id);
+        if (index >= 0) {
+          this.subscriptions[index] = updated;
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        item.active = previous;
+        this.savingStatusId = null;
+        this.errorMessage = this.extractError(error);
+      }
+    });
+  }
+
+  subscriptionStatusLabel(item: PlatformAdminSubscription): string {
+    switch (item.status) {
+      case 'ACTIVE':
+        return this.translations.translate('PLATFORM_SUBSCRIPTIONS.STATUS_ACTIVE');
+      case 'OVERDUE':
+        return this.translations.translate('PLATFORM_SUBSCRIPTIONS.STATUS_OVERDUE');
+      case 'EXPIRED':
+        return this.translations.translate('PLATFORM_SUBSCRIPTIONS.STATUS_EXPIRED');
+      case 'CANCELED':
+        return this.translations.translate('PLATFORM_SUBSCRIPTIONS.STATUS_CANCELED');
+      case 'PENDING':
+        return this.translations.translate('PLATFORM_SUBSCRIPTIONS.STATUS_PENDING');
+      default:
+        return item.active
+          ? this.translations.translate('COMMON.ACTIVE')
+          : this.translations.translate('COMMON.INACTIVE');
+    }
+  }
+
+  subscriptionStatusClass(item: PlatformAdminSubscription): string {
+    return `ud-status-${(item.status || (item.active ? 'ACTIVE' : 'CANCELED')).toLowerCase()}`;
+  }
+
   ngOnInit(): void {
     this.platformAdminService.listSubscriptions().subscribe({
       next: (response) => {
@@ -176,7 +228,7 @@ export class PlatformAdminSubscriptionsComponent implements OnInit {
     if (typeof error.error?.error === 'string') {
       return error.error.error;
     }
-    return 'Impossible de charger les abonnements.';
+    return this.translations.translate('PLATFORM_SUBSCRIPTIONS.LOAD_ERROR');
   }
 
   private parseDate(value: string): number {

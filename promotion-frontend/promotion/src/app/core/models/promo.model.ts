@@ -8,6 +8,8 @@ export interface PromotionDto {
   type: PromoType;
   category: string;
   discount: string;
+  initialPrice?: number | null;
+  promotionalPrice?: number | null;
   couponCode?: string | null;
   startDate: string;
   endDate: string;
@@ -21,7 +23,8 @@ export interface PromotionPayload {
   title: string;
   type: PromoType;
   category: string;
-  discount: string;
+  initialPrice?: number | null;
+  promotionalPrice?: number | null;
   couponCode?: string;
   startDate: string;
   endDate: string;

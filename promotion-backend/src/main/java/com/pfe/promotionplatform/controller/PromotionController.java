@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pfe.promotionplatform.dto.PromotionRequest;
 import com.pfe.promotionplatform.entity.Promotion;
 import com.pfe.promotionplatform.service.PromotionService;
 
@@ -42,7 +43,7 @@ public class PromotionController {
     @PostMapping("/company/{slug}")
     public ResponseEntity<Promotion> createPromotion(
             @PathVariable String slug,
-            @Valid @RequestBody Promotion request,
+            @Valid @RequestBody PromotionRequest request,
             Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(promotionService.createPromotion(slug, request, principal.getName()));
@@ -52,7 +53,7 @@ public class PromotionController {
     public ResponseEntity<Promotion> updatePromotion(
             @PathVariable String slug,
             @PathVariable Long promotionId,
-            @Valid @RequestBody Promotion request,
+            @Valid @RequestBody PromotionRequest request,
             Principal principal) {
         return ResponseEntity.ok(promotionService.updatePromotion(slug, promotionId, request, principal.getName()));
     }

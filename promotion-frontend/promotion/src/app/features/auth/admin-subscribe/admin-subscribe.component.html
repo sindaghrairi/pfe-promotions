@@ -1,6 +1,6 @@
 <section class="auth-page">
   <header class="mini-topbar">
-    <p class="top-brand"><span>P</span> {{ 'COMMON.BRAND' | translate }}</p>
+    <p class="top-brand"><img src="promolink-logo-icon.png" alt="" /> {{ 'COMMON.BRAND' | translate }}</p>
     <nav aria-label="Navigation rapide admin">
       <app-language-switcher />
       <a routerLink="/admin/login" [queryParams]="authQueryParams">{{ 'ADMIN_SUBSCRIBE.ADMIN_LOGIN' | translate }}</a>
@@ -74,10 +74,6 @@
         <a routerLink="/admin/login" [queryParams]="authQueryParams">{{ 'AUTH.LOGIN_BUTTON' | translate }}</a>
       </p>
 
-      <p class="switch-link">
-        {{ 'AUTH.BACK_SPACE_QUESTION' | translate }}
-        <a routerLink="/espace">{{ 'AUTH.CHOOSE_SPACE' | translate }}</a>
-      </p>
     </div>
   </div>
 

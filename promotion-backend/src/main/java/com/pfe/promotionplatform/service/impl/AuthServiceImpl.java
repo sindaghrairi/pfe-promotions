@@ -22,6 +22,7 @@ import com.pfe.promotionplatform.dto.MessageResponse;
 import com.pfe.promotionplatform.dto.PlatformAdminPlanDto;
 import com.pfe.promotionplatform.dto.RegisterRequest;
 import com.pfe.promotionplatform.entity.AdminSubscription;
+import com.pfe.promotionplatform.entity.AdminSubscriptionStatus;
 import com.pfe.promotionplatform.entity.Plan;
 import com.pfe.promotionplatform.entity.Role;
 import com.pfe.promotionplatform.entity.User;
@@ -31,6 +32,7 @@ import com.pfe.promotionplatform.repository.UserRepository;
 import com.pfe.promotionplatform.security.CustomUserDetailsService;
 import com.pfe.promotionplatform.security.JwtService;
 import com.pfe.promotionplatform.service.AuthService;
+import com.pfe.promotionplatform.service.SubscriptionInvoiceService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,12 +47,36 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
+    private final SubscriptionInvoiceService subscriptionInvoiceService;
 
         @PostConstruct
-        void normalizeLegacySubscriptionPlans() {
+        void normalizeLegacyData() {
                 int updated = adminSubscriptionRepository.normalizePlans();
                 if (updated > 0) {
                         log.info("Normalized {} subscription plan value(s) to BASIC/STANDARD/PREMIUM", updated);
+                }
+
+                int subscriptionStatuses = adminSubscriptionRepository.markLegacySubscriptionStatuses();
+                if (subscriptionStatuses > 0) {
+                        log.info("Marked {} legacy subscription status value(s)", subscriptionStatuses);
+                }
+
+                int googlePasswords = userRepository.markLegacyGoogleUsersWithoutLocalPassword();
+                int localPasswords = userRepository.markLegacyLocalUsersWithLocalPassword();
+                if (googlePasswords > 0 || localPasswords > 0) {
+                        log.info("Normalized local password flag for {} Google and {} local legacy user(s)",
+                                        googlePasswords,
+                                        localPasswords);
+                }
+
+                int activeUsers = userRepository.markLegacyUsersActive();
+                if (activeUsers > 0) {
+                        log.info("Marked {} legacy user(s) as active", activeUsers);
+                }
+
+                int invoices = subscriptionInvoiceService.backfillActiveSubscriptionsWithoutInvoice();
+                if (invoices > 0) {
+                        log.info("Created {} missing subscription invoice(s)", invoices);
                 }
         }
 
@@ -72,7 +98,9 @@ public class AuthServiceImpl implements AuthService {
                         existing.setCompanyName(request.getCompanyName());
                         existing.setPlan(normalizedPlan);
                         existing.setActive(true);
+                        existing.setStatus(AdminSubscriptionStatus.ACTIVE);
                         adminSubscriptionRepository.save(existing);
+                        subscriptionInvoiceService.createInitialInvoiceIfMissing(existing);
                         return new MessageResponse("Abonnement actif. Vous pouvez maintenant creer votre compte admin.");
                 }
 
@@ -85,9 +113,11 @@ public class AuthServiceImpl implements AuthService {
                                 .contactEmail(normalizedContactEmail)
                                 .plan(normalizedPlan)
                                 .active(true)
+                                .status(AdminSubscriptionStatus.ACTIVE)
                                 .build();
 
                 adminSubscriptionRepository.save(subscription);
+                subscriptionInvoiceService.createInitialInvoiceIfMissing(subscription);
                 return new MessageResponse("Abonnement active. Vous pouvez maintenant creer votre compte admin.");
         }
 
@@ -111,6 +141,7 @@ public class AuthServiceImpl implements AuthService {
                                 .fullName(request.getFullName())
                                 .email(normalizedEmail)
                                 .password(passwordEncoder.encode(request.getPassword()))
+                                .localPasswordSet(true)
                                 .role(Role.ADMIN)
                                 .build();
 
@@ -161,6 +192,8 @@ public class AuthServiceImpl implements AuthService {
                         throw new IllegalArgumentException("Email ou mot de passe incorrect");
                 }
 
+                ensureUserCanAuthenticate(user);
+
                 var userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
                 String token = jwtService.generateToken(
                                 userDetails,
@@ -196,6 +229,8 @@ public class AuthServiceImpl implements AuthService {
                         throw new IllegalArgumentException("Email ou mot de passe incorrect");
                 }
 
+                ensureUserCanAuthenticate(user);
+
                 var userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
                 String token = jwtService.generateToken(
                                 userDetails,
@@ -222,6 +257,7 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(request.getFullName())
                 .email(normalizedEmail)
                 .password(passwordEncoder.encode(request.getPassword()))
+                .localPasswordSet(true)
                 .role(Role.CLIENT)
                 .build();
 
@@ -253,6 +289,8 @@ public class AuthServiceImpl implements AuthService {
             log.warn("login failed: invalid password for email={}", normalizedEmail);
             throw new IllegalArgumentException("Email ou mot de passe incorrect");
         }
+
+        ensureUserCanAuthenticate(user);
 
         var userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
         String token = jwtService.generateToken(
@@ -434,6 +472,18 @@ public class AuthServiceImpl implements AuthService {
 
                 if (!Boolean.TRUE.equals(plan.getActive())) {
                         throw new IllegalArgumentException("Ce plan est actuellement inactif");
+                }
+        }
+
+        private void ensureUserCanAuthenticate(User user) {
+                if (Boolean.FALSE.equals(user.getActive())) {
+                        throw new IllegalArgumentException("Votre compte est inactif. Contactez l'admin plateforme.");
+                }
+
+                if (user.getRole() == Role.ADMIN
+                                && !adminSubscriptionRepository.existsByContactEmailIgnoreCaseAndActiveTrue(user.getEmail())) {
+                        throw new IllegalArgumentException(
+                                        "Votre abonnement est inactif. Contactez l'admin plateforme.");
                 }
         }
 

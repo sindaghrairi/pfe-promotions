@@ -19,6 +19,7 @@ export interface PlatformAdminUser {
   fullName: string;
   email: string;
   role: PlatformUserRole;
+  active: boolean;
   createdAt: string;
 }
 
@@ -28,6 +29,7 @@ export interface PlatformAdminSubscription {
   contactEmail: string;
   plan: string;
   active: boolean;
+  status: 'ACTIVE' | 'OVERDUE' | 'EXPIRED' | 'CANCELED' | 'PENDING';
   createdAt: string;
 }
 
@@ -135,4 +137,16 @@ export interface PlatformAdminChartDataset {
   label: string;
   data: number[];
   color: string;
+}
+
+export interface PlatformCopilotRequest {
+  question: string;
+  period: PlatformDashboardPeriod;
+}
+
+export interface PlatformCopilotResponse {
+  model: string;
+  answer: string;
+  suggestedActions: string[];
+  fallback: boolean;
 }

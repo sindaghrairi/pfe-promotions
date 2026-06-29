@@ -6,11 +6,14 @@ import { Router, RouterLink } from '@angular/router';
 
 import { LoginRequest } from '../../core/models/auth.model';
 import { AuthService } from '../../core/services/auth.service';
+import { TranslationService } from '../../core/i18n/translation.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-platform-admin-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './platform-admin-login.component.html',
   styleUrl: './platform-admin-login.component.css'
 })
@@ -18,6 +21,7 @@ export class PlatformAdminLoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly translations = inject(TranslationService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -60,13 +64,13 @@ export class PlatformAdminLoginComponent {
 
   private extractApiError(error: HttpErrorResponse): string {
     if (error.status === 0) {
-      return 'Serveur indisponible. Verifiez que le backend tourne sur le port 8081.';
+      return this.translations.translate('ERRORS.BACKEND_SERVER_PORT');
     }
 
     if (typeof error.error?.error === 'string') {
       return error.error.error;
     }
 
-    return 'Echec de connexion admin plateforme.';
+    return this.translations.translate('PLATFORM_LOGIN.LOGIN_ERROR');
   }
 }

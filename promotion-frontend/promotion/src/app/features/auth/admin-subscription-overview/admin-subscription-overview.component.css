@@ -2,6 +2,70 @@
   display: block;
 }
 
+/* PromoLink premium refresh - visual only */
+.sub-page {
+  color: #0f172a;
+  background:
+    radial-gradient(circle at 8% -4%, rgba(124, 58, 237, 0.16), transparent 34%),
+    radial-gradient(circle at 96% 4%, rgba(250, 204, 21, 0.16), transparent 30%),
+    #f8fafc;
+}
+
+.sub-header {
+  border: 1px solid rgba(91, 33, 182, 0.12);
+  border-radius: 24px;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  background:
+    radial-gradient(460px 260px at 86% 12%, rgba(250, 204, 21, 0.18), transparent 62%),
+    linear-gradient(135deg, #25086d, #5b21b6 62%, #7c3aed);
+  box-shadow: 0 24px 56px rgba(91, 33, 182, 0.18);
+}
+
+.sub-eyebrow {
+  color: #facc15;
+}
+
+.sub-header h1,
+.sub-subtitle {
+  color: #ffffff;
+}
+
+.sub-back-btn {
+  border-radius: 999px;
+  color: #5b21b6;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.sub-card,
+.sub-info-col,
+.sub-amount-box,
+.sub-loading,
+.sub-error,
+.sub-success {
+  border-radius: 20px;
+  border-color: rgba(91, 33, 182, 0.12);
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.sub-card::before {
+  background: linear-gradient(90deg, #5b21b6, #7c3aed, #facc15);
+}
+
+.sub-card-icon,
+.sub-live-badge {
+  color: #5b21b6;
+  background: #f3e8ff;
+}
+
+.sub-info-label,
+.sub-header h2,
+.sub-card-top h2,
+.sub-info-val,
+.sub-status-badge {
+  color: #5b21b6;
+}
+
 .sub-page {
   min-height: 100vh;
   padding: 2.5rem 1rem;
@@ -64,7 +128,8 @@
 }
 
 .sub-loading,
-.sub-error {
+.sub-error,
+.sub-success {
   margin: 0;
   border-radius: 12px;
   padding: 0.9rem 1rem;
@@ -81,6 +146,12 @@
   border: 1px solid #fecaca;
   background: #fef2f2;
   color: #b91c1c;
+}
+
+.sub-success {
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
 }
 
 .sub-card {
@@ -102,7 +173,7 @@
 .sub-card-top {
   padding: 1.3rem 1.45rem;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-columns: 48px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 0.9rem;
   border-bottom: 1px solid #e7edf4;
@@ -142,6 +213,33 @@
   white-space: nowrap;
 }
 
+.sub-status-badge {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  border-radius: 999px;
+  padding: 0 0.8rem;
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+}
+
+.sub-status-green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.sub-status-orange {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.sub-status-red {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
 .sub-blink {
   width: 8px;
   height: 8px;
@@ -156,7 +254,7 @@
 .sub-info-grid {
   padding: 1.25rem 1.45rem 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.85rem;
 }
 
@@ -232,7 +330,8 @@
 }
 
 .sub-btn-primary,
-.sub-btn-secondary {
+.sub-btn-secondary,
+.sub-btn-reactivate {
   min-height: 44px;
   display: inline-flex;
   align-items: center;
@@ -257,6 +356,18 @@
   border: 1px solid #d9e3ef;
   background: #fff;
   color: #334155;
+}
+
+.sub-btn-reactivate {
+  border: 0;
+  background: #c2410c;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(194, 65, 12, 0.18);
+}
+
+.sub-btn-reactivate:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .sub-empty {
@@ -340,4 +451,66 @@
   .sub-back-btn {
     width: 100%;
   }
+}
+
+/* PromoLink premium refresh final layer - visual only */
+.sub-page {
+  color: #0f172a;
+  background:
+    radial-gradient(circle at 8% -4%, rgba(124, 58, 237, 0.16), transparent 34%),
+    radial-gradient(circle at 96% 4%, rgba(250, 204, 21, 0.16), transparent 30%),
+    #f8fafc;
+}
+
+.sub-header {
+  border: 1px solid rgba(91, 33, 182, 0.12);
+  border-radius: 24px;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  background:
+    radial-gradient(460px 260px at 86% 12%, rgba(250, 204, 21, 0.18), transparent 62%),
+    linear-gradient(135deg, #25086d, #5b21b6 62%, #7c3aed);
+  box-shadow: 0 24px 56px rgba(91, 33, 182, 0.18);
+}
+
+.sub-eyebrow { color: #facc15; }
+.sub-header h1,
+.sub-subtitle { color: #ffffff; }
+
+.sub-back-btn,
+.sub-btn-secondary {
+  border-radius: 999px;
+  color: #5b21b6;
+  border-color: rgba(91, 33, 182, 0.14);
+  background: #ffffff;
+}
+
+.sub-btn-primary {
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  box-shadow: 0 14px 28px rgba(91, 33, 182, 0.24);
+}
+
+.sub-card,
+.sub-info-col,
+.sub-amount-box {
+  border-radius: 20px;
+  border-color: rgba(91, 33, 182, 0.12);
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.sub-card::before {
+  background: linear-gradient(90deg, #5b21b6, #7c3aed, #facc15);
+}
+
+.sub-card-icon,
+.sub-live-badge {
+  color: #5b21b6;
+  background: #f3e8ff;
+}
+
+.sub-info-label,
+.sub-card-top h2,
+.sub-info-val {
+  color: #5b21b6;
 }

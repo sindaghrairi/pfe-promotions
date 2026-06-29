@@ -6,7 +6,7 @@
     [class.is-active]="currentLanguage === language.code"
     [attr.aria-pressed]="currentLanguage === language.code"
     (click)="setLanguage(language.code)">
+    <span class="language-flag language-flag-{{ language.code }}" aria-hidden="true"></span>
     <span class="language-short">{{ language.shortLabel }}</span>
-    <span class="language-label">{{ language.labelKey | translate }}</span>
   </button>
 </div>

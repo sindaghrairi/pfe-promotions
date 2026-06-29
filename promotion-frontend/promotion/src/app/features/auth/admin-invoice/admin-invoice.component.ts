@@ -125,6 +125,11 @@ export class AdminInvoiceComponent {
   }
 
   private checkAdminAccountExists(): void {
+    if (this.authService.isAdminAuthenticated()) {
+      this.showAdminRegisterButton = false;
+      return;
+    }
+
     this.authService.adminAccountExists(this.email, this.companyName).subscribe({
       next: (response) => {
         this.showAdminRegisterButton = !response.exists;

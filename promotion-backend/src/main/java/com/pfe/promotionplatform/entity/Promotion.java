@@ -1,5 +1,6 @@
 package com.pfe.promotionplatform.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,6 +51,12 @@ public class Promotion {
 
     @Column(nullable = false)
     private String discount;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal initialPrice;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal promotionalPrice;
 
     @Column
     private String couponCode;

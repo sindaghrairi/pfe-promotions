@@ -6,11 +6,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { RegisterRequest } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
@@ -19,6 +22,7 @@ export class RegisterComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translations = inject(TranslationService);
 
   readonly form = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -29,6 +33,10 @@ export class RegisterComponent {
 
   loading = false;
   errorMessage = '';
+
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle();
+  }
 
   get completionPercent(): number {
     const controls = this.form.controls;
@@ -98,14 +106,14 @@ export class RegisterComponent {
 
   get passwordStrengthLabel(): string {
     if (this.passwordStrengthPercent >= 75) {
-      return 'Fort';
+      return this.t('ADMIN_REGISTER.STRENGTH_STRONG');
     }
 
     if (this.passwordStrengthPercent >= 45) {
-      return 'Moyen';
+      return this.t('ADMIN_REGISTER.STRENGTH_MEDIUM');
     }
 
-    return 'Faible';
+    return this.t('ADMIN_REGISTER.STRENGTH_WEAK');
   }
 
   submit(): void {
@@ -115,7 +123,7 @@ export class RegisterComponent {
     }
 
     if (this.form.controls.password.value !== this.form.controls.confirmPassword.value) {
-      this.errorMessage = 'Les mots de passe ne correspondent pas.';
+      this.errorMessage = this.t('ADMIN_REGISTER.PASSWORD_MISMATCH');
       return;
     }
 
@@ -165,7 +173,11 @@ export class RegisterComponent {
       }
     }
 
-    return 'Echec de creation de compte. Veuillez reessayer.';
+    return this.t('REGISTER.CREATE_ERROR');
+  }
+
+  private t(key: string): string {
+    return this.translations.translate(key);
   }
 
   private safeRedirect(redirectTo: string | null): string {

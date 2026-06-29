@@ -39,15 +39,38 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    // Google-only accounts start with a technical password that is not usable by the owner.
+    private Boolean localPasswordSet;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private OAuthProvider oauthProvider = OAuthProvider.LOCAL;
+
+    @Column(unique = true)
+    private String oauthId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Builder.Default
+    private Boolean active = true;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     void prePersist() {
+        if (this.oauthProvider == null) {
+            this.oauthProvider = OAuthProvider.LOCAL;
+        }
+        if (this.localPasswordSet == null) {
+            this.localPasswordSet = this.oauthProvider != OAuthProvider.GOOGLE;
+        }
+        if (this.active == null) {
+            this.active = true;
+        }
         this.createdAt = LocalDateTime.now();
     }
 }

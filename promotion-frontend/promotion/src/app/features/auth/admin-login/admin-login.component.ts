@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { LoginRequest } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher.component';
 
@@ -21,6 +22,7 @@ export class AdminLoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translations = inject(TranslationService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -29,6 +31,10 @@ export class AdminLoginComponent {
 
   loading = false;
   errorMessage = '';
+
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle(true);
+  }
 
   get authQueryParams(): { redirectTo: string } | undefined {
     const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
@@ -57,8 +63,8 @@ export class AdminLoginComponent {
       next: () => {
         this.loading = false;
         const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
-        if (redirectTo === '/dashboard') {
-          this.router.navigate(['/dashboard']);
+        if (redirectTo?.startsWith('/')) {
+          this.router.navigateByUrl(redirectTo);
           return;
         }
 
@@ -91,11 +97,11 @@ export class AdminLoginComponent {
 
   private extractApiError(error: HttpErrorResponse): string {
     if (error.status === 0) {
-      return "Serveur indisponible. Verifiez que le backend tourne sur le port 8081.";
+      return this.translations.translate('ERRORS.BACKEND_SERVER_PORT');
     }
 
     if (error.status === 401 || error.status === 403) {
-      return 'Acces refuse. Verifiez vos identifiants admin.';
+      return this.translations.translate('AUTH.ADMIN_ACCESS_DENIED');
     }
 
     const payload = error.error;
@@ -111,7 +117,7 @@ export class AdminLoginComponent {
       }
     }
 
-    return 'Echec de connexion admin. Verifiez vos identifiants.';
+    return this.translations.translate('AUTH.ADMIN_LOGIN_ERROR');
   }
 
 }

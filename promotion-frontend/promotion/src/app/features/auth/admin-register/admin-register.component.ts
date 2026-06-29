@@ -36,6 +36,10 @@ export class AdminRegisterComponent {
   errorMessage = '';
   redirectTo = '/entreprises/entreprise';
 
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle(true);
+  }
+
   get isConfirmPasswordValid(): boolean {
     const confirmControl = this.form.controls.confirmPassword;
     if (!confirmControl.value) {

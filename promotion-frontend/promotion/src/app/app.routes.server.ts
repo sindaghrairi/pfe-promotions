@@ -58,7 +58,19 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server
   },
   {
+    path: 'oauth2/google/callback',
+    renderMode: RenderMode.Client
+  },
+  {
     path: 'dashboard',
+    renderMode: RenderMode.Server
+  },
+  {
+    path: 'client/profile',
+    renderMode: RenderMode.Server
+  },
+  {
+    path: 'admin/profile',
     renderMode: RenderMode.Server
   },
   {

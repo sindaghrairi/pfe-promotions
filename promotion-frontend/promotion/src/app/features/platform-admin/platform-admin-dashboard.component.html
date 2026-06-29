@@ -46,6 +46,12 @@
         <app-language-switcher />
         <button
           type="button"
+          class="ud-logout-btn"
+          (click)="logout()">
+          {{ 'COMMON.LOGOUT' | translate }}
+        </button>
+        <button
+          type="button"
           class="ud-theme-toggle"
           [class.is-dark]="(isDark$ | async)"
           [attr.aria-pressed]="(isDark$ | async) ? 'true' : 'false'"
@@ -91,6 +97,55 @@
             <strong class="ud-kpi-value">{{ card.value }}</strong>
             <span class="ud-kpi-hint">{{ card.hint }}</span>
           </article>
+        </section>
+
+        <section class="ud-panel ud-ai-panel">
+          <div class="ud-panel-header ud-ai-header">
+            <div>
+              <p class="ud-chart-kicker">AI Platform Copilot</p>
+            </div>
+            <span class="ud-ai-model" *ngIf="copilotResponse">
+              {{ copilotResponse.model }}{{ copilotResponse.fallback ? ' · mode local' : '' }}
+            </span>
+          </div>
+
+          <div class="ud-ai-layout">
+            <div class="ud-ai-question">
+              <textarea
+                [(ngModel)]="copilotQuestion"
+                rows="4"
+                placeholder="Pose une question sur la sante de la plateforme, les risques ou les revenus"></textarea>
+              <div class="ud-ai-actions">
+                <button type="button" class="ud-ai-submit" [disabled]="copilotLoading" (click)="askCopilot()">
+                  {{ copilotLoading ? 'Analyse en cours...' : 'Analyser' }}
+                </button>
+                <button
+                  *ngFor="let suggestion of copilotSuggestions"
+                  type="button"
+                  class="ud-ai-chip"
+                  [disabled]="copilotLoading"
+                  (click)="askCopilot(suggestion)">
+                  {{ suggestion }}
+                </button>
+              </div>
+            </div>
+
+            <div class="ud-ai-answer">
+              <p class="ud-state ud-state-error" *ngIf="copilotError">{{ copilotError }}</p>
+              <p class="ud-ai-empty" *ngIf="!copilotResponse && !copilotError">
+                Demandez au copilot une lecture decisionnelle du dashboard.
+              </p>
+              <ng-container *ngIf="copilotResponse as ai">
+                <p class="ud-ai-text">{{ ai.answer }}</p>
+                <div class="ud-ai-next" *ngIf="ai.suggestedActions.length">
+                  <h3>Actions rapides</h3>
+                  <ul>
+                    <li *ngFor="let action of ai.suggestedActions">{{ action }}</li>
+                  </ul>
+                </div>
+              </ng-container>
+            </div>
+          </div>
         </section>
 
         <section class="ud-chart-grid ud-chart-grid-main">

@@ -4,11 +4,14 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { AccountService } from '../../../core/services/account.service';
+import { AdminSubscriptionResponse } from '../../../core/models/auth.model';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 type BillingCycle = 'MONTHLY' | 'YEARLY';
 type PlanKey = 'BASIC' | 'STANDARD' | 'PREMIUM';
+type SubscriptionStatus = 'ACTIVE' | 'EXPIRED' | 'CANCELED' | 'PENDING' | 'OVERDUE';
 
 type SubscriptionSnapshot = {
   companyName: string;
@@ -17,6 +20,9 @@ type SubscriptionSnapshot = {
   billingCycle: BillingCycle;
   amount: number;
   issuedAt: string;
+  nextInvoice: string;
+  status: SubscriptionStatus;
+  latestInvoiceStatus?: string | null;
   redirectTo: string;
 };
 
@@ -31,11 +37,14 @@ export class AdminSubscriptionOverviewComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly accountService = inject(AccountService);
   private readonly translations = inject(TranslationService);
 
   snapshot: SubscriptionSnapshot | null = null;
   loading = false;
   errorMessage = '';
+  successMessage = '';
+  reactivating = false;
   companyName ="";
   contactEmail = '';
   fallbackRedirect = '/dashboard';
@@ -107,7 +116,7 @@ export class AdminSubscriptionOverviewComponent {
   }
 
   get dateLabel(): string {
-    const issuedAt = this.snapshot?.issuedAt;
+    const issuedAt = this.snapshot?.nextInvoice || this.snapshot?.issuedAt;
     if (!issuedAt) {
       return '-';
     }
@@ -124,6 +133,25 @@ export class AdminSubscriptionOverviewComponent {
     }).format(parsed);
   }
 
+  get statusLabel(): string {
+    return this.snapshot?.status ?? 'PENDING';
+  }
+
+  get canReactivate(): boolean {
+    return this.snapshot?.status === 'EXPIRED' || this.snapshot?.status === 'CANCELED';
+  }
+
+  get statusBadgeClass(): string {
+    const status = this.snapshot?.status;
+    if (status === 'ACTIVE' && !this.isSoonDue()) {
+      return 'sub-status-green';
+    }
+    if (status === 'PENDING' || (status === 'ACTIVE' && this.isSoonDue())) {
+      return 'sub-status-orange';
+    }
+    return 'sub-status-red';
+  }
+
   openInvoice(): void {
     if (!this.snapshot) {
       return;
@@ -138,6 +166,30 @@ export class AdminSubscriptionOverviewComponent {
         billingCycle: this.snapshot.billingCycle,
         amount: this.snapshot.amount,
         issuedAt: this.snapshot.issuedAt
+      }
+    });
+  }
+
+  reactivateSubscription(): void {
+    if (!this.canReactivate || this.reactivating) {
+      return;
+    }
+
+    this.reactivating = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.accountService.reactivateCompanySubscription().subscribe({
+      next: (subscription) => {
+        this.reactivating = false;
+        this.successMessage = subscription.message
+          || 'Votre abonnement a ete reactive. Une nouvelle facture est en attente de validation.';
+        this.applySubscription(subscription);
+        this.loadSubscriptionFromApi(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.reactivating = false;
+        this.errorMessage = this.extractApiError(error);
       }
     });
   }
@@ -176,6 +228,10 @@ export class AdminSubscriptionOverviewComponent {
         return null;
       }
 
+      if (this.companyName.trim() && !this.isSameCompany(parsed.companyName, this.companyName)) {
+        return null;
+      }
+
       return {
         companyName: parsed.companyName,
         email: parsed.email ?? '',
@@ -183,6 +239,9 @@ export class AdminSubscriptionOverviewComponent {
         billingCycle: parsed.billingCycle,
         amount: Number(parsed.amount) || 0,
         issuedAt: parsed.issuedAt ?? '',
+        nextInvoice: parsed.nextInvoice ?? parsed.issuedAt ?? '',
+        status: parsed.status ?? 'PENDING',
+        latestInvoiceStatus: parsed.latestInvoiceStatus ?? null,
         redirectTo: parsed.redirectTo ?? this.fallbackRedirect
       };
     } catch {
@@ -195,33 +254,14 @@ export class AdminSubscriptionOverviewComponent {
     return normalized === 'societe' || normalized === 'entreprise' || normalized === 'societey';
   }
 
-  private loadSubscriptionFromApi(): void {
-    this.loading = true;
+  private loadSubscriptionFromApi(showLoader = true): void {
+    this.loading = showLoader;
     this.errorMessage = '';
 
-    if (this.companyName.trim()) {
-      this.loadSubscriptionByCompanyFallback();
-      return;
-    }
-
-    this.authService.adminSubscriptionMe().subscribe({
+    this.accountService.getCompanySubscription().subscribe({
       next: (subscription) => {
         this.loading = false;
-        const plan = subscription.plan;
-        const amount = plan === 'BASIC' ? 29 : plan === 'STANDARD' ? 79 : 149;
-
-        this.snapshot = {
-          companyName: subscription.companyName || this.companyName,
-          email: subscription.contactEmail || this.contactEmail,
-          plan,
-          billingCycle: 'MONTHLY',
-          amount,
-          issuedAt: subscription.createdAt || new Date().toISOString(),
-          redirectTo: this.fallbackRedirect
-        };
-
-        this.companyName = this.snapshot.companyName;
-        this.contactEmail = this.snapshot.email;
+        this.applySubscription(subscription);
       },
       error: () => {
         this.loadSubscriptionByCompanyFallback();
@@ -238,44 +278,35 @@ export class AdminSubscriptionOverviewComponent {
     this.authService.adminSubscriptionByCompanyName(this.companyName).subscribe({
       next: (subscription) => {
         this.loading = false;
-        const plan = subscription.plan;
-        const amount = plan === 'BASIC' ? 29 : plan === 'STANDARD' ? 79 : 149;
-
-        this.snapshot = {
-          companyName: subscription.companyName || this.companyName,
-          email: subscription.contactEmail || this.contactEmail,
-          plan,
-          billingCycle: 'MONTHLY',
-          amount,
-          issuedAt: subscription.createdAt || new Date().toISOString(),
-          redirectTo: this.fallbackRedirect
-        };
-
+        this.applySubscription(subscription);
         this.errorMessage = '';
       },
-      error: () => {
-        this.loadSubscriptionFromMeFallback();
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.snapshot = null;
+        this.errorMessage = this.extractApiError(error);
       }
     });
+  }
+
+  private isSameCompany(left: string | null | undefined, right: string | null | undefined): boolean {
+    return this.normalizeCompanyName(left) === this.normalizeCompanyName(right);
+  }
+
+  private normalizeCompanyName(value: string | null | undefined): string {
+    return (value ?? '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '');
   }
 
   private loadSubscriptionFromMeFallback(): void {
     this.authService.adminSubscriptionMe().subscribe({
       next: (subscription) => {
         this.loading = false;
-        const plan = subscription.plan;
-        const amount = plan === 'BASIC' ? 29 : plan === 'STANDARD' ? 79 : 149;
-
-        this.snapshot = {
-          companyName: subscription.companyName || this.companyName,
-          email: subscription.contactEmail || this.contactEmail,
-          plan,
-          billingCycle: 'MONTHLY',
-          amount,
-          issuedAt: subscription.createdAt || new Date().toISOString(),
-          redirectTo: this.fallbackRedirect
-        };
-
+        this.applySubscription(subscription);
         this.errorMessage = '';
       },
       error: (error: HttpErrorResponse) => {
@@ -288,7 +319,7 @@ export class AdminSubscriptionOverviewComponent {
 
   private extractApiError(error: HttpErrorResponse): string {
     if (error.status === 401 || error.status === 403) {
-      return 'Session invalide. Veuillez vous reconnecter en tant qu\'admin.';
+      return this.translations.translate('SUB_OVERVIEW.INVALID_SESSION');
     }
 
     const payload = error.error as { error?: string } | null;
@@ -296,6 +327,44 @@ export class AdminSubscriptionOverviewComponent {
       return payload.error;
     }
 
-    return 'Impossible de charger l\'abonnement depuis la base de donnees.';
+    return this.translations.translate('SUB_OVERVIEW.LOAD_ERROR');
+  }
+
+  private applySubscription(subscription: AdminSubscriptionResponse): void {
+    const plan = subscription.plan;
+    const amount = plan === 'BASIC' ? 29 : plan === 'STANDARD' ? 79 : 149;
+
+    this.snapshot = {
+      companyName: subscription.companyName || this.companyName,
+      email: subscription.contactEmail || this.contactEmail,
+      plan,
+      billingCycle: 'MONTHLY',
+      amount,
+      issuedAt: subscription.createdAt || new Date().toISOString(),
+      nextInvoice: subscription.nextInvoice || subscription.latestInvoiceDueAt || subscription.createdAt || new Date().toISOString(),
+      status: subscription.status || (subscription.active === false ? 'CANCELED' : 'ACTIVE'),
+      latestInvoiceStatus: subscription.latestInvoiceStatus,
+      redirectTo: this.fallbackRedirect
+    };
+
+    this.companyName = this.snapshot.companyName;
+    this.contactEmail = this.snapshot.email;
+  }
+
+  private isSoonDue(): boolean {
+    const nextInvoice = this.snapshot?.nextInvoice;
+    if (!nextInvoice) {
+      return false;
+    }
+
+    const parsed = new Date(nextInvoice);
+    if (Number.isNaN(parsed.getTime())) {
+      return false;
+    }
+
+    const today = new Date();
+    const diffMs = parsed.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 && diffDays <= 7;
   }
 }

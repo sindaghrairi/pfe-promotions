@@ -67,9 +67,7 @@ public class CompanyAdminDashboardService {
                 .limit(5)
                 .toList();
 
-        List<String> notes = List.of(
-                "Les vues et utilisations coupons sont stockees comme compteurs agreges. Sans table d'evenements datee, les series temporelles repartissent ces compteurs selon la date de creation des promotions."
-        );
+        List<String> notes = List.of();
 
         return new CompanyAdminDashboardResponse(
                 period.key(),

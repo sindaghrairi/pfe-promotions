@@ -1,6 +1,6 @@
 <section class="auth-page">
   <header class="mini-topbar">
-    <p class="top-brand"><span>P</span> {{ 'COMMON.BRAND' | translate }}</p>
+    <p class="top-brand"><img src="promolink-logo-icon.png" alt="" /> {{ 'COMMON.BRAND' | translate }}</p>
     <nav aria-label="{{ 'AUTH.QUICK_NAV' | translate }}">
       <app-language-switcher />
       <a routerLink="/register">{{ 'AUTH.REGISTER' | translate }}</a>
@@ -10,15 +10,9 @@
 
   <div class="auth-layout">
     <aside class="auth-intro" aria-hidden="true">
-      <p class="brand-row"><span class="brand-mark">P</span> {{ 'COMMON.BRAND' | translate }}</p>
-      <p class="sale-chip">{{ 'AUTH.CLIENT_CHIP' | translate }}</p>
-      <h1>{{ 'AUTH.CLIENT_TITLE' | translate }}</h1>
-      <p class="intro-copy">
-        {{ 'AUTH.CLIENT_COPY_1' | translate }}
-        {{ 'AUTH.CLIENT_COPY_2' | translate }}
-      </p>
+      <p class="auth-side-line">Accédez à vos offres et coupons en quelques secondes.</p>
 
-      <div class="feature-list">
+      <div class="feature-list auth-legacy-hidden">
         <article class="feature-item">
           <span class="feature-icon growth">%</span>
           <div>
@@ -39,9 +33,16 @@
 
     <div class="auth-card">
       <div class="form-head">
-        <h2>{{ 'NAV.LOGIN' | translate }} client</h2>
+        <h2>{{ 'AUTH.CLIENT_LOGIN_TITLE' | translate }}</h2>
         <p>{{ 'AUTH.CLIENT_LOGIN_SUBTITLE' | translate }}</p>
       </div>
+
+      <button type="button" class="google-btn" (click)="loginWithGoogle()">
+        <span aria-hidden="true">G</span>
+        Sign in with Google
+      </button>
+
+      <div class="auth-divider"><span>{{ 'AUTH.OR' | translate }}</span></div>
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div class="field-block">
@@ -82,15 +83,6 @@
         <a routerLink="/register">{{ 'AUTH.CREATE_ACCOUNT' | translate }}</a>
       </p>
 
-      <p class="switch-link">
-        {{ 'AUTH.NEW_CLIENT' | translate }}
-        <a routerLink="/register">{{ 'AUTH.CREATE_CLIENT_ACCOUNT' | translate }}</a>
-      </p>
-
-      <p class="switch-link">
-        {{ 'AUTH.BACK_SPACE_QUESTION' | translate }}
-        <a routerLink="/espace">{{ 'AUTH.CHOOSE_SPACE' | translate }}</a>
-      </p>
     </div>
   </div>
 

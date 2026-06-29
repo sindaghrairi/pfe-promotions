@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { ActiveAdminPlanResponse } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 type PlanKey = 'BASIC' | 'STANDARD' | 'PREMIUM';
@@ -44,6 +45,7 @@ interface SubscriptionSnapshot {
 })
 export class AdminPaymentTypeComponent implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly translations = inject(TranslationService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -71,7 +73,7 @@ export class AdminPaymentTypeComponent implements OnInit {
       }
 
       if (!this.companyName || !this.contactEmail) {
-        this.errorMessage = "Informations manquantes. Veuillez revenir a l'etape precedente.";
+        this.errorMessage = this.t('PAYMENT.MISSING_INFO');
       }
     });
   }
@@ -99,7 +101,7 @@ export class AdminPaymentTypeComponent implements OnInit {
 
   activateSubscription(): void {
     if (!this.companyName || !this.contactEmail) {
-      this.errorMessage = "Informations manquantes. Veuillez revenir a l'etape precedente.";
+      this.errorMessage = this.t('PAYMENT.MISSING_INFO');
       return;
     }
 
@@ -109,7 +111,7 @@ export class AdminPaymentTypeComponent implements OnInit {
     const selectedPlanMeta = this.plans.find((plan) => plan.key === this.selectedPlan);
     if (!selectedPlanMeta || !selectedPlanMeta.active) {
       this.loading = false;
-      this.errorMessage = 'Ce plan est indisponible pour le moment.';
+      this.errorMessage = this.t('PAYMENT.PLAN_UNAVAILABLE_ERROR');
       return;
     }
 
@@ -163,7 +165,7 @@ export class AdminPaymentTypeComponent implements OnInit {
 
   private extractApiError(error: HttpErrorResponse): string {
     if (error.status === 0) {
-      return "Backend non joignable. Verifiez que l'API tourne sur http://localhost:8081.";
+      return this.t('ERRORS.API_UNREACHABLE');
     }
 
     const payload = error.error;
@@ -180,10 +182,10 @@ export class AdminPaymentTypeComponent implements OnInit {
     }
 
     if (error.status >= 500) {
-      return 'Erreur serveur. Veuillez reessayer dans quelques instants.';
+      return this.t('ERRORS.SERVER_RETRY');
     }
 
-    return "Echec de l'abonnement. Veuillez reessayer.";
+    return this.t('PAYMENT.SUBSCRIPTION_ERROR');
   }
 
   private loadActivePlans(): void {
@@ -198,7 +200,7 @@ export class AdminPaymentTypeComponent implements OnInit {
 
         const activePlans = this.plans.filter((plan) => plan.active);
         if (!activePlans.length) {
-          this.errorMessage = 'Aucun plan actif disponible pour le moment.';
+          this.errorMessage = this.t('PAYMENT.NO_PLAN');
           return;
         }
 
@@ -230,6 +232,10 @@ export class AdminPaymentTypeComponent implements OnInit {
       subtitle: plan.description,
       features: this.planFeatures(plan.name)
     };
+  }
+
+  private t(key: string): string {
+    return this.translations.translate(key);
   }
 
   private formatPrice(amount: number): string {

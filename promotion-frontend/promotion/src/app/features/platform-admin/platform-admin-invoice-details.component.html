@@ -69,46 +69,46 @@
     </header>
 
     <main class="ud-content">
-      <p class="ud-state" *ngIf="loading">Chargement de la facture...</p>
+      <p class="ud-state" *ngIf="loading">{{ 'PLATFORM_INVOICE_DETAILS.LOADING' | translate }}</p>
       <p class="ud-state ud-state-error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
       <div *ngIf="!loading && invoice">
         <div class="ud-hero">
-          <p class="ud-kicker">Facturation plateforme</p>
-          <h1>Detail facture</h1>
+          <p class="ud-kicker">{{ 'PLATFORM_INVOICE_DETAILS.KICKER' | translate }}</p>
+          <h1>{{ 'PLATFORM_INVOICE_DETAILS.TITLE' | translate }}</h1>
           <p class="ud-hero-sub">{{ invoice.companyName }} &mdash; {{ invoiceNumber }}</p>
         </div>
 
-        <section class="ud-panel inv-shell" aria-label="Details de facture">
+        <section class="ud-panel inv-shell" [attr.aria-label]="'PLATFORM_INVOICE_DETAILS.ARIA' | translate">
           <header class="inv-header">
             <div>
-              <p class="inv-kicker">Facture d'abonnement</p>
-              <h2 class="inv-title">Facture societe</h2>
-              <p class="inv-subtitle">Facture consultee depuis l'espace admin plateforme.</p>
+              <p class="inv-kicker">{{ 'PLATFORM_INVOICE_DETAILS.SUBSCRIPTION_INVOICE' | translate }}</p>
+              <h2 class="inv-title">{{ 'PLATFORM_INVOICE_DETAILS.COMPANY_INVOICE' | translate }}</h2>
+              <p class="inv-subtitle">{{ 'PLATFORM_INVOICE_DETAILS.SUBTITLE' | translate }}</p>
             </div>
             <div class="inv-meta">
-              <p><span>Numero</span><strong>{{ invoiceNumber }}</strong></p>
-              <p><span>Date</span><strong>{{ invoice.issuedAt | date: 'dd/MM/yyyy' }}</strong></p>
+              <p><span>{{ 'PLATFORM_INVOICE_DETAILS.NUMBER' | translate }}</span><strong>{{ invoiceNumber }}</strong></p>
+              <p><span>{{ 'COMMON.DATE' | translate }}</span><strong>{{ invoice.issuedAt | date: 'dd/MM/yyyy' }}</strong></p>
             </div>
           </header>
 
           <div class="inv-body">
             <div class="inv-client">
-              <h3>Client</h3>
-              <p><strong>Societe:</strong> {{ invoice.companyName }}</p>
-              <p><strong>Email:</strong> {{ invoice.companyEmail }}</p>
+              <h3>{{ 'PLATFORM_INVOICE_DETAILS.CLIENT' | translate }}</h3>
+              <p><strong>{{ 'INVOICE.STEP_COMPANY' | translate }}:</strong> {{ invoice.companyName }}</p>
+              <p><strong>{{ 'COMMON.EMAIL' | translate }}:</strong> {{ invoice.companyEmail }}</p>
             </div>
 
             <div class="inv-subscription">
-              <h3>Abonnement</h3>
+              <h3>{{ 'NAV.SUBSCRIPTIONS' | translate }}</h3>
               <div class="inv-table-wrap">
                 <table class="inv-table">
                   <thead>
                     <tr>
-                      <th>Plan</th>
-                      <th>Cycle</th>
-                      <th>Montant</th>
-                      <th>Statut</th>
+                      <th>{{ 'TABLE.PLAN' | translate }}</th>
+                      <th>{{ 'INVOICE.CYCLE' | translate }}</th>
+                      <th>{{ 'TABLE.AMOUNT' | translate }}</th>
+                      <th>{{ 'COMMON.STATUS' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -132,15 +132,15 @@
             </div>
 
             <div class="inv-total-line">
-              <p>Total TTC</p>
+              <p>{{ 'INVOICE.TOTAL_TTC' | translate }}</p>
               <strong class="inv-total-amount">{{ invoice.amount | number: '1.2-2' }} DT</strong>
             </div>
           </div>
         </section>
 
         <div class="inv-actions no-print">
-          <a class="inv-back-btn" routerLink="/platform-admin/invoices">Retour factures</a>
-          <button type="button" class="inv-print-btn" (click)="printInvoice()">Imprimer facture (PDF)</button>
+          <a class="inv-back-btn" routerLink="/platform-admin/invoices">{{ 'PLATFORM_INVOICE_DETAILS.BACK' | translate }}</a>
+          <button type="button" class="inv-print-btn" (click)="printInvoice()">{{ 'INVOICE.PRINT' | translate }}</button>
         </div>
       </div>
     </main>

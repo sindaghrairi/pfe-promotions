@@ -30,10 +30,20 @@
 }
 
 .nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   color: #111827;
   text-decoration: none;
   font-size: 1.35rem;
   font-weight: 900;
+}
+
+.nav-brand img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
 }
 
 .nav-links {
@@ -474,4 +484,137 @@ h1 {
   .ranking-metrics {
     text-align: left;
   }
+}
+
+/* PromoLink premium refresh - visual only */
+:host {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.dashboard-page {
+  background:
+    radial-gradient(circle at 6% -4%, rgba(124, 58, 237, 0.16), transparent 34%),
+    radial-gradient(circle at 96% 2%, rgba(250, 204, 21, 0.16), transparent 30%),
+    #f8fafc;
+}
+
+.dashboard-navbar {
+  min-height: 76px;
+  border-bottom-color: rgba(91, 33, 182, 0.12);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.nav-brand {
+  color: #5b21b6;
+}
+
+.nav-links a,
+.nav-logout {
+  border-radius: 999px;
+  border-color: rgba(91, 33, 182, 0.12);
+  background: #ffffff;
+  color: #475569;
+}
+
+.nav-links a:hover,
+.nav-logout:hover {
+  color: #5b21b6;
+  background: #f3e8ff;
+}
+
+.nav-links .nav-primary {
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  box-shadow: 0 14px 28px rgba(91, 33, 182, 0.24);
+}
+
+.company-dashboard > .hero-row {
+  border: 1px solid rgba(91, 33, 182, 0.12);
+  border-radius: 24px;
+  padding: clamp(1.5rem, 3vw, 2.2rem);
+  background:
+    radial-gradient(480px 260px at 86% 10%, rgba(250, 204, 21, 0.18), transparent 62%),
+    linear-gradient(135deg, #25086d, #5b21b6 62%, #7c3aed);
+  box-shadow: 0 24px 56px rgba(91, 33, 182, 0.18);
+}
+
+.company-dashboard > .hero-row .eyebrow,
+.company-dashboard > .hero-row h1,
+.company-dashboard > .hero-row .subtitle {
+  color: #ffffff;
+}
+
+.company-dashboard > .hero-row .eyebrow {
+  color: #facc15;
+}
+
+.period-control {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.period-control button {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.period-control button.is-active {
+  color: #5b21b6;
+  background: #ffffff;
+}
+
+.state-card,
+.meta-strip,
+.note-card,
+.empty-state,
+.client-card,
+.kpi-card,
+.panel {
+  border-radius: 20px;
+  border-color: rgba(91, 33, 182, 0.12);
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+}
+
+.kpi-card,
+.panel {
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.kpi-card:hover,
+.panel:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124, 58, 237, 0.22);
+  box-shadow: 0 22px 46px rgba(91, 33, 182, 0.14);
+}
+
+.kpi-card::before {
+  width: 5px;
+  background: linear-gradient(180deg, #7c3aed, #5b21b6);
+}
+
+.tone-blue,
+.tone-green,
+.tone-orange,
+.tone-violet,
+.tone-red,
+.tone-slate {
+  --tone: #7c3aed;
+}
+
+.eyebrow,
+.panel-heading p,
+.kpi-card p,
+.coupon-code {
+  color: #5b21b6;
+}
+
+.coupon-code {
+  border-color: rgba(91, 33, 182, 0.18);
+  background: #f3e8ff;
+}
+
+.coupon-status-unused {
+  background: #f3e8ff;
+  color: #5b21b6;
 }

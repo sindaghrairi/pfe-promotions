@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,6 +42,10 @@ public class AdminSubscription {
     @Column(nullable = false)
     private Boolean active;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private AdminSubscriptionStatus status = AdminSubscriptionStatus.ACTIVE;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -47,6 +53,11 @@ public class AdminSubscription {
     void prePersist() {
         if (active == null) {
             this.active = true;
+        }
+        if (status == null) {
+            this.status = Boolean.TRUE.equals(active)
+                    ? AdminSubscriptionStatus.ACTIVE
+                    : AdminSubscriptionStatus.CANCELED;
         }
         this.createdAt = LocalDateTime.now();
     }

@@ -33,7 +33,7 @@ export class PlatformAdminInvoiceDetailsComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!id || Number.isNaN(id)) {
       this.loading = false;
-      this.errorMessage = 'Identifiant de facture invalide.';
+      this.errorMessage = this.translations.translate('PLATFORM_INVOICE_DETAILS.INVALID_ID');
       return;
     }
 
@@ -76,6 +76,6 @@ export class PlatformAdminInvoiceDetailsComponent implements OnInit {
     if (typeof error.error?.error === 'string') {
       return error.error.error;
     }
-    return 'Impossible de charger cette facture.';
+    return this.translations.translate('PLATFORM_INVOICE_DETAILS.LOAD_ERROR');
   }
 }

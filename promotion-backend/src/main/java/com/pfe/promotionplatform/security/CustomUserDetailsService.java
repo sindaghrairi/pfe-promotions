@@ -26,9 +26,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         var user = userRepository.findByEmailIgnoreCase(normalizedEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable: " + email));
 
+        boolean enabled = !Boolean.FALSE.equals(user.getActive());
+
         return new User(
                 user.getEmail(),
                 user.getPassword(),
+                enabled,
+                true,
+                true,
+                true,
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
     }
 }

@@ -532,6 +532,26 @@
   color: #5eead4;
 }
 
+.ud-status-overdue {
+  background: rgba(245,158,11,0.18);
+  color: #fbbf24;
+}
+
+.ud-status-expired {
+  background: rgba(239,68,68,0.18);
+  color: #fca5a5;
+}
+
+.ud-status-canceled {
+  background: rgba(100,116,139,0.22);
+  color: #cbd5e1;
+}
+
+.ud-status-pending {
+  background: rgba(99,102,241,0.16);
+  color: #a5b4fc;
+}
+
 .ud-status-inactive {
   background: rgba(248,113,113,0.18);
   color: #fca5a5;
@@ -556,6 +576,10 @@
 .ud-table-select option {
   background: var(--ud-page);
   color: var(--ud-text);
+}
+
+.ud-action-select {
+  min-width: 104px;
 }
 
 .ud-table-foot {

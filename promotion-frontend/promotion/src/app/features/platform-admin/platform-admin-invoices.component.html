@@ -71,6 +71,7 @@
 
       <p class="ud-state" *ngIf="loading">{{ 'PLATFORM_INVOICES.LOADING' | translate }}</p>
       <p class="ud-state ud-state-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="ud-state ud-state-success" *ngIf="successMessage">{{ successMessage }}</p>
 
       <div class="ud-kpi-grid" *ngIf="!loading && invoices">
         <article class="ud-kpi-card">
@@ -119,17 +120,41 @@
       </div>
 
       <section class="ud-panel" *ngIf="!loading && invoices">
-        <div class="ud-panel-header">
-          <h2 class="ud-chart-title">{{ invoicesTitle }}</h2>
-          <div class="ud-progress-pill">
-            <span>{{ 'PLATFORM_INVOICES.PAYMENT_RATE' | translate }}</span>
-            <strong>{{ paymentRate }}%</strong>
+        <div class="ud-toolbar">
+          <label class="ud-search-bar" [attr.aria-label]="'PLATFORM_INVOICES.SEARCH_LABEL' | translate">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input
+              type="search"
+              [ngModel]="searchTerm"
+              (ngModelChange)="onSearchTermChange($event)"
+              [placeholder]="'PLATFORM_INVOICES.SEARCH_PLACEHOLDER' | translate" />
+          </label>
+
+          <div class="ud-toolbar-actions">
+            <div class="ud-status-chips" role="group" [attr.aria-label]="'PLATFORM_INVOICES.STATUS_FILTER' | translate">
+              <button
+                type="button"
+                class="ud-chip"
+                *ngFor="let status of statusFilters"
+                [class.ud-chip-active]="statusFilter === status"
+                (click)="setStatusFilter(status)">
+                {{ status === 'ALL' ? ('COMMON.ALL' | translate) : statusLabel(status) }}
+              </button>
+            </div>
+
+            <div class="ud-progress-pill" [attr.aria-label]="'PLATFORM_INVOICES.PAYMENT_RATE' | translate">
+              <span>{{ 'PLATFORM_INVOICES.PAYMENT_RATE' | translate }}</span>
+              <strong>{{ paymentRate }}%</strong>
+            </div>
           </div>
         </div>
 
-        <p class="ud-state" *ngIf="!invoices.items.length">{{ 'PLATFORM_INVOICES.EMPTY' | translate }}</p>
+        <p class="ud-state ud-state-notice" *ngIf="invoices.items.length">{{ invoicesTitle }}</p>
 
-        <div class="ud-table-wrap" *ngIf="invoices.items.length">
+        <p class="ud-state" *ngIf="!invoices.items.length">{{ 'PLATFORM_INVOICES.EMPTY' | translate }}</p>
+        <p class="ud-state" *ngIf="invoices.items.length && !filteredInvoices.length">{{ 'PLATFORM_INVOICES.EMPTY' | translate }}</p>
+
+        <div class="ud-table-wrap" *ngIf="pagedInvoices.length">
           <table class="ud-table">
             <thead>
               <tr>
@@ -146,14 +171,18 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of invoices.items">
+              <tr *ngFor="let item of pagedInvoices">
                 <td><span class="ud-id-badge">#{{ item.id }}</span></td>
                 <td><span class="ud-company-name">{{ item.companyName }}</span></td>
                 <td><span class="ud-email-cell">{{ item.companyEmail }}</span></td>
                 <td><span class="ud-plan-badge">{{ item.plan }}</span></td>
                 <td><span class="ud-amount">{{ item.amount | number: '1.2-2' }} DT</span></td>
                 <td>
-                  <span class="ud-status-badge" [class.ud-status-active]="item.status === 'PAID'" [class.ud-status-inactive]="item.status !== 'PAID'">
+                  <span
+                    class="ud-status-badge"
+                    [class.ud-status-paid]="item.status === 'PAID'"
+                    [class.ud-status-pending]="item.status === 'PENDING'"
+                    [class.ud-status-overdue]="item.status === 'OVERDUE'">
                     {{ statusLabel(item.status) }}
                   </span>
                 </td>
@@ -164,12 +193,37 @@
                   <ng-template #notPaid><span class="ud-muted">-</span></ng-template>
                 </td>
                 <td>
-                  <a class="ud-view-btn" [routerLink]="['/platform-admin/invoices', item.id]">{{ 'PLATFORM_INVOICES.VIEW' | translate }}</a>
+                  <div class="ud-invoice-actions">
+                    <a class="ud-view-btn" [routerLink]="['/platform-admin/invoices', item.id]">{{ 'PLATFORM_INVOICES.VIEW' | translate }}</a>
+                    <button
+                      type="button"
+                      class="ud-paid-btn"
+                      *ngIf="item.status === 'PENDING' || item.status === 'OVERDUE'"
+                      [disabled]="savingInvoiceId === item.id"
+                      (click)="markAsPaid(item)">
+                      {{ 'INVOICES.MARK_AS_PAID' | translate }}
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+
+        <footer class="ud-table-foot" *ngIf="filteredInvoices.length">
+          <p>{{ 'PAGINATION.SHOWING' | translate }} <strong>{{ startItem }}</strong> {{ 'PAGINATION.TO' | translate }} <strong>{{ endItem }}</strong> {{ 'PAGINATION.ON' | translate }} <strong>{{ filteredInvoices.length }}</strong> {{ 'PLATFORM_INVOICES.ITEMS' | translate }}</p>
+          <nav class="ud-pagination" [attr.aria-label]="'PAGINATION.LABEL' | translate">
+            <button type="button" class="ud-page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&lsaquo;</button>
+            <button
+              type="button"
+              class="ud-page-btn"
+              *ngFor="let item of paginationItems"
+              [class.ud-page-active]="item === currentPage"
+              [disabled]="item === '...'"
+              (click)="goToPageItem(item)">{{ item }}</button>
+            <button type="button" class="ud-page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">&rsaquo;</button>
+          </nav>
+        </footer>
       </section>
     </main>
   </div>

@@ -10,6 +10,7 @@ import {
   OnInit,
   PLATFORM_ID,
   ViewChild,
+  effect,
   inject
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -128,6 +129,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private viewReady = false;
   private charts: Chart[] = [];
   private renderHandle: number | null = null;
+
+  constructor() {
+    effect(() => {
+      this.translations.currentLanguage();
+      this.cdr.markForCheck();
+      this.scheduleRenderCharts();
+    });
+  }
 
   ngOnInit(): void {
     this.selectedCompanySlug = this.route.snapshot.queryParamMap.get('company') ?? '';
@@ -387,9 +396,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.charts.push(new Chart(canvas, {
       type: 'line',
       data: {
-        labels: chart.labels,
+        labels: chart.labels.map((label) => this.translateChartLabel(label)),
         datasets: chart.datasets.map((dataset) => ({
-          label: dataset.label,
+          label: this.translateChartLabel(dataset.label),
           data: this.numericData(dataset.data),
           borderColor: dataset.color,
           backgroundColor: this.alpha(dataset.color, 0.12),
@@ -414,9 +423,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.charts.push(new Chart(canvas, {
       type: 'bar',
       data: {
-        labels: chart.labels,
+        labels: chart.labels.map((label) => this.translateChartLabel(label)),
         datasets: chart.datasets.map((dataset) => ({
-          label: dataset.label,
+          label: this.translateChartLabel(dataset.label),
           data: this.numericData(dataset.data),
           backgroundColor: this.alpha(dataset.color, 0.72),
           borderColor: dataset.color,
@@ -443,9 +452,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.charts.push(new Chart(canvas, {
       type: 'doughnut',
       data: {
-        labels: chart.labels,
+        labels: chart.labels.map((label) => this.translateChartLabel(label)),
         datasets: [{
-          label: dataset?.label ?? chart.title,
+          label: this.translateChartLabel(dataset?.label ?? chart.title),
           data: this.numericData(dataset?.data ?? []),
           backgroundColor: chart.labels.map((_, index) => colors[index % colors.length]),
           borderColor: '#ffffff',
@@ -505,18 +514,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private formatLoadError(error: HttpErrorResponse): string {
-    if (error.status === 0) return 'Backend inaccessible sur http://localhost:8081.';
-    if (error.status === 401 || error.status === 403) return 'Session admin societe invalide ou expiree.';
-    if (error.status === 400) return error.error?.error ?? 'Impossible de retrouver votre abonnement entreprise.';
-    if (error.status === 404) return 'Endpoint dashboard admin societe introuvable. Redemarrez le backend.';
-    return `Impossible de charger le dashboard societe. Code HTTP ${error.status}.`;
+    if (error.status === 0) return this.t('ERRORS.BACKEND_UNREACHABLE');
+    if (error.status === 401 || error.status === 403) return this.t('ERRORS.COMPANY_ADMIN_SESSION');
+    if (error.status === 400) return error.error?.error ?? this.t('ERRORS.COMPANY_SUBSCRIPTION_NOT_FOUND');
+    if (error.status === 404) return this.t('ERRORS.COMPANY_DASHBOARD_ENDPOINT');
+    return this.t('ERRORS.COMPANY_DASHBOARD_LOAD', { status: error.status });
   }
 
   private formatCouponsError(error: HttpErrorResponse): string {
-    if (error.status === 0) return 'Backend inaccessible sur http://localhost:8081.';
-    if (error.status === 401 || error.status === 403) return 'Session admin societe invalide ou expiree.';
-    if (error.status === 400) return error.error?.error ?? 'Impossible de retrouver les coupons de votre entreprise.';
-    return `Impossible de charger les coupons. Code HTTP ${error.status}.`;
+    if (error.status === 0) return this.t('ERRORS.BACKEND_UNREACHABLE');
+    if (error.status === 401 || error.status === 403) return this.t('ERRORS.COMPANY_ADMIN_SESSION');
+    if (error.status === 400) return error.error?.error ?? this.t('ERRORS.COMPANY_COUPONS_NOT_FOUND');
+    return this.t('ERRORS.COMPANY_COUPONS_LOAD', { status: error.status });
   }
 
   private numericData(values: number[]): number[] {
@@ -530,6 +539,35 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private t(key: string, params?: Record<string, string | number>): string {
     return this.translations.translate(key, params);
+  }
+
+  private translateChartLabel(label: string): string {
+    const normalized = label.trim().toLowerCase();
+    const keyByLabel: Record<string, string> = {
+      vues: 'DASHBOARD.VIEWS_LABEL',
+      views: 'DASHBOARD.VIEWS_LABEL',
+      coupons: 'DASHBOARD.COUPONS_LABEL',
+      'coupons utilises': 'DASHBOARD.KPI_COUPONS_USED',
+      'used coupons': 'DASHBOARD.KPI_COUPONS_USED',
+      promotions: 'DASHBOARD.KPI_PROMOTIONS',
+      'promotions creees': 'DASHBOARD.CREATED_PROMOTIONS_LABEL',
+      'created promotions': 'DASHBOARD.CREATED_PROMOTIONS_LABEL',
+      actives: 'PROMOS.STATUS_ACTIVE',
+      active: 'PROMOS.STATUS_ACTIVE',
+      expirees: 'PROMOS.STATUS_EXPIRED',
+      expired: 'PROMOS.STATUS_EXPIRED',
+      planifiees: 'PROMOS.STATUS_SCHEDULED',
+      scheduled: 'PROMOS.STATUS_SCHEDULED',
+      brouillons: 'PROMOS.STATUS_DRAFT',
+      drafts: 'PROMOS.STATUS_DRAFT',
+      utilises: 'DASHBOARD.USED_LABEL',
+      used: 'DASHBOARD.USED_LABEL',
+      restants: 'DASHBOARD.REMAINING_LABEL',
+      remaining: 'DASHBOARD.REMAINING_LABEL'
+    };
+
+    const key = keyByLabel[normalized];
+    return key ? this.t(key) : label;
   }
 
   private tooltipMetricValue(context: any): number {

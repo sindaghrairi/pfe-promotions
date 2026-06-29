@@ -11,6 +11,7 @@ import { AdminRegisterComponent } from './features/auth/admin-register/admin-reg
 import { AdminSubscribeComponent } from './features/auth/admin-subscribe/admin-subscribe.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { OAuthCallbackComponent } from './features/auth/oauth-callback/oauth-callback.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { HomeComponent } from './features/home/home.component';
 import { CompanyPromosComponent } from './features/company-promos/company-promos.component';
@@ -24,9 +25,12 @@ import { PlatformAdminSubscriptionsComponent } from './features/platform-admin/p
 import { PlatformAdminInvoicesComponent } from './features/platform-admin/platform-admin-invoices.component';
 import { PlatformAdminInvoiceDetailsComponent } from './features/platform-admin/platform-admin-invoice-details.component';
 import { PlatformAdminPlansComponent } from './features/platform-admin/platform-admin-plans.component';
+import { ClientProfileComponent } from './features/account/client-profile.component';
+import { CompanyProfileComponent } from './features/account/company-profile.component';
 
 export const routes: Routes = [
 	{ path: '', pathMatch: 'full', component: HomeComponent },
+	{ path: 'promotions', component: CompanyPromosComponent },
 	{ path: 'promos/consulter-toutes', component: CompanyPromosComponent },
 	{ path: 'entreprises/:slug/consulter-promos', component: CompanyPromosComponent },
 	{ path: 'entreprises/:slug', canActivate: [companyPromosGuard], component: CompanyPromosComponent },
@@ -34,6 +38,7 @@ export const routes: Routes = [
 	{ path: 'espace', component: AuthSpaceComponent },
 	{ path: 'login', canActivate: [guestGuard], component: LoginComponent },
 	{ path: 'register', canActivate: [guestGuard], component: RegisterComponent },
+	{ path: 'oauth2/google/callback', component: OAuthCallbackComponent },
 	{ path: 'admin/subscribe/payment', canActivate: [guestGuard], component: AdminPaymentTypeComponent },
 	{ path: 'admin/subscribe/overview', component: AdminSubscriptionOverviewComponent },
 	{ path: 'admin/subscribe/invoice', component: AdminInvoiceComponent },
@@ -47,6 +52,8 @@ export const routes: Routes = [
 	{ path: 'platform-admin/plans', canActivate: [platformAdminGuard], component: PlatformAdminPlansComponent },
 	{ path: 'platform-admin/invoices', canActivate: [platformAdminGuard], component: PlatformAdminInvoicesComponent },
 	{ path: 'platform-admin/invoices/:id', canActivate: [platformAdminGuard], component: PlatformAdminInvoiceDetailsComponent },
+	{ path: 'client/profile', canActivate: [authGuard], component: ClientProfileComponent },
+	{ path: 'admin/profile', canActivate: [authGuard], component: CompanyProfileComponent },
 	{ path: 'dashboard', canActivate: [authGuard], component: DashboardComponent },
 	{ path: '**', redirectTo: '' }
 ];

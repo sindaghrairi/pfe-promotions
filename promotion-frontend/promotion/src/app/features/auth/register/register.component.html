@@ -1,44 +1,39 @@
 <section class="auth-page">
   <header class="mini-topbar">
-    <p class="top-brand"><span>P</span> Promotion Platform</p>
-    <nav aria-label="Navigation rapide">
-      <a routerLink="/login">Connexion</a>
-      <a class="pill-link" routerLink="/register">Essai gratuit</a>
+    <p class="top-brand"><img src="promolink-logo-icon.png" alt="" /> {{ 'COMMON.BRAND' | translate }}</p>
+    <nav [attr.aria-label]="'AUTH.QUICK_NAV' | translate">
+      <app-language-switcher />
+      <a routerLink="/login">{{ 'NAV.LOGIN' | translate }}</a>
+      <a class="pill-link" routerLink="/register">{{ 'REGISTER.FREE_TRIAL' | translate }}</a>
     </nav>
   </header>
 
   <div class="auth-layout">
     <aside class="auth-intro" aria-hidden="true">
-      <p class="brand-row"><span class="brand-mark">P</span> Promotion Platform</p>
-      <p class="sale-chip">Inscription gratuite et immediate</p>
-      <h1>Decouvrez les meilleures offres pres de <span>chez vous</span></h1>
-      <p class="intro-copy">
-        Inscrivez-vous gratuitement pour recevoir les promotions exclusives,
-        suivre vos reductions preferees et ne jamais rater une bonne affaire.
-      </p>
+      <p class="auth-side-line">Créez votre compte pour profiter des meilleures promotions.</p>
 
-      <div class="feature-list">
+      <div class="feature-list auth-legacy-hidden">
         <article class="feature-item">
           <span class="feature-icon growth">%</span>
           <div>
-            <h3>Promos exclusives</h3>
-            <p>Acces aux meilleures reductions en temps reel.</p>
+            <h3>{{ 'REGISTER.FEATURE_EXCLUSIVE_TITLE' | translate }}</h3>
+            <p>{{ 'REGISTER.FEATURE_EXCLUSIVE_TEXT' | translate }}</p>
           </div>
         </article>
 
         <article class="feature-item">
           <span class="feature-icon ai">♥</span>
           <div>
-            <h3>Offres personnalisees</h3>
-            <p>Des promotions adaptees a vos habitudes d'achat.</p>
+            <h3>{{ 'REGISTER.FEATURE_PERSONALIZED_TITLE' | translate }}</h3>
+            <p>{{ 'REGISTER.FEATURE_PERSONALIZED_TEXT' | translate }}</p>
           </div>
         </article>
 
         <article class="feature-item">
           <span class="feature-icon action">🔔</span>
           <div>
-            <h3>Alertes instantanees</h3>
-            <p>Soyez le premier informe des nouvelles offres.</p>
+            <h3>{{ 'REGISTER.FEATURE_ALERTS_TITLE' | translate }}</h3>
+            <p>{{ 'REGISTER.FEATURE_ALERTS_TEXT' | translate }}</p>
           </div>
         </article>
       </div>
@@ -46,101 +41,99 @@
 
     <div class="auth-card">
       <div class="form-head">
-        <h2>Creer votre compte client</h2>
-        <p>Rejoignez la communaute et profitez des meilleures offres.</p>
+        <h2>{{ 'REGISTER.FORM_TITLE' | translate }}</h2>
+        <p>{{ 'REGISTER.FORM_SUBTITLE' | translate }}</p>
       </div>
+
+      <button type="button" class="google-btn" (click)="loginWithGoogle()">
+        <span aria-hidden="true">G</span>
+        {{ 'REGISTER.SIGN_UP_GOOGLE' | translate }}
+      </button>
+
+      <div class="auth-divider"><span>{{ 'AUTH.OR' | translate }}</span></div>
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div class="field-block">
-          <label for="fullName">Nom complet</label>
+          <label for="fullName">{{ 'PLATFORM_USERS.FULL_NAME' | translate }}</label>
           <div class="field-shell" [class.is-valid]="isControlValid('fullName')">
             <span class="field-icon" aria-hidden="true">U</span>
-            <input id="fullName" type="text" formControlName="fullName" placeholder="Votre nom complet" />
+            <input id="fullName" type="text" formControlName="fullName" [placeholder]="'ADMIN_REGISTER.FULL_NAME_PLACEHOLDER' | translate" />
           </div>
-          <small class="error" *ngIf="hasError('fullName', 'required')">Le nom complet est obligatoire.</small>
-          <small class="error" *ngIf="hasError('fullName', 'minlength')">3 caracteres minimum.</small>
+          <small class="error" *ngIf="hasError('fullName', 'required')">{{ 'ADMIN_REGISTER.FULL_NAME_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('fullName', 'minlength')">{{ 'PLATFORM_USERS.NAME_MIN' | translate }}</small>
         </div>
 
         <div class="field-block">
-          <label for="email">Email</label>
+          <label for="email">{{ 'COMMON.EMAIL' | translate }}</label>
           <div class="field-shell" [class.is-valid]="isControlValid('email')">
             <span class="field-icon" aria-hidden="true">@</span>
             <input id="email" type="email" formControlName="email" placeholder="exemple@gmail.com" />
           </div>
-          <small class="error" *ngIf="hasError('email', 'required')">L'email est obligatoire.</small>
-          <small class="error" *ngIf="hasError('email', 'email')">Format email invalide.</small>
+          <small class="error" *ngIf="hasError('email', 'required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('email', 'email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</small>
         </div>
 
         <div class="field-block">
-          <label for="password">Mot de passe</label>
+          <label for="password">{{ 'COMMON.PASSWORD' | translate }}</label>
           <div class="field-shell" [class.is-valid]="isControlValid('password')">
             <span class="field-icon" aria-hidden="true">*</span>
-            <input id="password" type="password" formControlName="password" placeholder="Choisissez un mot de passe" />
+            <input id="password" type="password" formControlName="password" [placeholder]="'REGISTER.PASSWORD_PLACEHOLDER' | translate" />
           </div>
 
           <div class="password-strength" *ngIf="form.controls.password.value">
             <div class="strength-track"><span [style.width.%]="passwordStrengthPercent"></span></div>
             <p>
-              Force:
+              {{ 'ADMIN_REGISTER.STRENGTH' | translate }}:
               <strong [class.weak]="passwordStrengthPercent < 45" [class.medium]="passwordStrengthPercent >= 45 && passwordStrengthPercent < 75" [class.strong]="passwordStrengthPercent >= 75">
                 {{ passwordStrengthLabel }}
               </strong>
             </p>
           </div>
 
-          <small class="error" *ngIf="hasError('password', 'required')">Le mot de passe est obligatoire.</small>
-          <small class="error" *ngIf="hasError('password', 'minlength')">6 caracteres minimum.</small>
+          <small class="error" *ngIf="hasError('password', 'required')">{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="hasError('password', 'minlength')">{{ 'AUTH.PASSWORD_MIN' | translate }}</small>
         </div>
 
         <div class="field-block">
-          <label for="confirmPassword">Confirmer le mot de passe</label>
+          <label for="confirmPassword">{{ 'ADMIN_REGISTER.CONFIRM_PASSWORD' | translate }}</label>
           <div class="field-shell" [class.is-valid]="isConfirmPasswordValid">
             <span class="field-icon" aria-hidden="true">*</span>
-            <input id="confirmPassword" type="password" formControlName="confirmPassword" placeholder="Confirmez le mot de passe" />
+            <input id="confirmPassword" type="password" formControlName="confirmPassword" [placeholder]="'ADMIN_REGISTER.CONFIRM_PASSWORD_PLACEHOLDER' | translate" />
           </div>
-          <small class="error" *ngIf="hasError('confirmPassword', 'required')">Confirmation obligatoire.</small>
-          <small class="error" *ngIf="form.controls.confirmPassword.touched && !isConfirmPasswordValid && form.controls.confirmPassword.value">Les mots de passe ne correspondent pas.</small>
+          <small class="error" *ngIf="hasError('confirmPassword', 'required')">{{ 'ADMIN_REGISTER.CONFIRM_REQUIRED' | translate }}</small>
+          <small class="error" *ngIf="form.controls.confirmPassword.touched && !isConfirmPasswordValid && form.controls.confirmPassword.value">{{ 'ADMIN_REGISTER.PASSWORD_MISMATCH' | translate }}</small>
         </div>
 
         <label class="terms-line" for="terms-check">
           <input id="terms-check" type="checkbox" />
-          <span>J'accepte les conditions d'utilisation.</span>
+          <span>{{ 'REGISTER.ACCEPT_TERMS' | translate }}</span>
         </label>
 
         <p class="api-error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
         <button type="submit" [disabled]="loading">
           <span class="btn-loader" *ngIf="loading" aria-hidden="true"></span>
-          <span>{{ loading ? 'Creation en cours...' : 'Creer mon compte' }}</span>
+          <span>{{ loading ? ('REGISTER.CREATING' | translate) : ('REGISTER.CREATE_BUTTON' | translate) }}</span>
         </button>
 
       </form>
 
       <p class="switch-link">
-        Deja membre ?
-        <a routerLink="/login">Se connecter</a>
+        {{ 'REGISTER.ALREADY_MEMBER' | translate }}
+        <a routerLink="/login">{{ 'AUTH.LOGIN_BUTTON' | translate }}</a>
       </p>
 
-      <p class="switch-link">
-        Besoin d'aide pour debuter ?
-        <a routerLink="/espace">Voir nos offres du moment</a>
-      </p>
-
-      <p class="switch-link">
-        Retour a la selection des espaces ?
-        <a routerLink="/espace">Choisir un espace</a>
-      </p>
     </div>
   </div>
 
-  <footer class="page-footer" aria-label="Liens footer">
-    <p class="footer-brand">Promotion Platform</p>
+  <footer class="page-footer" [attr.aria-label]="'REGISTER.FOOTER_LINKS' | translate">
+    <p class="footer-brand">{{ 'COMMON.BRAND' | translate }}</p>
     <div class="footer-links">
-      <a routerLink="/espace">Confidentialite</a>
-      <a routerLink="/espace">Conditions</a>
-      <a routerLink="/espace">Securite</a>
-      <a routerLink="/espace">Statut</a>
+      <a routerLink="/espace">{{ 'AUTH.PRIVACY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.TERMS' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.SECURITY' | translate }}</a>
+      <a routerLink="/espace">{{ 'AUTH.STATUS' | translate }}</a>
     </div>
-    <p class="copyright">© 2026 Promotion Platform. Tous droits reserves.</p>
+    <p class="copyright">2026 {{ 'COMMON.BRAND' | translate }}. {{ 'AUTH.RIGHTS' | translate }}</p>
   </footer>
 </section>

@@ -17,4 +17,9 @@ public class AdminSubscriptionResponse {
     private String plan;
     private String createdAt;
     private Boolean active;
+    private String status;
+    private String nextInvoice;
+    private String latestInvoiceStatus;
+    private String latestInvoiceDueAt;
+    private String message;
 }

@@ -2,36 +2,37 @@
   <header class="add-promo-head anim-fade-up delay-1">
     <div>
       <p class="kicker">{{ 'PROMOS.MANAGEMENT.ADD_KICKER' | translate }}</p>
-      <h1>{{ 'PROMOS.MANAGEMENT.ADD_TITLE' | translate }}</h1>
+      <h1>{{ (isEditMode ? 'PROMOS.MANAGEMENT.EDIT_TITLE' : 'PROMOS.MANAGEMENT.ADD_TITLE') | translate }}</h1>
       <p class="subtitle">{{ 'PROMOS.MANAGEMENT.COMPANY_LABEL' | translate }}: <strong>{{ companyName }}</strong></p>
     </div>
     <a class="back-link" [routerLink]="['/entreprises', companySlug]">{{ 'PROMOS.MANAGEMENT.BACK_MANAGEMENT' | translate }}</a>
   </header>
 
-  <form class="add-promo-card card-glass anim-fade-up delay-2" (ngSubmit)="submit()">
+  <form class="add-promo-card card-glass anim-fade-up delay-2" [formGroup]="form" (ngSubmit)="submit()">
     <div class="card-head">
       <h2>{{ 'PROMOS.MANAGEMENT.DETAILS_TITLE' | translate }}</h2>
     </div>
 
     <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
     <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="loading-message" *ngIf="loadingPromotion">{{ 'PROMOS.MANAGEMENT.LOADING_EDIT' | translate }}</p>
 
     <label>
       {{ 'PROMOS.MANAGEMENT.FORM_TITLE' | translate }} *
-      <input type="text" name="title" [(ngModel)]="formModel.title" [placeholder]="'PROMOS.MANAGEMENT.TITLE_PLACEHOLDER' | translate" required />
+      <input type="text" formControlName="title" [placeholder]="'PROMOS.MANAGEMENT.TITLE_PLACEHOLDER' | translate" required />
     </label>
 
     <div class="grid-two">
       <label>
         {{ 'PROMOS.MANAGEMENT.COL_TYPE' | translate }}
-        <select name="type" [(ngModel)]="formModel.type">
+        <select formControlName="type">
           <option *ngFor="let item of typeOptions" [value]="item.value">{{ item.labelKey | translate }}</option>
         </select>
       </label>
 
       <label>
         {{ 'COMMON.STATUS' | translate }}
-        <select name="status" [(ngModel)]="formModel.status">
+        <select formControlName="status">
           <option *ngFor="let item of statusOptions" [value]="item.value">{{ item.labelKey | translate }}</option>
         </select>
       </label>
@@ -40,45 +41,122 @@
     <div class="grid-two">
       <label>
         {{ 'PROMOS.MANAGEMENT.CATEGORY' | translate }}
-        <select name="category" [(ngModel)]="formModel.category">
+        <select formControlName="category">
           <option *ngFor="let item of categories" [value]="item">{{ categoryLabel(item) }}</option>
         </select>
       </label>
 
       <label>
-        {{ 'PROMOS.MANAGEMENT.COL_DISCOUNT' | translate }}
-        <input type="text" name="discount" [(ngModel)]="formModel.discount" [placeholder]="'PROMOS.MANAGEMENT.DISCOUNT_PLACEHOLDER' | translate" />
+        {{ 'PROMOS.MANAGEMENT.INITIAL_PRICE' | translate }} *
+        <input type="number" min="0.01" step="0.01" formControlName="initialPrice" />
+        <span class="field-error" *ngIf="showPositivePriceError('initialPrice')">{{ 'PROMOS.MANAGEMENT.ERROR_INITIAL_PRICE' | translate }}</span>
       </label>
     </div>
 
     <div class="grid-two">
       <label>
+        {{ 'PROMOS.MANAGEMENT.PROMOTIONAL_PRICE' | translate }} *
+        <input type="number" min="0.01" step="0.01" formControlName="promotionalPrice" />
+        <span class="field-error" *ngIf="showPositivePriceError('promotionalPrice')">{{ 'PROMOS.MANAGEMENT.ERROR_PROMOTIONAL_POSITIVE' | translate }}</span>
+      </label>
+
+      <div class="discount-preview" [class.discount-preview-error]="showPriceRangeError">
+        <span>{{ 'PROMOS.MANAGEMENT.CALCULATED_DISCOUNT' | translate }}</span>
+        <strong>{{ calculatedDiscountLabel }}</strong>
+        <small *ngIf="showPriceRangeError">{{ 'PROMOS.MANAGEMENT.ERROR_PROMOTIONAL_PRICE' | translate }}</small>
+      </div>
+    </div>
+
+    <div class="grid-two">
+      <label>
         {{ 'PROMOS.MANAGEMENT.START_DATE' | translate }} *
-        <input type="date" name="startDate" [(ngModel)]="formModel.startDate" required />
+        <input type="date" formControlName="startDate" required />
       </label>
 
       <label>
         {{ 'PROMOS.MANAGEMENT.END_DATE' | translate }} *
-        <input type="date" name="endDate" [(ngModel)]="formModel.endDate" required />
+        <input type="date" formControlName="endDate" required />
       </label>
     </div>
 
     <div class="grid-two">
       <label>
         {{ 'PROMOS.MANAGEMENT.COUPON_CODE' | translate }}
-        <input type="text" name="code" [(ngModel)]="formModel.code" [placeholder]="'PROMOS.MANAGEMENT.COUPON_PLACEHOLDER' | translate" />
+        <input type="text" formControlName="code" [placeholder]="'PROMOS.MANAGEMENT.COUPON_PLACEHOLDER' | translate" />
       </label>
 
       <label>
         {{ 'PROMOS.MANAGEMENT.USAGE_LIMIT' | translate }}
-        <input type="number" min="0" name="usageLimit" [(ngModel)]="formModel.usageLimit" [placeholder]="'PROMOS.MANAGEMENT.USAGE_LIMIT_PLACEHOLDER' | translate" />
+        <input type="number" min="0" formControlName="usageLimit" [placeholder]="'PROMOS.MANAGEMENT.USAGE_LIMIT_PLACEHOLDER' | translate" />
       </label>
     </div>
 
+    <p class="error-message" *ngIf="hasAiAccess && aiErrorMessage">
+      {{ aiErrorMessage }}
+      <a *ngIf="aiLoginLink" routerLink="/admin/login" [queryParams]="adminLoginQueryParams">
+        Se connecter
+      </a>
+    </p>
+
+    <section class="ai-evaluation ai-plan-note" *ngIf="hasAiAccess && !aiEvaluation">
+      <div>
+        <h3>{{ aiPanelTitle }}</h3>
+        <p>{{ aiPanelDescription }}</p>
+      </div>
+    </section>
+
+    <section class="ai-evaluation" [class.ai-standard-evaluation]="isStandardAi" *ngIf="hasAiAccess && aiEvaluation">
+      <div class="ai-panel-head">
+        <h3>{{ aiPanelTitle }}</h3>
+        <p>{{ aiPanelDescription }}</p>
+      </div>
+
+      <div class="ai-score">
+        <span>{{ 'PROMOS.MANAGEMENT.AI_SCORE' | translate }}</span>
+        <strong>{{ aiEvaluation.score }}/100</strong>
+        <em [ngClass]="aiLevelClass(aiEvaluation.level)">{{ aiEvaluation.level }}</em>
+      </div>
+
+      <div class="ai-list" *ngIf="aiEvaluation.alerts.length">
+        <h3>{{ 'PROMOS.MANAGEMENT.AI_ALERTS' | translate }}</h3>
+        <ul>
+          <li *ngFor="let alert of aiEvaluation.alerts">{{ alert }}</li>
+        </ul>
+      </div>
+
+      <div class="ai-list ai-list-danger" *ngIf="aiEvaluation.anomalies.length">
+        <h3>{{ 'PROMOS.MANAGEMENT.AI_ANOMALIES' | translate }}</h3>
+        <ul>
+          <li *ngFor="let anomaly of aiEvaluation.anomalies">{{ anomaly }}</li>
+        </ul>
+      </div>
+
+      <div class="ai-list ai-list-advice" *ngIf="aiEvaluation.recommendations.length">
+        <h3>{{ 'PROMOS.MANAGEMENT.AI_RECOMMENDATIONS' | translate }}</h3>
+        <ul>
+          <li *ngFor="let recommendation of aiEvaluation.recommendations">{{ recommendation }}</li>
+        </ul>
+      </div>
+
+      <div class="ai-list ai-list-advice" *ngIf="isPremiumAi && (aiEvaluation.marketingTitle || aiEvaluation.marketingDescription || aiEvaluation.enhancedRecommendation)">
+        <h3>{{ 'PROMOS.MANAGEMENT.AI_MARKETING_COPY' | translate }}</h3>
+        <p *ngIf="aiEvaluation.marketingTitle"><strong>{{ 'PROMOS.MANAGEMENT.AI_MARKETING_TITLE' | translate }}:</strong> {{ aiEvaluation.marketingTitle }}</p>
+        <p *ngIf="aiEvaluation.marketingDescription"><strong>{{ 'PROMOS.MANAGEMENT.AI_MARKETING_DESCRIPTION' | translate }}:</strong> {{ aiEvaluation.marketingDescription }}</p>
+        <p *ngIf="aiEvaluation.enhancedRecommendation"><strong>{{ 'PROMOS.MANAGEMENT.AI_MARKETING_RECOMMENDATION' | translate }}:</strong> {{ aiEvaluation.enhancedRecommendation }}</p>
+      </div>
+
+      <p class="ai-fallback-message" *ngIf="isPremiumAi && aiEvaluation.marketingFallbackMessage">
+        {{ aiEvaluation.marketingFallbackMessage }}
+      </p>
+    </section>
+
     <div class="actions">
+      <button type="button" class="analyze-btn btn-anim" *ngIf="hasAiAccess" (click)="evaluatePromotion()" [disabled]="evaluatingPromotion || loadingPromotion || aiPlanLoading">
+        {{ aiAnalyzeButtonLabel }}
+      </button>
       <button type="button" class="cancel-btn btn-anim" (click)="cancel()" [disabled]="submitting">{{ 'COMMON.CANCEL' | translate }}</button>
-      <button type="submit" class="submit-btn btn-anim" [disabled]="submitting">
-        {{ submitting ? ('PROMOS.MANAGEMENT.SUBMITTING' | translate) : ('PROMOS.MANAGEMENT.SUBMIT_ADD' | translate) }}
+      <button type="submit" class="submit-btn btn-anim" [disabled]="submitting || loadingPromotion">
+        {{ submitting ? ('PROMOS.MANAGEMENT.SUBMITTING' | translate) : ((isEditMode ? 'PROMOS.MANAGEMENT.SUBMIT_EDIT' : 'PROMOS.MANAGEMENT.SUBMIT_ADD') | translate) }}
       </button>
     </div>
   </form>

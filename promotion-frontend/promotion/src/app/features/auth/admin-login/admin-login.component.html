@@ -1,6 +1,6 @@
 <section class="al-page">
   <header class="al-topbar">
-    <p class="al-top-brand"><span>P</span> {{ 'COMMON.BRAND' | translate }}</p>
+    <p class="al-top-brand"><img src="promolink-logo-icon.png" alt="" /> {{ 'COMMON.BRAND' | translate }}</p>
     <nav aria-label="{{ 'AUTH.QUICK_NAV' | translate }}">
       <app-language-switcher />
       <a routerLink="/admin/subscribe" [queryParams]="authQueryParams">{{ 'AUTH.SUBSCRIBE' | translate }}</a>
@@ -10,15 +10,9 @@
 
   <div class="al-layout">
     <aside class="al-intro" aria-hidden="true">
-      <p class="al-brand-row"><span class="al-brand-mark">P</span> {{ 'COMMON.BRAND' | translate }}</p>
-      <p class="al-sale-chip">{{ 'AUTH.ADMIN_CHIP' | translate }}</p>
-      <h1>{{ 'AUTH.ADMIN_TITLE' | translate }}</h1>
-      <p class="al-intro-copy">
-        {{ 'AUTH.ADMIN_COPY_1' | translate }}
-        {{ 'AUTH.ADMIN_COPY_2' | translate }}
-      </p>
+      <p class="auth-side-line">Gérez vos promotions, coupons et performances depuis un seul espace.</p>
 
-      <div class="al-feature-list">
+      <div class="al-feature-list auth-legacy-hidden">
         <article class="al-feature-item">
           <span class="al-feature-icon growth">%</span>
           <div>
@@ -42,6 +36,13 @@
         <h2>{{ 'AUTH.ADMIN_LOGIN' | translate }} societe</h2>
         <p>{{ 'AUTH.ADMIN_LOGIN_SUBTITLE' | translate }}</p>
       </div>
+
+      <button type="button" class="google-btn" (click)="loginWithGoogle()" style="width:100%;padding:12px;border:1px solid #dadce0;border-radius:8px;background:#fff;cursor:pointer;font-size:15px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px">
+        <span style="font-weight:700;color:#4285f4;font-size:20px">G</span>
+        {{ 'AUTH.SIGN_IN_GOOGLE' | translate }}
+      </button>
+
+      <div class="auth-divider" style="margin:16px 0"><span>{{ 'AUTH.OR' | translate }}</span></div>
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <div class="al-field-block">
@@ -77,18 +78,8 @@
       </form>
 
       <p class="al-switch-link">
-        {{ 'AUTH.NO_ACCOUNT' | translate }}
-        <a routerLink="/admin/register" [queryParams]="authQueryParams">{{ 'AUTH.CREATE_ADMIN_ACCOUNT' | translate }}</a>
-      </p>
-
-      <p class="al-switch-link">
         {{ 'AUTH.NOT_SUBSCRIBED' | translate }}
         <a routerLink="/admin/subscribe" [queryParams]="authQueryParams">{{ 'AUTH.SUBSCRIBE_FIRST' | translate }}</a>
-      </p>
-
-      <p class="al-switch-link">
-        {{ 'AUTH.BACK_SPACE_QUESTION' | translate }}
-        <a routerLink="/espace">{{ 'AUTH.CHOOSE_SPACE' | translate }}</a>
       </p>
     </div>
   </div>

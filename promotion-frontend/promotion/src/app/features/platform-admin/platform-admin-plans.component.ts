@@ -124,7 +124,7 @@ export class PlatformAdminPlansComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.saving = false;
-        this.errorMessage = this.extractError(error, 'Impossible de modifier ce plan.');
+        this.errorMessage = this.extractError(error, this.translations.translate('PLATFORM_PLANS.UPDATE_ERROR'));
       }
     });
   }
@@ -144,7 +144,7 @@ export class PlatformAdminPlansComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.togglingId = null;
-        this.errorMessage = this.extractError(error, 'Impossible de changer le statut du plan.');
+        this.errorMessage = this.extractError(error, this.translations.translate('PLATFORM_PLANS.STATUS_ERROR'));
       }
     });
   }
@@ -171,7 +171,7 @@ export class PlatformAdminPlansComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
-        this.errorMessage = this.extractError(error, 'Impossible de charger les plans.');
+        this.errorMessage = this.extractError(error, this.translations.translate('PLATFORM_PLANS.LOAD_ERROR'));
       }
     });
   }

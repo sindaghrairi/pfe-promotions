@@ -2,6 +2,7 @@ package com.pfe.promotionplatform.service;
 
 import java.util.List;
 
+import com.pfe.promotionplatform.dto.PromotionRequest;
 import com.pfe.promotionplatform.entity.Promotion;
 
 public interface PromotionService {
@@ -13,9 +14,9 @@ public interface PromotionService {
 
     List<String> listPublishedCompanySlugs();
 
-    Promotion createPromotion(String companySlug, Promotion promotion, String principalEmail);
+    Promotion createPromotion(String companySlug, PromotionRequest request, String principalEmail);
 
-    Promotion updatePromotion(String companySlug, Long promotionId, Promotion promotion, String principalEmail);
+    Promotion updatePromotion(String companySlug, Long promotionId, PromotionRequest request, String principalEmail);
 
     Promotion claimCoupon(String companySlug, Long promotionId);
 

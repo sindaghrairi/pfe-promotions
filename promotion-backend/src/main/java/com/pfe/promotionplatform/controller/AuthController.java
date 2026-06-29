@@ -24,9 +24,12 @@ import com.pfe.promotionplatform.dto.AdminSubscribeRequest;
 import com.pfe.promotionplatform.dto.AuthResponse;
 import com.pfe.promotionplatform.dto.LoginRequest;
 import com.pfe.promotionplatform.dto.MessageResponse;
+import com.pfe.promotionplatform.dto.OAuth2CallbackRequest;
+import com.pfe.promotionplatform.dto.OAuth2UrlResponse;
 import com.pfe.promotionplatform.dto.PlatformAdminPlanDto;
 import com.pfe.promotionplatform.dto.RegisterRequest;
 import com.pfe.promotionplatform.service.AuthService;
+import com.pfe.promotionplatform.service.OAuth2Service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,7 @@ public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthService authService;
+    private final OAuth2Service oAuth2Service;
 
     @PostMapping("/admin/subscribe")
     public ResponseEntity<MessageResponse> adminSubscribe(@Valid @RequestBody AdminSubscribeRequest request) {
@@ -72,6 +76,17 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         log.info("POST /api/auth/login for email={}", request.getEmail());
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @GetMapping("/oauth2/google/url")
+    public ResponseEntity<OAuth2UrlResponse> googleAuthorizationUrl(
+            @RequestParam(required = false, defaultValue = "") String state) {
+        return ResponseEntity.ok(new OAuth2UrlResponse(oAuth2Service.getGoogleAuthorizationUrl(state)));
+    }
+
+    @PostMapping("/oauth2/google/callback")
+    public ResponseEntity<AuthResponse> googleCallback(@Valid @RequestBody OAuth2CallbackRequest request) {
+        return ResponseEntity.ok(oAuth2Service.handleGoogleCallback(request.getCode(), request.getState()));
     }
 
     @GetMapping("/me")

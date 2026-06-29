@@ -1,0 +1,90 @@
+<section class="profile-page company-profile">
+  <header class="profile-topbar">
+    <a class="profile-brand" routerLink="/dashboard">
+      <img src="promolink-logo-icon.png" alt="" />
+      <span>PromoLink</span>
+    </a>
+    <div class="profile-actions">
+      <a routerLink="/dashboard">{{ 'PROFILE.BACK_DASHBOARD' | translate }}</a>
+      <app-language-switcher />
+    </div>
+  </header>
+
+  <main class="profile-shell">
+    <div class="profile-hero">
+      <div>
+        <p>{{ 'PROFILE.ADMIN_KICKER' | translate }}</p>
+        <h1>{{ 'PROFILE.ADMIN_TITLE' | translate }}</h1>
+        <span>{{ 'PROFILE.ADMIN_SUBTITLE' | translate }}</span>
+      </div>
+      <span class="plan-chip">{{ 'TABLE.PLAN' | translate }} {{ currentPlan }}</span>
+    </div>
+    <p class="profile-state" *ngIf="loading">{{ 'COMMON.LOADING' | translate }}</p>
+    <p class="profile-state error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="profile-grid" *ngIf="!loading">
+      <form class="profile-panel" [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate>
+        <div class="panel-head">
+          <p>{{ 'PROFILE.COMPANY' | translate }}</p>
+          <h2>{{ 'PROFILE.COMPANY_CONTACTS' | translate }}</h2>
+        </div>
+        <label>
+          <span>{{ 'ADMIN_SUBSCRIBE.COMPANY_NAME' | translate }}</span>
+          <input type="text" formControlName="companyName" [placeholder]="'ADMIN_SUBSCRIBE.COMPANY_PLACEHOLDER' | translate" />
+          <small *ngIf="hasProfileError('companyName', 'required')">{{ 'ADMIN_SUBSCRIBE.COMPANY_REQUIRED' | translate }}</small>
+          <small *ngIf="hasProfileError('companyName', 'minlength')">{{ 'ADMIN_SUBSCRIBE.COMPANY_MIN' | translate }}</small>
+        </label>
+        <label>
+          <span>{{ 'COMMON.EMAIL' | translate }}</span>
+          <input type="email" formControlName="email" [placeholder]="'PROFILE.EMAIL_PLACEHOLDER' | translate" />
+          <small *ngIf="hasProfileError('email', 'required')">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</small>
+          <small *ngIf="hasProfileError('email', 'email')">{{ 'AUTH.EMAIL_INVALID' | translate }}</small>
+        </label>
+        <p class="notice" *ngIf="profileNotice">{{ profileNotice }}</p>
+        <button type="submit" [disabled]="savingProfile">{{ savingProfile ? ('COMMON.SAVING' | translate) : ('COMMON.SAVE' | translate) }}</button>
+      </form>
+
+      <form class="profile-panel security" [formGroup]="passwordForm" (ngSubmit)="savePassword()" novalidate>
+        <div class="panel-head">
+          <p>{{ 'PROFILE.SECURITY' | translate }}</p>
+          <h2>{{ passwordTitleKey | translate }}</h2>
+        </div>
+        <p class="profile-hint" *ngIf="googleAccount">
+          <strong>{{ 'PROFILE.GOOGLE_ACCOUNT' | translate }}</strong>
+          <span *ngIf="needsLocalPassword">{{ 'PROFILE.CREATE_LOCAL_PASSWORD' | translate }}</span>
+          <span *ngIf="!needsLocalPassword">{{ 'PROFILE.GOOGLE_LOCAL_PASSWORD_NOTE' | translate }}</span>
+        </p>
+        <label *ngIf="!googleAccount"><span>{{ 'PROFILE.OLD_PASSWORD' | translate }}</span><input type="password" formControlName="oldPassword" autocomplete="current-password" />
+          <small *ngIf="hasPasswordError('oldPassword', 'required')">{{ 'PROFILE.OLD_PASSWORD_REQUIRED' | translate }}</small></label>
+        <label><span>{{ 'PROFILE.NEW_PASSWORD' | translate }}</span><input type="password" formControlName="newPassword" autocomplete="new-password" />
+          <small *ngIf="hasPasswordError('newPassword', 'required')">{{ 'PROFILE.NEW_PASSWORD_REQUIRED' | translate }}</small>
+          <small *ngIf="hasPasswordError('newPassword', 'minlength')">{{ 'AUTH.PASSWORD_MIN' | translate }}</small></label>
+        <label><span>{{ 'PROFILE.CONFIRM_NEW_PASSWORD' | translate }}</span><input type="password" formControlName="confirmNewPassword" autocomplete="new-password" />
+          <small *ngIf="hasPasswordError('confirmNewPassword', 'required')">{{ 'PROFILE.CONFIRM_REQUIRED' | translate }}</small>
+          <small *ngIf="passwordForm.controls.confirmNewPassword.touched && !passwordsMatch">{{ 'PROFILE.PASSWORD_MISMATCH' | translate }}</small></label>
+        <p class="notice" *ngIf="passwordNotice">{{ passwordNotice }}</p>
+        <button type="submit" [disabled]="savingPassword">{{ savingPassword ? ('COMMON.SAVING' | translate) : ((needsLocalPassword ? 'PROFILE.SET_PASSWORD' : 'PROFILE.UPDATE_PASSWORD') | translate) }}</button>
+      </form>
+
+      <form class="profile-panel plan-panel" [formGroup]="planForm" (ngSubmit)="savePlan()" novalidate>
+        <div class="panel-head">
+          <p>{{ 'NAV.SUBSCRIPTIONS' | translate }}</p>
+          <h2>{{ 'PROFILE.PLAN_TITLE' | translate }}</h2>
+        </div>
+        <p class="plan-current">{{ 'PROFILE.CURRENT_PLAN' | translate }} <strong>{{ currentPlan }}</strong></p>
+        <p class="profile-state compact" *ngIf="plansLoading">{{ 'PAYMENT.LOADING_PLANS' | translate }}</p>
+        <label *ngIf="!plansLoading">
+          <span>{{ 'PROFILE.ACTIVE_PLANS' | translate }}</span>
+          <select formControlName="plan">
+            <option *ngFor="let plan of plans" [value]="plan.name">{{ plan.name }} - {{ plan.price | number: '1.2-2' }} DT</option>
+          </select>
+        </label>
+        <div class="plan-list" *ngIf="plans.length">
+          <p *ngFor="let plan of plans"><strong>{{ plan.name }}</strong><span>{{ planDescription(plan) }}</span></p>
+        </div>
+        <p class="notice" *ngIf="planNotice">{{ planNotice }}</p>
+        <button type="submit" [disabled]="savingPlan || plansLoading || !plans.length">{{ savingPlan ? ('COMMON.SAVING' | translate) : ('PROFILE.UPDATE_PLAN' | translate) }}</button>
+      </form>
+    </div>
+  </main>
+</section>

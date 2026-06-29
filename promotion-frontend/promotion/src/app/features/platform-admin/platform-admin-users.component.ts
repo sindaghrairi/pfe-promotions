@@ -10,6 +10,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { PlatformAdminService } from '../../core/services/platform-admin.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { TranslationService } from '../../core/i18n/translation.service';
 import { LanguageSwitcherComponent } from '../../shared/language-switcher/language-switcher.component';
 
 @Component({
@@ -24,6 +25,7 @@ export class PlatformAdminUsersComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly platformAdminService = inject(PlatformAdminService);
   private readonly themeService = inject(ThemeService);
+  private readonly translations = inject(TranslationService);
 
   readonly isDark$ = this.themeService.isDark$;
 
@@ -39,6 +41,7 @@ export class PlatformAdminUsersComponent implements OnInit {
   roleFilter: PlatformUserRole | 'ALL' = 'ALL';
   pageSize = 6;
   currentPage = 1;
+  savingStatusId: number | null = null;
 
   readonly roleOptions: PlatformUserRole[] = ['CLIENT', 'ADMIN', 'PLATFORM_ADMIN'];
 
@@ -159,13 +162,13 @@ export class PlatformAdminUsersComponent implements OnInit {
     this.authService.createUser(payload).subscribe({
       next: () => {
         this.creatingUser = false;
-        this.addUserSuccess = 'Utilisateur ajoute avec succes.';
+        this.addUserSuccess = this.t('PLATFORM_USERS.ADD_SUCCESS');
         this.addUserForm.reset();
         this.loadUsers(false);
       },
       error: (error: HttpErrorResponse) => {
         this.creatingUser = false;
-        this.addUserError = this.extractError(error, "Impossible d'ajouter cet utilisateur.");
+        this.addUserError = this.extractError(error, this.t('PLATFORM_USERS.ADD_ERROR'));
       }
     });
   }
@@ -193,8 +196,34 @@ export class PlatformAdminUsersComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.saving = false;
-        this.errorMessage = this.extractError(error, 'Impossible de modifier le role utilisateur.');
+        this.errorMessage = this.extractError(error, this.t('PLATFORM_USERS.ROLE_ERROR'));
         this.loadUsers();
+      }
+    });
+  }
+
+  onStatusChange(user: PlatformAdminUser, active: boolean): void {
+    if (user.active === active || this.savingStatusId === user.id) {
+      return;
+    }
+
+    const previous = user.active;
+    user.active = active;
+    this.savingStatusId = user.id;
+    this.errorMessage = '';
+
+    this.platformAdminService.updateUserStatus(user.id, active).subscribe({
+      next: (updated) => {
+        this.savingStatusId = null;
+        const index = this.users.findIndex((item) => item.id === updated.id);
+        if (index >= 0) {
+          this.users[index] = updated;
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        user.active = previous;
+        this.savingStatusId = null;
+        this.errorMessage = this.extractError(error, this.t('PLATFORM_USERS.ROLE_ERROR'));
       }
     });
   }
@@ -233,7 +262,7 @@ export class PlatformAdminUsersComponent implements OnInit {
 
   deleteUser(user: PlatformAdminUser): void {
     const confirmed = typeof window !== 'undefined'
-      ? window.confirm(`Supprimer le compte ${user.email} ?`)
+      ? window.confirm(this.t('PLATFORM_USERS.DELETE_CONFIRM', { email: user.email }))
       : true;
 
     if (!confirmed) {
@@ -250,7 +279,7 @@ export class PlatformAdminUsersComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.saving = false;
-        this.errorMessage = this.extractError(error, 'Impossible de supprimer cet utilisateur.');
+        this.errorMessage = this.extractError(error, this.t('PLATFORM_USERS.DELETE_ERROR'));
       }
     });
   }
@@ -286,7 +315,7 @@ export class PlatformAdminUsersComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
-        this.errorMessage = this.extractError(error, 'Impossible de charger les utilisateurs.');
+        this.errorMessage = this.extractError(error, this.t('PLATFORM_USERS.LOAD_ERROR'));
       }
     });
   }
@@ -305,5 +334,9 @@ export class PlatformAdminUsersComponent implements OnInit {
       return error.error.error;
     }
     return fallback;
+  }
+
+  private t(key: string, params?: Record<string, string>): string {
+    return this.translations.translate(key, params);
   }
 }

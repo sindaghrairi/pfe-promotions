@@ -11,6 +11,8 @@ import {
   PlatformAdminPlanPayload,
   PlatformAdminPromotion,
   PlatformAdminStats,
+  PlatformCopilotRequest,
+  PlatformCopilotResponse,
   PlatformAdminSubscription,
   PlatformAdminUser,
   PlatformDashboardPeriod,
@@ -36,6 +38,10 @@ export class PlatformAdminService {
     });
   }
 
+  askPlatformCopilot(payload: PlatformCopilotRequest): Observable<PlatformCopilotResponse> {
+    return this.http.post<PlatformCopilotResponse>(`${this.apiUrl}/ai/copilot/ask`, payload);
+  }
+
   listUsers(): Observable<PlatformAdminUser[]> {
     return this.http.get<PlatformAdminUser[]>(`${this.apiUrl}/users`);
   }
@@ -44,12 +50,20 @@ export class PlatformAdminService {
     return this.http.put<PlatformAdminUser>(`${this.apiUrl}/users/${userId}/role`, { role });
   }
 
+  updateUserStatus(userId: number, active: boolean): Observable<PlatformAdminUser> {
+    return this.http.patch<PlatformAdminUser>(`${this.apiUrl}/users/${userId}/status`, { active });
+  }
+
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/users/${userId}`);
   }
 
   listSubscriptions(): Observable<PlatformAdminSubscription[]> {
     return this.http.get<PlatformAdminSubscription[]>(`${this.apiUrl}/subscriptions`);
+  }
+
+  updateSubscriptionStatus(subscriptionId: number, active: boolean): Observable<PlatformAdminSubscription> {
+    return this.http.patch<PlatformAdminSubscription>(`${this.apiUrl}/subscriptions/${subscriptionId}/status`, { active });
   }
 
   listPromotions(): Observable<PlatformAdminPromotion[]> {
@@ -62,6 +76,10 @@ export class PlatformAdminService {
 
   getInvoiceById(invoiceId: number): Observable<PlatformAdminInvoice> {
     return this.http.get<PlatformAdminInvoice>(`${this.apiUrl}/invoices/${invoiceId}`);
+  }
+
+  markInvoicePaid(invoiceId: number): Observable<PlatformAdminInvoice> {
+    return this.http.patch<PlatformAdminInvoice>(`${this.apiUrl}/invoices/${invoiceId}/mark-paid`, {});
   }
 
   getPlans(): Observable<PlatformAdminPlan[]> {

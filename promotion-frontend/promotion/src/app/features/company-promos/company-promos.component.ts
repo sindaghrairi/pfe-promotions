@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -47,11 +48,12 @@ type SubscriptionSnapshot = {
 export class CompanyPromosComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly authService = inject(AuthService);
   private readonly promotionService = inject(PromotionService);
   private readonly translations = inject(TranslationService);
 
-  companyName = 'Entreprise';
+  companyName = '';
   companySlug = '';
   allCompaniesMode = false;
   promotions: PromoItem[] = [];
@@ -159,10 +161,19 @@ export class CompanyPromosComponent {
     const currentPath = this.route.snapshot.routeConfig?.path ?? '';
     const slug = (this.route.snapshot.paramMap.get('slug') ?? '').toLowerCase();
     this.companySlug = slug;
-    this.allCompaniesMode = currentPath === 'promos/consulter-toutes';
+    this.allCompaniesMode = currentPath === 'promos/consulter-toutes' || currentPath === 'promotions';
     this.companyName = this.allCompaniesMode ? this.t('PROMOS.ALL_COMPANIES') : this.slugToLabel(slug);
     this.readOnlyMode = currentPath === 'entreprises/:slug/consulter-promos' || this.allCompaniesMode;
     this.subscriptionSnapshot = this.readSubscriptionSnapshot();
+    this.loadSubscriptionSnapshot();
+    this.applyCategoryFromParam(this.route.snapshot.queryParamMap.get('category'));
+    this.applySearchFromParam(this.route.snapshot.queryParamMap.get('search'));
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.applyCategoryFromParam(params.get('category'));
+        this.applySearchFromParam(params.get('search'));
+      });
 
     this.loadPromotions();
   }
@@ -408,13 +419,19 @@ export class CompanyPromosComponent {
   }
 
   get curatedPromotions(): PromoItem[] {
-    const query = this.readonlySearch.trim().toLowerCase();
+    const query = this.normalizeText(this.readonlySearch);
     const filteredBySearch = this.publishedPromotions.filter((promo) => {
-      const company = this.companyLabelFor(promo).toLowerCase();
+      const company = this.normalizeText(this.companyLabelFor(promo));
+      const companySlug = this.normalizeText(promo.companySlug);
+      const title = this.normalizeText(promo.title);
+      const category = this.normalizeText(promo.category);
+      const discount = this.normalizeText(promo.discount);
       const searchMatches = !query
         || company.includes(query)
-        || promo.title.toLowerCase().includes(query)
-        || promo.category.toLowerCase().includes(query);
+        || companySlug.includes(query)
+        || title.includes(query)
+        || category.includes(query)
+        || discount.includes(query);
 
       if (!searchMatches) {
         return false;
@@ -430,8 +447,24 @@ export class CompanyPromosComponent {
     return filteredBySearch;
   }
 
+  get selectedReadCategoryLabel(): string {
+    return this.selectedReadCategory === 'ALL' ? '' : this.categoryLabel(this.selectedReadCategory);
+  }
+
   setReadCategory(key: string): void {
-    this.selectedReadCategory = key;
+    this.selectedReadCategory = this.resolveReadCategory(key);
+
+    if (!this.allCompaniesMode) {
+      return;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        category: this.selectedReadCategory === 'ALL' ? null : this.selectedReadCategory
+      },
+      queryParamsHandling: 'merge'
+    });
   }
 
   isReadCategoryActive(key: string): boolean {
@@ -474,6 +507,22 @@ export class CompanyPromosComponent {
     return this.copiedCouponPromoId === promo.id
       ? this.t('PROMOS.COUPON_COPIED')
       : this.t('PROMOS.GET_COUPON');
+  }
+
+  isCouponUnavailable(promo: PromoItem): boolean {
+    return this.isPromotionExpired(promo) || this.isCouponStockExhausted(promo);
+  }
+
+  couponUnavailableReason(promo: PromoItem): string {
+    if (this.isPromotionExpired(promo)) {
+      return 'Promotion expiree';
+    }
+
+    if (this.isCouponStockExhausted(promo)) {
+      return 'Coupons epuises';
+    }
+
+    return '';
   }
 
   statusClass(status: PromoStatus): string {
@@ -592,8 +641,8 @@ export class CompanyPromosComponent {
     this.router.navigate(['/admin/subscribe/overview'], {
       queryParams: {
         companyName: this.companyName,
-        email: this.subscriptionSnapshot?.email || this.authService.getStoredEmail() || '',
-        redirectTo: '/dashboard'
+        email: this.authService.getStoredEmail() || this.subscriptionSnapshot?.email || '',
+        redirectTo: this.router.url
       }
     });
   }
@@ -606,9 +655,9 @@ export class CompanyPromosComponent {
 
     this.router.navigate(['/admin/subscribe/invoice'], {
       queryParams: {
-        companyName: this.subscriptionSnapshot.companyName || this.companyName,
-        email: this.subscriptionSnapshot.email || this.authService.getStoredEmail() || '',
-        redirectTo: '/dashboard',
+        companyName: this.companyName,
+        email: this.authService.getStoredEmail() || this.subscriptionSnapshot.email || '',
+        redirectTo: this.router.url,
         plan: this.subscriptionSnapshot.plan,
         billingCycle: this.subscriptionSnapshot.billingCycle,
         amount: this.subscriptionSnapshot.amount,
@@ -660,7 +709,8 @@ export class CompanyPromosComponent {
       title: `${promo.title} (Copie)`,
       type: promo.type,
       category: promo.category,
-      discount: promo.discount,
+      initialPrice: promo.initialPrice,
+      promotionalPrice: promo.promotionalPrice,
       couponCode: promo.couponCode ?? undefined,
       startDate: promo.startDate,
       endDate: promo.endDate,
@@ -672,7 +722,7 @@ export class CompanyPromosComponent {
 
     this.promotionService.createPromotion(this.companySlug, payload).subscribe({
       next: () => this.loadPromotions(),
-      error: () => (this.errorMessage = "Impossible de dupliquer la promotion.")
+      error: () => (this.errorMessage = this.t('PROMOS.MANAGEMENT.DUPLICATE_ERROR'))
     });
   }
 
@@ -685,7 +735,8 @@ export class CompanyPromosComponent {
       title: promo.title,
       type: promo.type,
       category: promo.category,
-      discount: promo.discount,
+      initialPrice: promo.initialPrice,
+      promotionalPrice: promo.promotionalPrice,
       couponCode: promo.couponCode ?? undefined,
       startDate: promo.startDate,
       endDate: promo.endDate,
@@ -697,7 +748,7 @@ export class CompanyPromosComponent {
 
     this.promotionService.updatePromotion(this.companySlug, promo.id, payload).subscribe({
       next: () => this.loadPromotions(),
-      error: () => (this.errorMessage = 'Impossible de changer le statut de la promotion.')
+      error: () => (this.errorMessage = this.t('PROMOS.MANAGEMENT.STATUS_ERROR'))
     });
   }
 
@@ -708,7 +759,7 @@ export class CompanyPromosComponent {
 
     this.promotionService.deletePromotion(this.companySlug, promo.id).subscribe({
       next: () => this.loadPromotions(),
-      error: () => (this.errorMessage = 'Impossible de supprimer la promotion.')
+      error: () => (this.errorMessage = this.t('PROMOS.MANAGEMENT.DELETE_ERROR'))
     });
   }
 
@@ -729,6 +780,10 @@ export class CompanyPromosComponent {
   }
 
   handleCouponAction(promo: PromoItem): void {
+    if (this.isCouponUnavailable(promo)) {
+      return;
+    }
+
     const code = (promo.couponCode ?? '').trim();
     if (!code) {
       return;
@@ -741,7 +796,7 @@ export class CompanyPromosComponent {
     }
 
     const companyLabel = this.resolveCompanyLabelForAuth(promo);
-    this.router.navigate(['/espace'], {
+    this.router.navigate(['/login'], {
       queryParams: {
         redirectTo: this.router.url,
         company: companyLabel || undefined
@@ -1083,7 +1138,7 @@ export class CompanyPromosComponent {
         error: () => {
           this.loading = false;
           this.promotions = [];
-          this.errorMessage = 'Impossible de charger les promotions publiees.';
+          this.errorMessage = this.t('PROMOS.PUBLISHED_LOAD_ERROR');
         }
       });
       return;
@@ -1103,15 +1158,32 @@ export class CompanyPromosComponent {
         this.loading = false;
         this.promotions = [];
         this.errorMessage = this.readOnlyMode
-          ? 'Impossible de charger les promotions publiees.'
-          : 'Impossible de charger les promotions de gestion.';
+          ? this.t('PROMOS.PUBLISHED_LOAD_ERROR')
+          : this.t('PROMOS.MANAGEMENT.LOAD_ERROR');
       }
     });
   }
 
+  private applyCategoryFromParam(category: string | null): void {
+    this.selectedReadCategory = this.resolveReadCategory(category);
+  }
+
+  private applySearchFromParam(search: string | null): void {
+    this.readonlySearch = (search ?? '').trim();
+  }
+
+  private resolveReadCategory(category: string | null | undefined): string {
+    if (!category) {
+      return 'ALL';
+    }
+
+    const normalized = this.normalizeText(category);
+    return this.readCategories.find((item) => this.normalizeText(item.key) === normalized)?.key ?? 'ALL';
+  }
+
   private slugToLabel(slug: string): string {
     if (!slug) {
-      return 'Entreprise';
+      return this.t('PROMOS.MANAGEMENT.COMPANY_LABEL');
     }
 
     return slug
@@ -1164,6 +1236,40 @@ export class CompanyPromosComponent {
       .toLowerCase();
   }
 
+  private isPromotionExpired(promo: PromoItem): boolean {
+    if (promo.status === 'EXPIRED') {
+      return true;
+    }
+
+    const endDate = this.parseLocalDate(promo.endDate);
+    if (!endDate) {
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return endDate < today;
+  }
+
+  private isCouponStockExhausted(promo: PromoItem): boolean {
+    const remaining = Number(promo.usageCount ?? 0);
+
+    if (Number.isNaN(remaining)) {
+      return false;
+    }
+
+    return remaining <= 0;
+  }
+
+  private parseLocalDate(rawDate: string): Date | null {
+    const [year, month, day] = rawDate.split('-').map(Number);
+    if (!year || !month || !day) {
+      return null;
+    }
+
+    return new Date(year, month - 1, day);
+  }
+
   private consumeCouponUsage(promo: PromoItem): void {
     if (this.claimedCouponIds.has(promo.id)) {
       return;
@@ -1183,8 +1289,8 @@ export class CompanyPromosComponent {
         this.claimedCouponIds.delete(promo.id);
         if (error.status === 401 || error.status === 403) {
           this.authService.logout();
-          this.errorMessage = 'Session expiree. Reconnectez-vous pour recuperer le coupon.';
-          this.router.navigate(['/espace'], {
+          this.errorMessage = this.t('PROMOS.COUPON_SESSION_EXPIRED');
+          this.router.navigate(['/login'], {
             queryParams: { redirectTo: this.router.url }
           });
           return;
@@ -1194,7 +1300,7 @@ export class CompanyPromosComponent {
           ? error.error.error
           : '';
 
-        this.errorMessage = backendMessage || 'Impossible de mettre a jour le stock du coupon.';
+        this.errorMessage = backendMessage || this.t('PROMOS.COUPON_STOCK_ERROR');
       }
     });
   }
@@ -1219,6 +1325,10 @@ export class CompanyPromosComponent {
         return null;
       }
 
+      if (!this.isSameCompany(parsed.companyName, this.companyName)) {
+        return null;
+      }
+
       return {
         companyName: parsed.companyName,
         email: parsed.email ?? '',
@@ -1231,6 +1341,53 @@ export class CompanyPromosComponent {
     } catch {
       return null;
     }
+  }
+
+  private loadSubscriptionSnapshot(): void {
+    if (this.readOnlyMode || this.allCompaniesMode || !this.companyName.trim()) {
+      return;
+    }
+
+    this.authService.adminSubscriptionByCompanyName(this.companyName).subscribe({
+      next: (subscription) => {
+        const plan = subscription.plan;
+        this.subscriptionSnapshot = {
+          companyName: subscription.companyName || this.companyName,
+          email: subscription.contactEmail || this.authService.getStoredEmail() || '',
+          plan,
+          billingCycle: 'MONTHLY',
+          amount: this.amountForPlan(plan),
+          issuedAt: subscription.createdAt || new Date().toISOString(),
+          redirectTo: this.router.url
+        };
+      },
+      error: () => {
+        this.subscriptionSnapshot = null;
+      }
+    });
+  }
+
+  private amountForPlan(plan: PlanKey): number {
+    if (plan === 'BASIC') {
+      return 29;
+    }
+    if (plan === 'PREMIUM') {
+      return 149;
+    }
+    return 79;
+  }
+
+  private isSameCompany(left: string | null | undefined, right: string | null | undefined): boolean {
+    return this.normalizeCompanyName(left) === this.normalizeCompanyName(right);
+  }
+
+  private normalizeCompanyName(value: string | null | undefined): string {
+    return (value ?? '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '');
   }
 }
 

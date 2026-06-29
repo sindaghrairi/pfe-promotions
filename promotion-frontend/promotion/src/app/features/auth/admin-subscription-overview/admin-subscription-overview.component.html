@@ -18,6 +18,7 @@
     <!-- ── Feedback ── -->
     <p class="sub-loading anim-up" *ngIf="loading">{{ 'SUB_OVERVIEW.LOADING' | translate }}</p>
     <p class="sub-error anim-up" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="sub-success anim-up" *ngIf="successMessage">{{ successMessage }}</p>
 
     <!-- ── Main Card ── -->
     <div class="sub-card anim-up delay-2" *ngIf="hasSnapshot; else noData" aria-label="Details abonnement">
@@ -31,6 +32,9 @@
         <span class="sub-live-badge">
           <span class="sub-blink" aria-hidden="true"></span>
           Plan {{ cycleLabel }}
+        </span>
+        <span class="sub-status-badge" [ngClass]="statusBadgeClass">
+          {{ statusLabel }}
         </span>
       </div>
 
@@ -56,6 +60,12 @@
           <span class="sub-info-label">{{ 'INVOICE.CYCLE' | translate }}</span>
           <strong class="sub-info-val">{{ cycleLabel }}</strong>
         </div>
+        <div class="sub-info-col">
+          <span class="sub-info-label">{{ 'COMMON.STATUS' | translate }}</span>
+          <strong class="sub-info-val">
+            <span class="sub-status-badge" [ngClass]="statusBadgeClass">{{ statusLabel }}</span>
+          </strong>
+        </div>
       </div>
 
       <!-- Row 2: amount + next invoice -->
@@ -77,6 +87,14 @@
         <button type="button" class="sub-btn-primary" (click)="openInvoice()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           {{ 'PLATFORM_INVOICES.VIEW' | translate }}
+        </button>
+        <button
+          *ngIf="canReactivate"
+          type="button"
+          class="sub-btn-reactivate"
+          [disabled]="reactivating"
+          (click)="reactivateSubscription()">
+          {{ reactivating ? ('COMMON.PROCESSING' | translate) : ('SUB_OVERVIEW.REACTIVATE' | translate) }}
         </button>
       </div>
 

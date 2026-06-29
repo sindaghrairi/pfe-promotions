@@ -1,464 +1,301 @@
 <section class="home-page">
-  <!-- ═══ NAVIGATION ═══ -->
-  <header class="top-nav">
-    <div class="top-nav-inner">
-      <a class="brand" routerLink="/">
-        <span class="brand-icon">P</span>
-        PromoLink
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" routerLink="/" aria-label="PromoLink">
+        <img class="brand-mark" src="promolink-logo-icon.png" alt="" />
+        <span>PromoLink</span>
       </a>
 
-      <nav class="menu" aria-label="Navigation principale">
-        <a class="menu-link active" href="#stats">{{ 'NAV.HOME' | translate }}</a>
-        <a class="menu-link" href="#how">{{ 'NAV.HOW_IT_WORKS' | translate }}</a>
-        <a class="menu-link" href="#offers">{{ 'NAV.PROMOTIONS' | translate }}</a>
-        <a class="menu-link" href="#partners">{{ 'NAV.PARTNERS' | translate }}</a>
-      </nav>
+      <a class="category-menu-button" href="#categories">
+        {{ 'HOME.NAV_CATEGORIES' | translate }}
+        <span aria-hidden="true"></span>
+      </a>
 
-      <div class="top-actions">
+      <form class="search-bar" role="search" (submit)="searchPromotions(homeSearch.value); $event.preventDefault()">
+        <button class="search-icon" type="submit" [attr.aria-label]="'HOME.SEARCH_PLACEHOLDER' | translate"></button>
+        <input #homeSearch type="search" [placeholder]="'HOME.SEARCH_PLACEHOLDER' | translate" />
+      </form>
+
+      <div class="header-actions">
         <app-language-switcher />
-        <a class="nav-ghost-btn" routerLink="/login">{{ 'NAV.LOGIN' | translate }}</a>
-        <a class="upgrade-btn" routerLink="/login">
-          <span>{{ 'NAV.CLIENT_PROMOS' | translate }}</span>
-        </a>
-        <a class="upgrade-btn accent-2" routerLink="/admin/login">
-          <span>{{ 'NAV.LAUNCH_PROMOS' | translate }}</span>
-        </a>
+        <a class="login-link" routerLink="/login">{{ 'HOME.LOGIN_NAV' | translate }}</a>
+        <a class="company-link" routerLink="/admin/login">{{ 'HOME.COMPANY_SPACE' | translate }}</a>
       </div>
     </div>
   </header>
 
-  <main>
-    <!-- ═══ HERO ═══ -->
-    <section class="hero" id="stats">
-      <div class="hero-bg" aria-hidden="true">
-        <img src="stitch-acceuil.png" alt="" />
-      </div>
-      <div class="hero-motif" aria-hidden="true"></div>
-      <div class="container hero-grid">
+  <main id="home">
+    <section class="hero-shell">
+      <div class="hero-banner">
         <div class="hero-copy">
-          <div class="hero-trust-row" aria-hidden="true">
-            <span class="trust-dot"></span>
-            <span class="trust-dot"></span>
-            <span class="trust-dot"></span>
-            <span class="trust-dot"></span>
-            <span class="trust-dot"></span>
-            <span class="trust-text">{{ 'HOME.TRUST' | translate }}</span>
+          <p class="eyebrow">{{ 'HOME.HERO_EYEBROW' | translate }}</p>
+          <h1>{{ 'HOME.HERO_TITLE' | translate }}</h1>
+          <p>{{ 'HOME.HERO_SUBTITLE' | translate }}</p>
+          <a class="primary-button" routerLink="/promos/consulter-toutes">
+            {{ 'HOME.HERO_CTA' | translate }}
+            <span aria-hidden="true">-></span>
+          </a>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+          <div class="shopping-bag bag-back"></div>
+          <div class="shopping-bag bag-front">
+            <span>%</span>
           </div>
-          <p class="hero-chip">{{ 'HOME.CHIP' | translate }}</p>
-          <p class="hero-kicker">{{ 'HOME.KICKER' | translate }}</p>
-          <h1>
-            {{ 'HOME.TITLE_LINE_1' | translate }}<br />
-            <span>{{ 'HOME.TITLE_LINE_2' | translate }}</span>
-          </h1>
-          <div class="hero-badges" aria-hidden="true">
-            <span class="hero-badge">{{ 'HOME.BADGE_ANALYTICS' | translate }}</span>
-            <span class="hero-badge alt">{{ 'HOME.BADGE_FAST' | translate }}</span>
-            <span class="hero-badge green">{{ 'HOME.BADGE_ROI' | translate }}</span>
+          <div class="cart">
+            <span></span>
           </div>
-          <p class="hero-desc">
-            {{ 'HOME.DESCRIPTION' | translate }}
-          </p>
-          <div class="hero-cta">
-            <a class="btn btn-primary" routerLink="/admin/login">
-              {{ 'NAV.LAUNCH_PROMOS' | translate }}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <div class="coupon coupon-top">-30%</div>
+          <div class="coupon coupon-bottom">PROMO</div>
+          <div class="spark spark-one"></div>
+          <div class="spark spark-two"></div>
+        </div>
+      </div>
+
+      <aside class="daily-card" (mouseenter)="pauseDealCarousel()" (mouseleave)="resumeDealCarousel()">
+        <ng-container *ngIf="dealOfDay as deal; else noDailyDeal">
+          <img class="daily-card-bg" [src]="deal.image" [alt]="deal.title" aria-hidden="true" />
+          <div class="daily-slide" [class.is-next]="carouselDirection === 'next'" [class.is-prev]="carouselDirection === 'prev'">
+            <div class="daily-art" aria-hidden="true">
+              <div class="daily-chip">
+                <span></span>
+                {{ 'HOME.DEAL_OF_DAY' | translate }}
+              </div>
+              <div class="daily-burst"></div>
+              <div class="daily-bag">
+                <span>%</span>
+              </div>
+            </div>
+            <span class="daily-discount">{{ deal.discount }}</span>
+            <strong class="daily-brand">{{ deal.companyName }}</strong>
+            <h2>{{ deal.title }}</h2>
+            <dl>
+              <div>
+                <span class="daily-info-icon daily-info-calendar" aria-hidden="true"></span>
+                <dt>{{ 'HOME.DEADLINE' | translate }}</dt>
+                <dd>{{ formatDate(deal.endDate) }}</dd>
+              </div>
+              <div>
+                <span class="daily-info-icon daily-info-ticket" aria-hidden="true"></span>
+                <dt>{{ 'HOME.COUPONS_LEFT' | translate }}</dt>
+                <dd>{{ deal.couponsRemaining }}</dd>
+              </div>
+            </dl>
+            <a class="daily-button" [routerLink]="['/entreprises', deal.companySlug, 'consulter-promos']">
+              <span class="daily-eye" aria-hidden="true"></span>
+              {{ 'HOME.VIEW_OFFER' | translate }}
             </a>
-            <a class="btn btn-ghost" routerLink="/login">{{ 'NAV.LOGIN' | translate }}</a>
+            <p class="daily-validity">
+              <span aria-hidden="true"></span>
+              {{ 'HOME.DEAL_VALIDITY' | translate }}
+            </p>
           </div>
-        </div>
 
-        <div class="hero-media" aria-hidden="true">
-          <img class="tone-image" src="stitch-acceuil.png" alt="Équipe marketing en réunion" />
-          <article class="float-card card-bottom-left">
-            <div class="float-card-icon">📈</div>
-            <span>1 245</span>
-            <p>{{ 'HOME.ACTIVE_CAMPAIGNS' | translate }}</p>
-          </article>
-          <article class="float-card card-top-right">
-            <div class="float-card-icon">🎟</div>
-            <span>+84K</span>
-            <p>{{ 'HOME.USED_COUPONS' | translate }}</p>
-          </article>
+          <div class="daily-controls" *ngIf="dealPromotions.length > 1">
+            <button class="daily-arrow" type="button" (click)="showPreviousDeal()" [attr.aria-label]="'HOME.PREVIOUS_DEAL' | translate">
+              <span aria-hidden="true"></span>
+            </button>
+            <div class="daily-dots" [attr.aria-label]="'HOME.DEAL_DOTS' | translate">
+              <button
+                *ngFor="let promotion of dealPromotions; let i = index"
+                type="button"
+                [class.is-active]="i === activeDealIndex"
+                (click)="selectDeal(i, i > activeDealIndex ? 'next' : 'prev')"
+                [attr.aria-label]="'HOME.DEAL_DOT' | translate:{ index: i + 1 }"
+              ></button>
+            </div>
+            <button class="daily-arrow daily-arrow-next" type="button" (click)="showNextDeal()" [attr.aria-label]="'HOME.NEXT_DEAL' | translate">
+              <span aria-hidden="true"></span>
+            </button>
+          </div>
+
+        </ng-container>
+
+        <ng-template #noDailyDeal>
+          <div class="daily-empty">
+            <div class="daily-empty-icon" aria-hidden="true">
+              <span>%</span>
+            </div>
+            <h2>{{ 'HOME.NO_DEAL_TITLE' | translate }}</h2>
+            <p>{{ 'HOME.NO_DEAL_TEXT' | translate }}</p>
+          </div>
+        </ng-template>
+      </aside>
+    </section>
+
+    <section class="benefits-strip" [attr.aria-label]="'HOME.BENEFITS_ARIA' | translate">
+      <article *ngFor="let benefit of benefits">
+        <span class="benefit-icon benefit-icon-{{ benefit.icon }}" aria-hidden="true"></span>
+        <div>
+          <strong>{{ benefit.titleKey | translate }}</strong>
+          <p>{{ benefit.textKey | translate }}</p>
         </div>
+      </article>
+    </section>
+
+    <section class="section-block" id="categories">
+      <div class="section-title-row">
+        <h2>{{ 'HOME.CATEGORIES_TITLE' | translate }}</h2>
+        <a routerLink="/promos/consulter-toutes">{{ 'HOME.VIEW_ALL_CATEGORIES' | translate }}</a>
+      </div>
+
+      <div class="category-grid">
+        <a
+          class="category-item"
+          routerLink="/promotions"
+          [queryParams]="{ category: category.category }"
+          *ngFor="let category of categories"
+        >
+          <span class="category-icon category-icon-{{ category.icon }}" aria-hidden="true"></span>
+          <strong>{{ category.key | translate }}</strong>
+        </a>
       </div>
     </section>
 
-    <!-- ═══ STATS BAR ═══ -->
-    <section class="stats-bar">
-      <div class="container">
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-number">1 245</span>
-            <span class="stat-label">{{ 'HOME.ACTIVE_CAMPAIGNS' | translate }}</span>
+    <section class="section-block" id="partners">
+      <div class="section-title-row">
+        <h2>{{ 'HOME.PARTNERS_TITLE' | translate }}</h2>
+        <a routerLink="/promos/consulter-toutes">{{ 'HOME.VIEW_ALL_PARTNERS' | translate }}</a>
+      </div>
+
+      <div class="partner-row">
+        <a
+          class="partner-card"
+          *ngFor="let partner of partners"
+          [routerLink]="['/entreprises', partner.slug, 'consulter-promos']"
+        >
+          <div class="partner-logo">
+            <img *ngIf="partner.logo" [src]="partner.logo" [alt]="partner.name" />
+            <span *ngIf="!partner.logo">{{ partner.name.charAt(0) }}</span>
           </div>
-          <div class="stat-divider" aria-hidden="true"></div>
-          <div class="stat-item">
-            <span class="stat-number">+84K</span>
-            <span class="stat-label">{{ 'HOME.DISTRIBUTED_COUPONS' | translate }}</span>
-          </div>
-          <div class="stat-divider" aria-hidden="true"></div>
-          <div class="stat-item">
-            <span class="stat-number">5</span>
-            <span class="stat-label">{{ 'HOME.PARTNER_BRANDS' | translate }}</span>
-          </div>
-          <div class="stat-divider" aria-hidden="true"></div>
-          <div class="stat-item">
-            <span class="stat-number">+32%</span>
-            <span class="stat-label">{{ 'HOME.AVERAGE_GROWTH' | translate }}</span>
-          </div>
-        </div>
+          <strong>{{ partner.name }}</strong>
+          <p>{{ partner.activePromotions }} {{ 'HOME.ACTIVE_PROMOTIONS' | translate }}</p>
+          <p>{{ partner.coupons }} {{ 'HOME.AVAILABLE_COUPONS' | translate }}</p>
+        </a>
       </div>
     </section>
 
-    <!-- ═══ COMMENT ÇA MARCHE ═══ -->
-    <section class="how-it-works" id="how">
-      <div class="container">
-        <div class="section-badge">
-          <span>{{ 'HOME.SIMPLE_FAST' | translate }}</span>
-        </div>
-        <h2 class="how-title">{{ 'HOME.HOW_TITLE' | translate }}</h2>
-        <p class="how-subtitle">
-          {{ 'HOME.HOW_SUBTITLE' | translate }}
-        </p>
+    <section class="section-block" id="offers">
+      <div class="section-title-row">
+        <h2>{{ 'HOME.TOP_PROMOTIONS_TITLE' | translate }}</h2>
+        <a routerLink="/promos/consulter-toutes">{{ 'HOME.VIEW_ALL_PROMOTIONS' | translate }}</a>
+      </div>
 
-        <div class="steps-grid">
-          <div class="step-card">
-            <div class="step-number">01</div>
-            <div class="step-icon-wrap">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="loading-line" *ngIf="isLoading">{{ 'COMMON.LOADING' | translate }}</div>
+
+      <div class="promo-grid">
+        <article class="promo-card" *ngFor="let promotion of topPromotions">
+          <a [routerLink]="['/entreprises', promotion.companySlug, 'consulter-promos']" class="promo-media">
+            <img [src]="promotion.image" [alt]="promotion.title" />
+            <span class="discount-badge">{{ promotion.discount }}</span>
+            <span class="brand-badge">{{ promotion.companyName }}</span>
+          </a>
+          <div class="promo-body">
+            <span class="promo-category">{{ promotion.category }}</span>
+            <h3>{{ promotion.title }}</h3>
+            <div class="price-row">
+              <strong>{{ formatPrice(promotion.promotionalPrice) }}</strong>
+              <del>{{ formatPrice(promotion.initialPrice) }}</del>
             </div>
-            <h3>{{ 'HOME.STEP_REGISTER' | translate }}</h3>
-            <p>{{ 'HOME.STEP_REGISTER_DESC' | translate }}</p>
-            <a class="step-link" routerLink="/espace">{{ 'HOME.STEP_REGISTER_LINK' | translate }}</a>
-          </div>
-
-          <div class="step-connector" aria-hidden="true">
-            <div class="connector-line"></div>
-            <div class="connector-dot"></div>
-          </div>
-
-          <div class="step-card">
-            <div class="step-number">02</div>
-            <div class="step-icon-wrap">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+            <div class="promo-meta">
+              <span>{{ promotion.couponsRemaining }} {{ 'HOME.COUPONS_REMAINING' | translate }}</span>
+              <span>{{ 'HOME.EXPIRES_ON' | translate }} {{ formatDate(promotion.endDate) }}</span>
             </div>
-            <h3>{{ 'HOME.STEP_CHOOSE' | translate }}</h3>
-            <p>{{ 'HOME.STEP_CHOOSE_DESC' | translate }}</p>
-            <a class="step-link" href="#offers">{{ 'HOME.STEP_CHOOSE_LINK' | translate }}</a>
           </div>
-
-          <div class="step-connector" aria-hidden="true">
-            <div class="connector-line"></div>
-            <div class="connector-dot"></div>
-          </div>
-
-          <div class="step-card">
-            <div class="step-number">03</div>
-            <div class="step-icon-wrap">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </div>
-            <h3>{{ 'HOME.STEP_SAVE' | translate }}</h3>
-            <p>Activez vos coupons et réalisez des économies immédiates sur vos achats préférés.</p>
-            <a class="step-link" routerLink="/espace">Commencer →</a>
-          </div>
-        </div>
+        </article>
       </div>
     </section>
 
-    <!-- ═══ PARTNERS ═══ -->
-    <section class="partners" id="partners">
-      <div class="container">
-        <div class="partners-header">
-          <span class="partners-eyebrow">Ils nous font confiance</span>
-          <h2>Nos partenaires de confiance</h2>
-          <p>Des marques leaders qui boostent leurs ventes grâce à notre plateforme</p>
-        </div>
-
-        <div class="partner-cards-grid">
-          <a routerLink="/entreprises/decathlon/consulter-promos" class="partner-card" style="--accent:#0082c8;">
-            <div class="partner-card-glow"></div>
-            <div class="partner-logo-wrap">
-              <span class="partner-initial">D</span>
-            </div>
-            <div class="partner-info">
-              <strong>DECATHLON</strong>
-              <span>Sport & Outdoor</span>
-            </div>
-            <div class="partner-badge">
-              <span class="badge-dot"></span>
-              Actif
-            </div>
-            <div class="partner-arrow">→</div>
-          </a>
-
-          <a routerLink="/entreprises/aziza/consulter-promos" class="partner-card" style="--accent:#e63946;">
-            <div class="partner-card-glow"></div>
-            <div class="partner-logo-wrap">
-              <span class="partner-initial">A</span>
-            </div>
-            <div class="partner-info">
-              <strong>AZIZA</strong>
-              <span>Grande Distribution</span>
-            </div>
-            <div class="partner-badge">
-              <span class="badge-dot"></span>
-              Actif
-            </div>
-            <div class="partner-arrow">→</div>
-          </a>
-
-          <a routerLink="/entreprises/fatales/consulter-promos" class="partner-card" style="--accent:#c77dff;">
-            <div class="partner-card-glow"></div>
-            <div class="partner-logo-wrap">
-              <span class="partner-initial">F</span>
-            </div>
-            <div class="partner-info">
-              <strong>FATALES</strong>
-              <span>Beauté & Soins</span>
-            </div>
-            <div class="partner-badge">
-              <span class="badge-dot"></span>
-              Actif
-            </div>
-            <div class="partner-arrow">→</div>
-          </a>
-
-          <a routerLink="/entreprises/monoprix/consulter-promos" class="partner-card" style="--accent:#f4a261;">
-            <div class="partner-card-glow"></div>
-            <div class="partner-logo-wrap">
-              <span class="partner-initial">M</span>
-            </div>
-            <div class="partner-info">
-              <strong>MONOPRIX</strong>
-              <span>Mode & Lifestyle</span>
-            </div>
-            <div class="partner-badge">
-              <span class="badge-dot"></span>
-              Actif
-            </div>
-            <div class="partner-arrow">→</div>
-          </a>
-
-          <a routerLink="/entreprises/zara/consulter-promos" class="partner-card" style="--accent:#2d6a4f;">
-            <div class="partner-card-glow"></div>
-            <div class="partner-logo-wrap">
-              <span class="partner-initial">Z</span>
-            </div>
-            <div class="partner-info">
-              <strong>ZARA</strong>
-              <span>Mode & Tendances</span>
-            </div>
-            <div class="partner-badge">
-              <span class="badge-dot"></span>
-              Actif
-            </div>
-            <div class="partner-arrow">→</div>
-          </a>
-        </div>
-
-        <div class="partner-ticker-wrap" aria-hidden="true">
-          <div class="partner-ticker">
-            <span>DECATHLON</span><span>·</span>
-            <span>AZIZA</span><span>·</span>
-            <span>FATALES</span><span>·</span>
-            <span>MONOPRIX</span><span>·</span>
-            <span>ZARA</span><span>·</span>
-            <span>DECATHLON</span><span>·</span>
-            <span>AZIZA</span><span>·</span>
-            <span>FATALES</span><span>·</span>
-            <span>MONOPRIX</span><span>·</span>
-            <span>ZARA</span><span>·</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ OFFERS ═══ -->
-    <section class="offers" id="offers">
-      <div class="container">
-        <div class="section-head">
+    <section class="promo-guide-section" id="how">
+      <div class="promo-guide-hero">
+        <div class="promo-guide-copy">
+          <span class="promo-guide-icon" aria-hidden="true">%</span>
           <div>
-            <div class="section-badge"><span>Exclusif</span></div>
-            <h2>Promotions du moment</h2>
-            <p>Découvrez les offres les plus performantes de notre réseau.</p>
+            <h2>
+              <span>{{ 'HOME.BEST_OFFERS_TITLE_LINE_1' | translate }}</span>
+              <span>{{ 'HOME.BEST_OFFERS_TITLE_LINE_2' | translate }}</span>
+            </h2>
+            <p>{{ 'HOME.BEST_OFFERS_TEXT' | translate }}</p>
+            <div class="promo-guide-actions">
+              <a class="promo-guide-primary" routerLink="/promos/consulter-toutes">
+                {{ 'HOME.HERO_CTA' | translate }}
+                <span aria-hidden="true">›</span>
+              </a>
+              <a class="promo-guide-secondary" href="#partners">
+                {{ 'HOME.BEST_OFFERS_PARTNERS' | translate }}
+              </a>
+            </div>
           </div>
-          <a class="view-all" routerLink="/promos/consulter-toutes">Voir toutes les offres →</a>
         </div>
 
-        <div class="offer-grid">
-          <article class="offer-card">
-            <div class="offer-media">
-              <img class="tone-image" src="partners/decathlon.png" alt="Chaussure running" />
-              <span class="discount">-30%</span>
-              <div class="offer-media-overlay"></div>
-            </div>
-            <div class="offer-body">
-              <div class="offer-meta">
-                <span class="offer-brand-tag" style="--brand-color:#0082c8;">DECATHLON</span>
-                <small>Collection Running Elite</small>
-              </div>
-              <p>Profitez de réductions exceptionnelles sur notre dernière gamme de chaussures.</p>
-              <a class="offer-cta" routerLink="/entreprises/decathlon/consulter-promos">
-                Voir l'offre
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-            </div>
-          </article>
-
-          <article class="offer-card">
-            <div class="offer-media">
-              <img class="tone-image" src="partners/fatales.jpg" alt="Produits de soins" />
-              <span class="discount">-15%</span>
-              <div class="offer-media-overlay"></div>
-            </div>
-            <div class="offer-body">
-              <div class="offer-meta">
-                <span class="offer-brand-tag" style="--brand-color:#c77dff;">FATALES</span>
-                <small>Soins Visage Premium</small>
-              </div>
-              <p>Une routine beauté complète avec nos meilleurs sérums anti-âge.</p>
-              <a class="offer-cta" routerLink="/entreprises/fatales/consulter-promos">
-                Voir l'offre
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-            </div>
-          </article>
-
-          <article class="offer-card">
-            <div class="offer-media">
-              <img class="tone-image" src="partners/monoprix-food.jpg" alt="Produits frais" />
-              <span class="discount">-20%</span>
-              <div class="offer-media-overlay"></div>
-            </div>
-            <div class="offer-body">
-              <div class="offer-meta">
-                <span class="offer-brand-tag" style="--brand-color:#f4a261;">MONOPRIX</span>
-                <small>Sélection Fraîcheur & Saveurs</small>
-              </div>
-              <p>Profitez d'une sélection de produits frais et gourmands à prix réduit.</p>
-              <a class="offer-cta" routerLink="/entreprises/monoprix/consulter-promos">
-                Voir l'offre
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-            </div>
-          </article>
+        <div class="promo-guide-art" aria-hidden="true">
+          <div class="guide-podium"></div>
+          <div class="guide-bag"><span>%</span></div>
+          <div class="guide-tag">%</div>
         </div>
       </div>
-    </section>
 
-    <!-- ═══ FEATURES ═══ -->
-    <section class="features" id="features">
-      <div class="container">
-        <div class="features-header">
-          <div class="section-badge"><span>Nos avantages</span></div>
-          <h2>Pourquoi choisir PromoLink&nbsp;?</h2>
-          <p>Une suite complète d'outils pour maximiser l'impact de vos campagnes promotionnelles.</p>
-        </div>
+      <h2 class="promo-guide-title">{{ 'HOME.HOW_TITLE' | translate }}</h2>
 
-        <div class="features-grid">
-          <div class="feature-card feature-card--large">
-            <div class="feature-icon-wrap">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            </div>
-            <h3>Gestion centralisée</h3>
-            <p>Pilotez toutes vos campagnes depuis un seul tableau de bord intuitif. Créez, modifiez et suivez vos promotions en temps réel.</p>
-            <div class="feature-visual-bar">
-              <div class="fv-bar-row"><span>Campagnes</span><div class="fv-bar"><div class="fv-bar-fill" style="--w:88%"></div></div><span>88%</span></div>
-              <div class="fv-bar-row"><span>Coupons</span><div class="fv-bar"><div class="fv-bar-fill" style="--w:74%"></div></div><span>74%</span></div>
-              <div class="fv-bar-row"><span>Conversion</span><div class="fv-bar"><div class="fv-bar-fill" style="--w:61%"></div></div><span>61%</span></div>
-            </div>
+      <div class="promo-steps-grid">
+        <article>
+          <span class="promo-step-number">01</span>
+          <span class="promo-step-icon promo-step-search" aria-hidden="true"></span>
+          <div>
+            <strong>{{ 'HOME.HOW_STEP_1_TITLE' | translate }}</strong>
+            <p>{{ 'HOME.HOW_STEP_1_TEXT' | translate }}</p>
           </div>
-
-          <div class="feature-card">
-            <div class="feature-icon-wrap">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            </div>
-            <h3>Analytics temps réel</h3>
-            <p>Suivez vos performances et optimisez votre ROI grâce à des données actualisées en continu.</p>
+        </article>
+        <article>
+          <span class="promo-step-number">02</span>
+          <span class="promo-step-icon promo-step-coupon" aria-hidden="true">%</span>
+          <div>
+            <strong>{{ 'HOME.HOW_STEP_2_TITLE' | translate }}</strong>
+            <p>{{ 'HOME.HOW_STEP_2_TEXT' | translate }}</p>
           </div>
-
-          <div class="feature-card">
-            <div class="feature-icon-wrap">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <h3>Activation rapide</h3>
-            <p>Lancez une campagne promotionnelle en moins de 5 minutes grâce à notre interface simplifiée.</p>
+        </article>
+        <article>
+          <span class="promo-step-number">03</span>
+          <span class="promo-step-icon promo-step-wallet" aria-hidden="true"></span>
+          <div>
+            <strong>{{ 'HOME.HOW_STEP_3_TITLE' | translate }}</strong>
+            <p>{{ 'HOME.HOW_STEP_3_TEXT' | translate }}</p>
           </div>
-
-          <div class="feature-card">
-            <div class="feature-icon-wrap">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </div>
-            <h3>Réseau qualifié</h3>
-            <p>Accédez à une base d'utilisateurs engagés et qualifiés, prêts à adopter vos offres.</p>
-          </div>
-
-          <div class="feature-card feature-card--accent">
-            <div class="feature-icon-wrap">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h3>Sécurité garantie</h3>
-            <p>Vos données et celles de vos clients sont protégées par un chiffrement de bout en bout.</p>
-            <a class="feature-cta" routerLink="/admin/subscribe">En savoir plus →</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ NEWSLETTER ═══ -->
-    <section class="newsletter">
-      <div class="newsletter-glow" aria-hidden="true"></div>
-      <div class="container newsletter-inner">
-        <div class="newsletter-icon" aria-hidden="true">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-        <h2>Ne manquez aucune opportunité</h2>
-        <p>Inscrivez-vous pour profiter des coupons exclusifs et propulser votre stratégie de croissance.</p>
-        <form class="newsletter-form" action="#" method="post">
-          <input type="email" placeholder="Votre adresse email professionnelle" />
-          <button type="button">
-            S'inscrire
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-        </form>
-        <p class="newsletter-hint">Pas de spam. Désinscription à tout moment.</p>
+        </article>
       </div>
     </section>
   </main>
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer class="footer">
-    <div class="container footer-inner">
+  <footer class="site-footer">
+    <div class="footer-inner">
       <div class="footer-brand">
         <a class="brand" routerLink="/">
-          <span class="brand-icon">P</span>
-          PromoLink
+          <img class="brand-mark" src="promolink-logo-icon.png" alt="" />
+          <span>PromoLink</span>
         </a>
-        <p>La plateforme B2B de référence pour vos campagnes promotionnelles.</p>
-        <p class="footer-copy">© 2026 PromoLink. Tous droits réservés.</p>
+        <p>{{ 'HOME.FOOTER_TEXT' | translate }}</p>
       </div>
 
-      <div class="footer-cols">
-        <div class="footer-col">
-          <strong>Plateforme</strong>
-          <a routerLink="/espace">Bénéficier des promos</a>
-          <a routerLink="/admin/login">Lancer mes promotions</a>
-          <a routerLink="/promos/consulter-toutes">Toutes les offres</a>
-        </div>
-        <div class="footer-col">
-          <strong>Partenaires</strong>
-          <a routerLink="/entreprises/decathlon/consulter-promos">Decathlon</a>
-          <a routerLink="/entreprises/aziza/consulter-promos">Aziza</a>
-          <a routerLink="/entreprises/fatales/consulter-promos">Fatales</a>
-          <a routerLink="/entreprises/monoprix/consulter-promos">Monoprix</a>
-          <a routerLink="/entreprises/zara/consulter-promos">Zara</a>
-        </div>
-        <div class="footer-col">
-          <strong>Légal</strong>
-          <a routerLink="/espace">Politique de confidentialité</a>
-          <a routerLink="/espace">Conditions d'utilisation</a>
-          <a routerLink="/espace">Support</a>
-        </div>
+      <div class="footer-col">
+        <strong>{{ 'HOME.FOOTER_LINKS' | translate }}</strong>
+        <a routerLink="/promos/consulter-toutes">{{ 'NAV.PROMOTIONS' | translate }}</a>
+        <a href="#partners">{{ 'HOME.NAV_COMPANIES' | translate }}</a>
+        <a href="#categories">{{ 'HOME.NAV_CATEGORIES' | translate }}</a>
+        <a href="#how">{{ 'NAV.HOW_IT_WORKS' | translate }}</a>
+      </div>
+
+      <div class="footer-col">
+        <strong>{{ 'HOME.FOOTER_CONTACT' | translate }}</strong>
+        <a href="mailto:contact@promolink.tn">contact@promolink.tn</a>
+        <span>+216 71 000 000</span>
+        <span>Tunis, Tunisie</span>
+      </div>
+
+      <div class="footer-col">
+        <strong>{{ 'HOME.FOOTER_SOCIAL' | translate }}</strong>
+        <a href="#home">Facebook</a>
+        <a href="#home">Instagram</a>
+        <a href="#home">LinkedIn</a>
       </div>
     </div>
   </footer>

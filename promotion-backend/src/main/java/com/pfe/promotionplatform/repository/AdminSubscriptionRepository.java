@@ -32,4 +32,16 @@ public interface AdminSubscriptionRepository extends JpaRepository<AdminSubscrip
         where upper(s.plan) in ('PRO', 'ENTERPRISE', 'BASIC', 'STANDARD', 'PREMIUM')
     """)
     int normalizePlans();
+
+    @Modifying
+    @Transactional
+    @Query("""
+        update AdminSubscription s
+        set s.status = case
+            when s.active = true then com.pfe.promotionplatform.entity.AdminSubscriptionStatus.ACTIVE
+            else com.pfe.promotionplatform.entity.AdminSubscriptionStatus.CANCELED
+        end
+        where s.status is null
+    """)
+    int markLegacySubscriptionStatuses();
 }

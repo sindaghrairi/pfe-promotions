@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { LoginRequest } from '../../../core/models/auth.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { LanguageSwitcherComponent } from '../../../shared/language-switcher/language-switcher.component';
 
@@ -21,6 +22,7 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translations = inject(TranslationService);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -29,6 +31,10 @@ export class LoginComponent {
 
   loading = false;
   errorMessage = '';
+
+  loginWithGoogle(): void {
+    this.authService.loginWithGoogle();
+  }
 
   submit(): void {
     if (this.form.invalid) {
@@ -79,7 +85,7 @@ export class LoginComponent {
       }
     }
 
-    return 'Echec de connexion. Verifiez vos identifiants.';
+    return this.translations.translate('AUTH.LOGIN_ERROR');
   }
 
   private safeRedirect(redirectTo: string | null): string {

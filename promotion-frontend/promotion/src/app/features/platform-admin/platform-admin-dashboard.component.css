@@ -131,6 +131,35 @@
   font-weight: 900;
 }
 
+.ud-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ud-logout-btn {
+  min-height: 38px;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 9px;
+  background: rgba(220, 38, 38, 0.1);
+  color: #fca5a5;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 850;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.15s;
+}
+
+.ud-logout-btn:hover {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(220, 38, 38, 0.45);
+  color: #fecaca;
+  transform: translateY(-1px);
+}
+
 .ud-theme-toggle {
   width: 48px;
   height: 26px;
@@ -356,6 +385,134 @@
   height: 100% !important;
 }
 
+.ud-ai-panel {
+  border-color: rgba(37, 99, 235, 0.34);
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(15, 118, 110, 0.07)),
+    var(--ud-panel);
+}
+
+.ud-ai-header {
+  align-items: center;
+}
+
+.ud-ai-model {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--ud-border);
+  border-radius: 8px;
+  color: var(--ud-text-2);
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ud-ai-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.88fr) minmax(0, 1.12fr);
+  gap: 0.9rem;
+}
+
+.ud-ai-question,
+.ud-ai-answer {
+  min-width: 0;
+}
+
+.ud-ai-question textarea {
+  width: 100%;
+  min-height: 104px;
+  resize: vertical;
+  padding: 0.8rem;
+  border: 1px solid var(--ud-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ud-text);
+  font: inherit;
+  line-height: 1.45;
+  outline: none;
+}
+
+.ud-ai-question textarea:focus {
+  border-color: rgba(37, 99, 235, 0.7);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.ud-ai-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.ud-ai-submit,
+.ud-ai-chip {
+  min-height: 34px;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.ud-ai-submit {
+  padding: 0 0.85rem;
+  color: #fff;
+  background: #2563eb;
+}
+
+.ud-ai-chip {
+  padding: 0 0.7rem;
+  color: var(--ud-text-2);
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid var(--ud-border);
+}
+
+.ud-ai-submit:disabled,
+.ud-ai-chip:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.ud-ai-answer {
+  min-height: 170px;
+  padding: 0.85rem;
+  border: 1px solid var(--ud-border);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.ud-ai-empty {
+  margin: 0;
+  color: var(--ud-text-2);
+  font-weight: 750;
+}
+
+.ud-ai-text {
+  margin: 0;
+  color: var(--ud-text);
+  font-size: 0.9rem;
+  font-weight: 650;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.ud-ai-next {
+  margin-top: 0.9rem;
+}
+
+.ud-ai-next h3 {
+  font-size: 0.82rem;
+}
+
+.ud-ai-next ul {
+  margin: 0.55rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--ud-text-2);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .ud-insights-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -419,7 +576,8 @@
 
   .ud-chart-grid,
   .ud-chart-grid-main,
-  .ud-insights-grid {
+  .ud-insights-grid,
+  .ud-ai-layout {
     grid-template-columns: 1fr;
   }
 }

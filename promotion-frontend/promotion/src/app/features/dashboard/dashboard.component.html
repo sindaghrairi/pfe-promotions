@@ -1,11 +1,15 @@
 <section class="dashboard-page">
   <header class="dashboard-navbar">
-    <a class="nav-brand" routerLink="/">PromoLink</a>
+    <a class="nav-brand" routerLink="/">
+      <img src="promolink-logo-icon.png" alt="" />
+      <span>PromoLink</span>
+    </a>
 
-    <nav class="nav-links" aria-label="Navigation dashboard">
+    <nav class="nav-links" [attr.aria-label]="'DASHBOARD.NAVIGATION' | translate">
       <a routerLink="/">{{ 'NAV.HOME' | translate }}</a>
       <a class="nav-primary" [routerLink]="addPromoLink" *ngIf="!isClientSpace">{{ 'NAV.ADD_PROMO' | translate }}</a>
       <a routerLink="/admin/subscribe/overview" [queryParams]="subscriptionQueryParams" *ngIf="!isClientSpace">{{ 'NAV.SUBSCRIPTIONS' | translate }}</a>
+      <a routerLink="/admin/profile" *ngIf="!isClientSpace">{{ 'PROFILE.ADMIN_NAV' | translate }}</a>
       <app-language-switcher />
       <button type="button" class="nav-logout" (click)="logout()">{{ 'COMMON.LOGOUT' | translate }}</button>
     </nav>

@@ -1,5 +1,6 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -40,6 +41,7 @@ import { LanguageSwitcherComponent } from '../../shared/language-switcher/langua
 import {
   PlatformAdminChart,
   PlatformAdminDashboard,
+  PlatformCopilotResponse,
   PlatformDashboardPeriod
 } from '../../core/models/platform-admin.model';
 
@@ -68,7 +70,7 @@ Chart.register(
 @Component({
   selector: 'app-platform-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, DecimalPipe, TranslatePipe, LanguageSwitcherComponent],
+  imports: [CommonModule, FormsModule, RouterLink, DecimalPipe, TranslatePipe, LanguageSwitcherComponent],
   templateUrl: './platform-admin-dashboard.component.html',
   styleUrl: './platform-admin-dashboard.component.css'
 })
@@ -104,6 +106,15 @@ export class PlatformAdminDashboardComponent implements OnInit, AfterViewInit, O
   loading = true;
   errorMessage = '';
   email = '';
+  copilotQuestion = 'Analyse la sante de la plateforme et donne-moi les priorites du jour.';
+  copilotResponse: PlatformCopilotResponse | null = null;
+  copilotLoading = false;
+  copilotError = '';
+  readonly copilotSuggestions = [
+    'Quelles entreprises sont a risque ?',
+    'Pourquoi les revenus peuvent baisser ?',
+    'Que dois-je faire aujourd hui ?'
+  ];
 
   private viewReady = false;
   private charts: Chart[] = [];
@@ -208,6 +219,30 @@ export class PlatformAdminDashboardComponent implements OnInit, AfterViewInit, O
     if (this.selectedPeriod === period) return;
     this.selectedPeriod = period;
     this.loadDashboard();
+  }
+
+  askCopilot(question?: string): void {
+    const value = (question ?? this.copilotQuestion).trim();
+    if (!value || this.copilotLoading) return;
+
+    this.copilotQuestion = value;
+    this.copilotLoading = true;
+    this.copilotError = '';
+
+    this.platformAdminService.askPlatformCopilot({
+      question: value,
+      period: this.selectedPeriod
+    }).subscribe({
+      next: (response) => {
+        this.copilotResponse = response;
+        this.copilotLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.copilotLoading = false;
+        this.copilotError = this.formatCopilotError(error);
+      }
+    });
   }
 
   toggleTheme(): void {
@@ -423,15 +458,25 @@ export class PlatformAdminDashboardComponent implements OnInit, AfterViewInit, O
 
   private formatLoadError(error: HttpErrorResponse): string {
     if (error.status === 0) {
-      return 'Backend inaccessible sur http://localhost:8081.';
+      return this.t('ERRORS.BACKEND_UNREACHABLE');
     }
     if (error.status === 401 || error.status === 403) {
-      return 'Session admin plateforme invalide ou expiree. Reconnectez-vous.';
+      return this.t('ERRORS.PLATFORM_ADMIN_SESSION');
     }
     if (error.status === 404) {
-      return 'Endpoint analytics introuvable. Redemarrez le backend Spring Boot.';
+      return this.t('ERRORS.PLATFORM_ANALYTICS_ENDPOINT');
     }
-    return `Impossible de charger les analytics plateforme. Code HTTP ${error.status}.`;
+    return this.t('ERRORS.PLATFORM_ANALYTICS_LOAD', { status: error.status });
+  }
+
+  private formatCopilotError(error: HttpErrorResponse): string {
+    if (error.status === 0) {
+      return 'Backend indisponible. Verifiez que Spring Boot est demarre.';
+    }
+    if (error.status === 401 || error.status === 403) {
+      return 'Session admin plateforme expiree ou acces refuse.';
+    }
+    return `Copilot indisponible pour le moment (${error.status}).`;
   }
 
   private toRows(chart: PlatformAdminChart | undefined): { label: string; value: number }[] {
